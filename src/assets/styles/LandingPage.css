@@ -1,0 +1,10 @@
+.LandingPage{
+    display: flex;
+    /* 居中 */
+    justify-content: center;
+    background-color: #EEEEEE;
+}
+.page1-avater{
+    border-radius: 100%;
+
+}
