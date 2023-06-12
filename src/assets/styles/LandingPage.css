@@ -1,10 +1,58 @@
-.LandingPage{
-    display: flex;
-    /* 居中 */
-    justify-content: center;
-    background-color: #EEEEEE;
+.page1 {
+  height: 95vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* background-color: #EEEEEE; */
+  padding-top: 5vh;
 }
-.page1-avater{
-    border-radius: 100%;
 
+.page1-avater {
+  border-radius: 100%;
+  width: 35vh;
+  border: 10px solid #eeeeee;
+  box-shadow: 1px 1px 1px 1px #aaaaaa55;
+  cursor: pointer;
+}
+
+.page1-name {
+  margin-top: 3vh;
+  margin-bottom: 0;
+  font-size: 6rem;
+  font-weight: bold;
+}
+
+.page1-intro {
+  margin-top: 3vw;
+  font-size: 1.25rem;
+  font-style: italic;
+  color: gray;
+}
+
+.page1-btns {
+  width: 20vw;
+  display: flex;
+  justify-content: space-around;
+}
+
+.page1-btns-item {
+  cursor: pointer;
+}
+
+.page1-msg {
+  width: 60vw;
+  /* 文本居中 */
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #aaaaaa55;
+}
+
+.page2 {
+  height: 95vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* background-color: #EEEEEE; */
+  padding-top: 5vh;
 }
