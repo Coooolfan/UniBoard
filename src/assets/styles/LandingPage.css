@@ -56,3 +56,38 @@
   /* background-color: #EEEEEE; */
   padding-top: 5vh;
 }
+
+.page2-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.page2-intro {
+  margin-top: 1.25rem;
+  font-style: italic;
+  color: gray;
+  text-align: center;
+  width: 60vw;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #aaaaaa55;
+}
+
+.page2-cards-list {
+  display: flex;
+  width: 60vw;
+  justify-content: space-around;
+}
+
+.page2-cards-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20vw;
+  height: 20vw;
+  border-radius: 100%;
+  border: 10px solid #eeeeee;
+  box-shadow: 1px 1px 1px 1px #aaaaaa55;
+  cursor: pointer;
+  word-wrap: break-word;
+}
