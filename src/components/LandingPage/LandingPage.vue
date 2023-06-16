@@ -17,10 +17,12 @@
             <div class="page2-cards-list">
                 <div class="page2-cards" v-for="(item, index) in links">
                     <div class="page2-cards-item" :key="index" @click="newWindow(item.link)">
-                        <p class="page2-cards-item-title">{{item.title}}</p>
-                        <p class="page2-cards-item-intro">{{item.intro}}</p>
-                        <p class="page2-cards-item-link">{{item.link}}</p>
-                        <component class="page2-cards-item-icon" :is="item.icon"></component>
+                        <div class="page2-cards-words">
+                            <p class="page2-cards-item-title">{{ item.title }}</p>
+                            <p class="page2-cards-item-intro">{{ item.intro }}</p>
+                        </div>
+                        <component class="page2-cards-item-icon" :is="item.icon" :style="{ 'background-color': item.color }">
+                        </component>
                     </div>
                 </div>
 
@@ -31,7 +33,7 @@
 </template>
 <script>
 import '../../assets/styles/LandingPage.css'
-import { Telegram, Github, Mail,Editor,CloudStorage,Brain } from '@icon-park/vue-next'
+import { Telegram, Github, Mail, Editor, CloudStorage, Brain } from '@icon-park/vue-next'
 export default {
     name: 'LandingPage',
     components: {
@@ -69,18 +71,23 @@ export default {
                     intro: '记录生活、学习、摄影的地方',
                     link: 'https://coooolfan.com',
                     icon: "editor",
+                    color: "#AA0000",
                 },
                 {
                     title: '网盘',
                     intro: '存放一些文件的地方',
                     link: 'https://drive.coooolfan.com',
                     icon: "cloud-storage",
+                    color: "#00AA00",
+
                 },
                 {
                     title: 'GPT',
                     intro: '来自OPENAI的力量',
                     link: 'https://gpt.coooolfan.com',
                     icon: "brain",
+                    color: "#0000AA",
+
                 },
             ]
         }
