@@ -1,3 +1,8 @@
+p{
+  white-space: nowrap;
+  align-content: center;
+}
+
 .page1 {
   height: 95vh;
   display: flex;
@@ -9,7 +14,7 @@
 
 .page1-avater {
   border-radius: 100%;
-  width: 35vh;
+  width: 20vw;
   border: 10px solid #eeeeee;
   box-shadow: 1px 1px 1px 1px #aaaaaa55;
   cursor: pointer;
@@ -80,13 +85,13 @@
 }
 
 .page2-cards {
-  margin-top: 2rem;
+  margin-top: 2vw;
   cursor: pointer;
   position: relative;
 }
 
 .page2-cards-words {
-  padding: 1rem;
+  padding: 1vw;
   width: 15vw;
   height: 12vw;
   border-radius: 10%;
@@ -100,9 +105,9 @@
 }
 
 .page2-cards-item-title {
-  font-size: 1.25rem;
+  font-size: 1.5vw;
   font-weight: bold;
-  margin-top: 1rem;
+  margin-top: 0.5vw;
   margin-bottom: 0;
 }
 
@@ -115,10 +120,9 @@
   position: absolute;
   right: -1.75vw;
   bottom: 3vw;
-  font-size: 2rem;
-  background-color: ;
+  font-size: 2vw;
   box-shadow:
     0.3em 0.3em 1em rgba(0, 0, 0, 0.3);
-  padding: 0.75rem;
+  padding: 0.8rem;
   border-radius: 100%;
 }

@@ -2,8 +2,8 @@
     <div class="LandingPage">
         <div class="page1">
             <img src="https://res.coooolfan.com/c-q.jpg" alt="头像" class="page1-avater" @click="jump2blog">
-            <p class="page1-name">Yang YiFan</p>
-            <p class="page1-intro">学生、摄影爱好者、Minecraft玩家</p>
+            <p class="page1-name">{{ userName }}</p>
+            <p class="page1-intro">{{ intro }}</p>
             <div class="page1-btns">
                 <div class="page1-btns-item" v-for="(item, index) in contacts" :key="index" @click="newWindow(item.link)">
                     <component :is="item.icon"></component>
@@ -33,7 +33,7 @@
 </template>
 <script>
 import '../../assets/styles/LandingPage.css'
-import { Telegram, Github, Mail, Editor, CloudStorage, Brain } from '@icon-park/vue-next'
+import { Telegram, Github, Mail, Editor, CloudStorage, SmartOptimization } from '@icon-park/vue-next'
 export default {
     name: 'LandingPage',
     components: {
@@ -42,10 +42,12 @@ export default {
         Mail,
         Editor,
         CloudStorage,
-        Brain,
+        SmartOptimization,
     },
     data() {
         return {
+            userName: "Yang YiFan",
+            intro:"学生、摄影爱好者、Minecraft玩家",
             contacts: [
                 {
                     title: 'Telegram',
@@ -71,22 +73,22 @@ export default {
                     intro: '记录生活、学习、摄影的地方',
                     link: 'https://coooolfan.com',
                     icon: "editor",
-                    color: "#AA0000",
+                    color: "grey",
                 },
                 {
                     title: '网盘',
                     intro: '存放一些文件的地方',
                     link: 'https://drive.coooolfan.com',
-                    icon: "cloud-storage",
-                    color: "#00AA00",
+                    icon: "CloudStorage",
+                    color: "#87CEFA",
 
                 },
                 {
                     title: 'GPT',
                     intro: '来自OPENAI的力量',
-                    link: 'https://gpt.coooolfan.com',
-                    icon: "brain",
-                    color: "#0000AA",
+                    link: 'https://chat.coooolfan.com',
+                    icon: "SmartOptimization",
+                    color: "#18A058",
 
                 },
             ]
