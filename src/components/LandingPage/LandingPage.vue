@@ -9,23 +9,20 @@
                     <component :is="item.icon"></component>
                 </div>
             </div>
-            <p class="page1-msg">欢迎回来，点击头像往博客或者向下滑动来浏览更多页面</p>
+            <p class="page1-msg">欢迎回来,点击头像往博客或者向下滑动来浏览更多页面</p>
         </div>
         <div class="page2">
             <p class="page2-title">选择一个页面继续</p>
             <p class="page2-intro">此页面的中的内容并非全部公开项</p>
             <div class="page2-cards-list">
-                <div class="page2-cards" v-for="(item, index) in links">
-                    <div class="page2-cards-item" :key="index" @click="newWindow(item.link)">
-                        <div class="page2-cards-words">
-                            <p class="page2-cards-item-title">{{ item.title }}</p>
-                            <p class="page2-cards-item-intro">{{ item.intro }}</p>
-                        </div>
-                        <component class="page2-cards-item-icon" :is="item.icon" :style="{ 'background-color': item.color }">
-                        </component>
+                <div class="page2-cards-item" v-for="(item, index) in links" :key="index" @click="newWindow(item.link)">
+                    <div class="page2-cards-words">
+                        <p class="page2-cards-item-title">{{ item.title }}</p>
+                        <p class="page2-cards-item-intro">{{ item.intro }}</p>
                     </div>
+                    <component class="page2-cards-item-icon" :is="item.icon" :style="{ 'background-color': item.color }">
+                    </component>
                 </div>
-
             </div>
 
         </div>
@@ -47,7 +44,7 @@ export default {
     data() {
         return {
             userName: "Yang YiFan",
-            intro:"学生、摄影爱好者、Minecraft玩家",
+            intro: "学生、摄影爱好者、Minecraft玩家",
             contacts: [
                 {
                     title: 'Telegram',
