@@ -8,8 +8,7 @@ p {
   flex-direction: column;
   align-items: center;
   /* 对于桌面设备和移动设备不同处理 */
-  padding-top: max(10vh, 6vw);
-
+  padding-top: 10vh;
   box-sizing: border-box;
 }
 
