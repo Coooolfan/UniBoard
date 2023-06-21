@@ -125,7 +125,8 @@ p {
 
 .page2-cards-item-icon {
   position: absolute;
-  right: min(-1vw, -1rem);
+  /* right: min(-1vw, -1rem); */
+  left: max(15vw, 15rem);
   bottom: max(1vw, 1rem);
   font-size: max(2vw, 2rem);
   box-shadow:

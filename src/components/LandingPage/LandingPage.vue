@@ -30,7 +30,7 @@
 </template>
 <script>
 import '../../assets/styles/LandingPage.css'
-import { Telegram, Github, Mail, Editor, CloudStorage, SmartOptimization } from '@icon-park/vue-next'
+import { Telegram, Github, Mail, Editor, CloudStorage, SmartOptimization, AirConditioning } from '@icon-park/vue-next'
 export default {
     name: 'LandingPage',
     components: {
@@ -40,6 +40,7 @@ export default {
         Editor,
         CloudStorage,
         SmartOptimization,
+        AirConditioning,
     },
     data() {
         return {
@@ -87,6 +88,14 @@ export default {
                     icon: "SmartOptimization",
                     color: "#18A058",
 
+                },
+                {
+                    title: '空调',
+                    intro: '轻凉一下~',
+                    link: 'https://yangyi.fan/air_condition',
+                    icon: "AirConditioning",
+                    // 凉快的颜色
+                    color: "#DCE2F1",
                 },
             ]
         }
