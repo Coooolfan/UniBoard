@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@icon-park/vue-next": "^1.4.2",
+    "axios": "^1.4.0",
+    "luxon": "^3.3.0",
     "vue": "^3.3.2"
   },
   "devDependencies": {

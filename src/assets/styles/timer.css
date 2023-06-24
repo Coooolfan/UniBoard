@@ -1,0 +1,30 @@
+@font-face {
+  font-family: TimeTravelerPal;
+  src: url("../fonts/TimeTravelerPal-Normal-Regular.ttf");
+}
+
+.HomePage-Line1-Timer {
+  color: #333;
+  /* font-size: 16vw; */
+  padding: 0;
+  border: 0;
+  outline: 0;
+  margin: 60px 0;
+  /* 设置字间距 */
+  letter-spacing: 0.1em;
+  /* 固定字宽 */
+  word-spacing: 0.5em;
+  direction: ltr;
+}
+.HomePage-Line1-Timer-item{
+  display: inline-block;
+  width: 0.6em;
+  text-align: center;
+  font-size:10vw;
+  font-weight: 400;
+  letter-spacing: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-family: TimeTravelerPal;
+}
