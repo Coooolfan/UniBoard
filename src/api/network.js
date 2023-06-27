@@ -4,7 +4,10 @@ import { localstorge_manager } from './localstorage.js';
 
 export const network_manager = reactive({
     postKey(key) {
-        return axios.post('/report/', key).then((response) => {
+        var data = {
+            "key": key,
+        }
+        return axios.post('/report/', data).then((response) => {
             if (response.data["verified"] === true) {
                 return response.data["token"]
             }
@@ -15,7 +18,7 @@ export const network_manager = reactive({
     },
     getNote() {
         return axios.get('/note/').then((response) => {
-            return response.data
+            return response
         })
     },
     postNote(note) {
@@ -30,3 +33,12 @@ export const network_manager = reactive({
 
 
 })
+
+
+// axios.interceptors.request.use(
+//     config => {
+//         return config.headers['Authorization'] = localstorge_manager.getToken()
+//     }
+// )
+
+

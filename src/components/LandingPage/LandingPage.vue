@@ -2,7 +2,7 @@
     <div class="LandingPage">
         <div class="page1">
             <p v-if="msg !== ''" style="padding: 0;margin: 0;">{{ msg }}</p>
-            <img src="https://res.coooolfan.com/c-q.jpg" alt="头像" class="page1-avater" @click="jump2blog">
+            <img src="https://res.coooolfan.com/c-q.jpg" alt="头像" class="page1-avater" @click="newWindow(links[0].link)">
             <p class="page1-name">{{ userName }}</p>
             <p class="page1-intro">{{ intro }}</p>
             <div class="page1-btns">
@@ -10,7 +10,7 @@
                     <component :is="item.icon"></component>
                 </div>
             </div>
-            <p class="page1-msg">欢迎回来,点击头像往博客或者向下滑动来浏览更多页面</p>
+            <p class="page1-msg">欢迎回来,点击头像前往博客或者向下滑动以浏览更多页面</p>
         </div>
         <div class="page2">
             <p class="page2-title">选择一个页面继续</p>
@@ -50,6 +50,7 @@ export default {
             msg: "",
             userName: "Yang YiFan",
             intro: "学生、摄影爱好者、Minecraft玩家",
+            key_record: "",
             contacts: [
                 {
                     title: 'Telegram',
@@ -104,27 +105,39 @@ export default {
         }
     },
     created() {
-        // window.addEventListener("keyup", this.enterSearch)
+        console.log(localstorge_manager.getPage())
+        if (localstorge_manager.getPage() !== "HomePage")
+            window.addEventListener("keyup", this.enterSearch)
     },
     methods: {
-        async enterSearch(e) {
+        enterSearch(e) {
             // 如果按下的是数字
             if (e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105) {
-                var token = await network_manager.postKey(e.key)
-                // 存储token，保存登录状态，刷新后跳转到首页
-                if (token !== undefined) {
-                    localstorge_manager.setToken(token)
-                    this.msg = "登录成功"
-                    localstorge_manager.setPage('HomePage')
-                    window.location.reload()
+                this.key_record += e.key
+                if (this.key_record.length > 6) {
+                    this.key_record = this.key_record.slice(-6)
                 }
+                if (this.key_record.length === 6) {
+                    this.postKey(this.key_record)
+                }
+                console.log(this.key_record)
+            }
+        },
+        async postKey(key) {
+            var token = await network_manager.postKey(this.key_record)
+            // 存储token，保存登录状态，刷新后跳转到首页
+            if (token !== undefined) {
+                localstorge_manager.setToken(token)
+                this.msg = "登录成功"
+                localstorge_manager.setPage('HomePage')
+                window.location.reload()
             }
         },
         newWindow(url) {
             window.open(url)
         },
     },
-    destroyed() {
+    beforeDestroy() {
         window.removeEventListener("keyup", this.enterSearch)
     },
 }

@@ -64,6 +64,14 @@ export default {
     methods: {
         async getNote() {
             var new_content = await network_manager.getNote();
+            var status = new_content.status;
+            new_content = new_content.data;
+            console.log(status)
+            if (status !== 200) {
+                this.note_msg = "Offline";
+                clearInterval(this.intervalId);
+                return;
+            }
             var remote_last_edited = new_content["last edited"];
             // 比较本地和远程时间
             if (remote_last_edited > this.last_edited || this.note_content === "") {
