@@ -8,6 +8,12 @@ export const localstorge_manager = reactive({
     getToken() {
         return localStorage.getItem('token')
     },
+    setDeviceID() {
+        localStorage.setItem('deviceID', new Date().getTime())
+    },
+    getDeviceID() {
+        return localStorage.getItem('deviceID')
+    },
     setPage(page) {
         if (page === "LandingPage" || page === "HomePage" ) {
             localStorage.setItem('page', page)

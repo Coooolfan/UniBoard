@@ -4,7 +4,7 @@ import { localstorge_manager } from './localstorage.js';
 
 export const network_manager = reactive({
     postKey(key) {
-        var data = {
+        const data = {
             "key": key,
         }
         return axios.post('/report/', data).then((response) => {
@@ -22,7 +22,7 @@ export const network_manager = reactive({
         })
     },
     postNote(note) {
-        var data = {
+        const data = {
             "content": note,
             'last edited': new Date().getTime(),
         }

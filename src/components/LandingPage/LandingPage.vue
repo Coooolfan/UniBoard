@@ -124,7 +124,7 @@ export default {
             }
         },
         async postKey(key) {
-            var token = await network_manager.postKey(this.key_record)
+            const token = await network_manager.postKey(this.key_record)
             // 存储token，保存登录状态，刷新后跳转到首页
             if (token !== undefined) {
                 localstorge_manager.setToken(token)

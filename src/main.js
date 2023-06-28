@@ -18,7 +18,8 @@ axios.interceptors.request.use(
         // 在请求发送之前添加请求头部信息
         const token = localstorge_manager.getToken();
         if (token) {
-            config.headers['Authorization'] = 'Bearer ' + token;
+            config.headers['Authorization'] = 'Bearer ' + localstorge_manager.getToken();
+            config.headers['deviceid'] = localstorge_manager.getDeviceID();
         }
         return config;
     }
@@ -27,9 +28,8 @@ axios.interceptors.request.use(
 // 劫持响应头，如果响应头中有token，就将其存入localStorage
 axios.interceptors.response.use(
     response => {
-        var token = response.data['token']
+        const token = response.data['token']
         if (response.data['token']) {
-            console.log(token)
             localstorge_manager.setToken(token)
         }
         return response

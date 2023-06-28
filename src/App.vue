@@ -18,11 +18,14 @@ export default {
 
   },
   mounted() {
-    var pagestored = localstorge_manager.getPage();
+    const pagestored = localstorge_manager.getPage();
     if (pagestored == undefined || pagestored == null) {
       localstorge_manager.setPage('LandingPage');
     } else {
       this.componentId = pagestored;
+    }
+    if(localstorge_manager.getDeviceID() == undefined || localstorge_manager.getDeviceID() == null){
+      localstorge_manager.setDeviceID();
     }
 
   },
