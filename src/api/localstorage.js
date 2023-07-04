@@ -9,7 +9,9 @@ export const localstorge_manager = reactive({
         return localStorage.getItem('token')
     },
     setDeviceID() {
-        localStorage.setItem('deviceID', new Date().getTime())
+        // 生成一个随机的设备ID，规则为时间戳+随机字符
+        let deviceID = Date.now() + Math.random().toString(36).slice(-8)
+        localStorage.setItem('deviceID', deviceID)
     },
     getDeviceID() {
         return localStorage.getItem('deviceID')

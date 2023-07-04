@@ -17,10 +17,9 @@ axios.interceptors.request.use(
     (config) => {
         // 在请求发送之前添加请求头部信息
         const token = localstorge_manager.getToken();
-        if (token) {
-            config.headers['Authorization'] = 'Bearer ' + localstorge_manager.getToken();
-            config.headers['deviceid'] = localstorge_manager.getDeviceID();
-        }
+        const deviceID = localstorge_manager.getDeviceID();
+        config.headers['Authorization'] = 'Bearer ' + token;
+        config.headers['deviceID'] = deviceID;
         return config;
     }
 )

@@ -3,7 +3,7 @@
         <div class="page1">
             <p v-if="msg !== ''" style="padding: 0;margin: 0;">{{ msg }}</p>
             <img src="https://res.coooolfan.com/c-q.jpg" alt="头像" class="page1-avater" @click="newWindow(links[0].link)">
-            <p class="page1-name">{{ userName }}</p>
+            <p class="page1-name" @click="postKey()">{{ userName }}</p>
             <p class="page1-intro">{{ intro }}</p>
             <div class="page1-btns">
                 <div class="page1-btns-item" v-for="(item, index) in contacts" :key="index" @click="newWindow(item.link)">
