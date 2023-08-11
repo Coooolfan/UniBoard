@@ -1,0 +1,30 @@
+.obj-card {
+    background-color: #fff;
+    margin: 10px;
+    padding: 10px;
+    width: 50vw;
+    height: 30vh;
+    border-radius: 3px;
+    /* 外阴影 */
+    box-shadow: 0 0 5px #ccc;
+}
+
+.obj-card-left{
+    float: left;
+    width: 25%;
+    height: 100%;
+    padding-right: 10px;
+    /* 右侧一条竖线 */
+    border-right: 1px solid #ccc;
+    display: flex;
+    /* 纵向 */
+    flex-direction: column; 
+    /* 居中 */
+    align-items: center;
+    /* 撑满父组件 */
+    justify-content: center;
+}
+
+.obj-card-left-icon{
+    font-size: 50px;
+}

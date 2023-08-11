@@ -5,7 +5,8 @@
   padding: 3px;
   border-radius: 3px;
   /* 外阴影 */
-    box-shadow: 0 0 5px #ccc;
+  box-shadow: 0 0 5px #ccc;
+  margin: 10px;
 }
 .note-inputbox {
   /* 最小宽度 */
@@ -23,10 +24,10 @@
   cursor: pointer;
 }
 .note-input-btns-item2 {
-    display: flex;
-    align-items:center;
+  display: flex;
+  align-items: center;
 }
-.note-input-btns-item1{
-    display: flex;
-    align-items:center;
+.note-input-btns-item1 {
+  display: flex;
+  align-items: center;
 }

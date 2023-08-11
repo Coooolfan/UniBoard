@@ -29,6 +29,11 @@ export const network_manager = reactive({
         return axios.post('/note/', data).then((response) => {
             return response.data
         })
+    },
+    getMonitoredObjects() {
+        return axios.get('/monitored-objects/').then((response) => {
+            return response.data["monitored_objects"]
+        })
     }
 
 
