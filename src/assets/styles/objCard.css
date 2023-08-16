@@ -1,30 +1,70 @@
 .obj-card {
-    background-color: #fff;
-    margin: 10px;
-    padding: 10px;
-    width: 50vw;
-    height: 30vh;
-    border-radius: 3px;
-    /* 外阴影 */
-    box-shadow: 0 0 5px #ccc;
+  background-color: #fff;
+  margin: 10px;
+  padding: 10px;
+  width: 50vw;
+  height: 30vh;
+  border-radius: 3px;
+  /* 外阴影 */
+  box-shadow: 0 0 5px #ccc;
+  display: flex;
 }
 
-.obj-card-left{
-    float: left;
-    width: 25%;
-    height: 100%;
-    padding-right: 10px;
-    /* 右侧一条竖线 */
-    border-right: 1px solid #ccc;
-    display: flex;
-    /* 纵向 */
-    flex-direction: column; 
-    /* 居中 */
-    align-items: center;
-    /* 撑满父组件 */
-    justify-content: center;
+.obj-card-left {
+  float: left;
+  width: 25%;
+  height: 100%;
+  padding-right: 10px;
+  /* 右侧一条竖线 */
+  border-right: 1px solid #ccc;
+  display: flex;
+  /* 纵向 */
+  flex-direction: column;
+  /* 居中 */
+  align-items: center;
+  /* 撑满父组件 */
+  justify-content: center;
 }
 
-.obj-card-left-icon{
-    font-size: 50px;
+.obj-card-left-icon {
+  font-size: 50px;
+}
+.obj-card-right {
+  padding-left: 10px;
+  padding-right: 10px;
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+  /* 撑满父组件 */
+  justify-content: space-evenly;
+}
+
+.obj-card-right-item {
+  display: flex;
+  justify-content: space-between;
+  /* 子元素横向拉伸 */
+}
+
+.obj-card-right-item-name {
+  flex-grow: 1;
+  text-align: center;
+  width: 18%;
+}
+
+.obj-card-right-item-dot {
+  flex-grow: 4;
+  text-align: center;
+  margin-right:1px;
+  font-size: 1rem;
+  width:16%;
+}
+.obj-card-right-item-name + .obj-card-right-item-dot {
+  border-radius: 5px 0 0 5px;
+  background-color: #000;
+}
+
+/* obj-card-right-item的子元素的最后一个元素 */
+.obj-card-right-item-dot:last-child {
+  /* 背景颜色设置圆角 */
+  border-radius: 0 5px 5px 0;
 }

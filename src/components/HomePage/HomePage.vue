@@ -6,7 +6,7 @@
             <button @click="loggingout()">Loggin Out</button>
         </div>
         <div class="Line3">
-            <objCard v-for="(item, index) in MonitoredObjects" :key="index" :category="item.category" :objectName="item.objectName" :statusList="this.statusList" :objectID="item.objectID"></objCard>
+            <objCard v-for="(item, index) in MonitoredObjects" :key="index" :category="item.category" :objectName="item.objectName" :statusList="item.statusList" :objectID="item.objectID"></objCard>
         </div>
     </div>
 </template>
@@ -38,7 +38,6 @@ export default {
         },
         async getMonitoredObjects() {
             this.MonitoredObjects = await network_manager.getMonitoredObjects()
-            console.log(this.MonitoredObjects)
         }
     },
     mounted() {

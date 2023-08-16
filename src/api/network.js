@@ -34,9 +34,21 @@ export const network_manager = reactive({
         return axios.get('/monitored-objects/').then((response) => {
             return response.data["monitored_objects"]
         })
+    },
+    getPeriodStatus(objectIDs, items, startTime, endTime, density, last) {
+        var params = {
+            "objectIDs": objectIDs,
+            "items": items,
+            "startTime": startTime,
+            "endTime": endTime,
+            "density": density,
+            "last": last,
+        }
+        return axios.get('/period-status/', {params:params}).then((response) => {
+            // return response.data["data"] //在函数里面返回
+            return response.data.data //直接返回，在调用函数的地方再处理
+        })
     }
-
-
 })
 
 
