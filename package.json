@@ -10,8 +10,10 @@
   "dependencies": {
     "@icon-park/vue-next": "^1.4.2",
     "axios": "^1.4.0",
+    "echarts": "^5.4.3",
     "luxon": "^3.3.0",
-    "vue": "^3.3.2"
+    "vue": "^3.3.2",
+    "vue-echarts": "^6.6.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
