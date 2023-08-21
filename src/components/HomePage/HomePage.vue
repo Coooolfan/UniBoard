@@ -3,12 +3,13 @@
         <timer class="Line1"></timer>
         <div class="Line2">
             <note></note>
-            <button @click="loggingout()">Loggin Out</button>
         </div>
-        <LineCharts></LineCharts>
         <div class="Line3">
-            <objCard v-for="(item, index) in MonitoredObjects" :key="index" :category="item.category" :objectName="item.objectName" :statusList="item.statusList" :objectID="item.objectID"></objCard>
+            <objCard v-for="(item, index) in MonitoredObjects" :key="index" :category="item.category"
+                :objectName="item.objectName" :statusList="item.statusList" :objectID="item.objectID"></objCard>
         </div>
+
+        <button @click="loggingout()" style="margin-bottom: 10px;">Logout</button>
     </div>
 </template>
 <script>
@@ -30,7 +31,7 @@ export default {
     data() {
         return {
             msg: "",
-            MonitoredObjects:[]
+            MonitoredObjects: []
 
         }
     },

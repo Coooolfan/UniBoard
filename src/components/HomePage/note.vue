@@ -52,12 +52,12 @@ export default {
             }
         },
     },
-    // mounted() {
-    //     this.intervalId = setInterval(() => {
-    //         this.note_msg = "Loading";
-    //         this.getNote();
-    //     }, 1000);
-    // },
+    mounted() {
+        this.intervalId = setInterval(() => {
+            this.note_msg = "Loading";
+            this.getNote();
+        }, 1000);
+    },
     destroyed() {
         clearInterval(this.intervalId);
     },

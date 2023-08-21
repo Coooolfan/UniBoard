@@ -26,6 +26,25 @@
   justify-content: center;
 }
 
+.obj-card-left-lastStatus {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.obj-card-left-lastStatus-item {
+  display: flex;
+  justify-content: space-between;
+}
+
+.obj-card-left-lastStatus-item-key {
+    margin-right: 8px;
+}
+
+.obj-card-left-lastStatus-item-val {
+}
+
 .obj-card-left-icon {
   font-size: 50px;
 }
@@ -37,6 +56,7 @@
   flex-direction: column;
   /* 撑满父组件 */
   justify-content: space-evenly;
+  position: relative;
 }
 
 .obj-card-right-item {
@@ -49,14 +69,15 @@
   flex-grow: 1;
   text-align: center;
   width: 18%;
+  cursor: pointer;
 }
 
 .obj-card-right-item-dot {
   flex-grow: 4;
   text-align: center;
-  margin-right:1px;
+  margin-right: 1px;
   font-size: 1rem;
-  width:16%;
+  width: 16%;
 }
 .obj-card-right-item-name + .obj-card-right-item-dot {
   border-radius: 5px 0 0 5px;
@@ -67,4 +88,20 @@
 .obj-card-right-item-dot:last-child {
   /* 背景颜色设置圆角 */
   border-radius: 0 5px 5px 0;
+}
+
+.obj-card-right-charts {
+  width: 75%;
+  padding-left: 10px;
+  padding-right: 10px;
+  position: relative;
+}
+
+.obj-card-right-charts-icon {
+  position: absolute;
+  left: 10px;
+  top: 0;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 1;
 }

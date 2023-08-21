@@ -1,7 +1,5 @@
 <template>
-    <div>
-        <v-chart class="chart" :option="option" :autoresize="true" :loading="data_loading" />
-    </div>
+    <v-chart class="chart" :option="option" :autoresize="true" :loading="data_loading" />
 </template>
 <script>
 import { use } from "echarts/core";
@@ -17,8 +15,6 @@ import {
 } from "echarts/components";
 import { network_manager } from '../../api/network.js'
 import VChart, { THEME_KEY } from "vue-echarts";
-import { ref, defineComponent } from "vue";
-
 use([
     CanvasRenderer,
     TitleComponent,
@@ -70,11 +66,12 @@ export default {
                         height: 10,
                         moveHandleSize: 5,
                         handleSize: '200%',
+                        bottom: "4%",
                     }
                 ],
                 xAxis: {
                     type: "time",
-                    min: this.stamp2time(this.endTimestamp - 3600 * 38),
+                    min: this.stamp2time(this.startTimestamp),
                     max: this.stamp2time(this.endTimestamp),
                 },
                 yAxis: {
@@ -85,12 +82,18 @@ export default {
                 series: [
                     {
                         type: "line",
-                        name:this.items[0],
+                        name: this.items[0],
                         data: this.data[0].data,
                         smooth: true,
-                        symbolSize:2,
+                        symbolSize: 1,
                     },
                 ],
+                grid: {
+                    x: "8%",
+                    y: "12%",
+                    x2: "2%",
+                    y2: "18%"
+                },
             };
         },
     },
@@ -104,23 +107,19 @@ export default {
         },
         startTimestamp: {
             type: Number,
-            // default: 0,
-            default: 1691959375 - 60 * 60 * 38,
+            default: 0,
         },
         endTimestamp: {
             type: Number,
-            // default: () => Math.floor(Date.now() / 1000),
-            default: 1691959375,
+            default: () => Math.floor(Date.now() / 1000),
         },
         items: {
             type: Array,
-            default: ['battery'],
+            default: ['cpu'],
         },
     },
     methods: {
         stamp2time(stamp) {
-            // 从UTC时间转换为北京时间
-            stamp = stamp + 3600 * 8
             var date = new Date(stamp * 1000)
             var Y = date.getFullYear() + '-'
             var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
@@ -144,8 +143,6 @@ export default {
 </script>
 <style scoped>
 .chart {
-    width: 60vw;
-    height: 30vw;
     margin: auto;
 }
 </style>

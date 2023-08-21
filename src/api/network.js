@@ -81,8 +81,6 @@ export const network_manager = reactive({
         })
     },
     stamp2time(stamp) {
-        // 从UTC时间转换为北京时间
-        stamp = stamp + 3600 * 8
         var date = new Date(stamp * 1000)
         var Y = date.getFullYear() + '-'
         var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'

@@ -120,7 +120,6 @@ export default {
                 if (this.key_record.length === 6) {
                     this.postKey(this.key_record)
                 }
-                console.log(this.key_record)
             }
         },
         async postKey(key) {
@@ -130,8 +129,8 @@ export default {
                 localstorge_manager.setToken(token)
                 this.msg = "登录成功"
                 localstorge_manager.setPage('HomePage')
-                window.location.reload()
             }
+            window.location.reload()
         },
         newWindow(url) {
             window.open(url)
