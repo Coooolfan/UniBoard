@@ -1,39 +1,46 @@
+<script setup lang="ts">
+import HelloWorld from './components/HelloWorld.vue'
+import TheWelcome from './components/TheWelcome.vue'
+</script>
+
 <template>
-    <component :is="componentId"></component>
+    <header>
+        <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+        <div class="wrapper">
+            <HelloWorld msg="You did it!" />
+        </div>
+    </header>
+
+    <main>
+        <TheWelcome />
+    </main>
 </template>
 
-<script>
-// import HomePage from './components/HomePage/HomePage.vue';
-import LandingPage from './components/LandingPage/LandingPage.vue';
-import { defineAsyncComponent } from 'vue'
-import { localstorge_manager } from './api/localstorage.js'
+<style scoped>
+header {
+    line-height: 1.5;
+}
 
-const HomePage = defineAsyncComponent(() =>
-    import('./components/HomePage/HomePage.vue')
-)
+.logo {
+    display: block;
+    margin: 0 auto 2rem;
+}
 
-export default {
-    components: {
-        LandingPage,
-        HomePage,
-    },
-    data() {
-        return {
-            componentId: 'LandingPage',
-        };
+@media (min-width: 1024px) {
+    header {
+        display: flex;
+        place-items: center;
+        padding-right: calc(var(--section-gap) / 2);
+    }
 
-    },
-    mounted() {
-        const pageStored = localstorge_manager.getPage();
-        if (pageStored == undefined || pageStored == null) {
-            localstorge_manager.setPage('LandingPage');
-        } else {
-            this.componentId = pageStored;
-        }
-        if (localstorge_manager.getDeviceID() == undefined || localstorge_manager.getDeviceID() == null) {
-            localstorge_manager.setDeviceID();
-        }
+    .logo {
+        margin: 0 2rem 0 0;
+    }
 
-    },
-};
-</script>
+    header .wrapper {
+        display: flex;
+        place-items: flex-start;
+        flex-wrap: wrap;
+    }
+}
+</style>
