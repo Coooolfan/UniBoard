@@ -1,19 +1,6 @@
 import axios from 'axios'
 let isRefreshing = false // 是否正在刷新token
 
-function setAccessToken(token: string) {
-    localStorage.setItem('access_token', token)
-}
-
-function getRefreshToken() {
-    return localStorage.getItem('refresh_token')
-}
-
-function removeToken() {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('refresh_token')
-}
-
 // 失效后同时发送请求的容器 -- 缓存接口
 let callbacks: Function[] = []
 function onAccessTokenFetched(newToken: String) {
@@ -53,7 +40,11 @@ axiosInstance.interceptors.response.use(
          * 将未授权接口缓存起来。retryOriginalRequest 这个 Promise 函数很关键，它一直处于等待状态。
          * 只有当token刷新成功后，onAccessTokenFetched 这个函数执行了回调函数，返回了 resolve 状态
          */
-        if (error.response && error.response.status === 401) {
+        if (
+            error.response &&
+            error.response.status === 401 &&
+            !error.config.url.endsWith('token/')
+        ) {
             // 获取当前的请求
             const config = error.response.config
             // 刷新token的promise
@@ -92,4 +83,39 @@ axiosInstance.interceptors.response.use(
     }
 )
 
-export default axiosInstance
+function setRefreshToken(token: string) {
+    localStorage.setItem('refresh_token', token)
+}
+
+function setAccessToken(token: string) {
+    localStorage.setItem('access_token', token)
+}
+
+function getRefreshToken() {
+    return localStorage.getItem('refresh_token')
+}
+
+function removeToken() {
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
+}
+
+async function login(username: string, password: string): Promise<boolean> {
+    try {
+        const response = await axiosInstance.post('token/', {
+            username: username,
+            password: password
+        })
+        if (response.status === 200) {
+            setAccessToken(response.data.access)
+            setRefreshToken(response.data.refresh)
+            return true
+        }
+        return false
+    } catch (error) {
+        console.error(`Error occurred while logging in: ${error}`)
+        return false
+    }
+}
+
+export { axiosInstance, login, setRefreshToken, setAccessToken, getRefreshToken, removeToken }
