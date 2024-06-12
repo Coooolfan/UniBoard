@@ -1,35 +1,58 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
 import { getSystemInfo } from '@/api/sysInfo'
 import type { SystemInfo } from '@/api/sysInfo'
-import { login } from '@/api/auth'
 import { ref, onMounted } from 'vue'
-const router = useRouter()
 const sysInfo = ref<SystemInfo | null>(null)
-
 onMounted(async () => {
     sysInfo.value = await getSystemInfo()
 })
-
-function handleClick() {
-    router.push('/uniboard')
+function getSvgPath(name: string) {
+    // 使用动态import语法导入SVG文件
+    // https://www.iconfinder.com/
+    return new URL(`../assets/svg/${name}.svg`, import.meta.url).href
 }
 </script>
 <template>
-    <img class="w-80" :src="sysInfo?.avater" alt="avatar" />
-    <p class="text-lg">{{ sysInfo?.name }}</p>
-    <p class="text-lg">{{ sysInfo?.profile }}</p>
-    <button
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        @click="handleClick"
-    >
-        to UniBoard View
-    </button>
-    <div class="h-4" />
-    <button
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        @click="login('yang', 'Yang')"
-    >
-        login
-    </button>
+    <div class="flex h-screen first-page">
+        <div
+            class="bg-[#f2f2f2] w-4/12 min-w-[35rem] flex flex-col items-center pt-[15vh] shadow-black shadow-ultra z-50"
+        >
+            <img
+                class="rounded-full w-60 border-10 border-gray-200 shadow-md cursor-pointer"
+                :src="sysInfo?.avatar"
+                alt="avater"
+            />
+            <p class="font-bold text-6xl font-[arial] mt-12 drop-shadow-xl">{{ sysInfo?.name }}</p>
+            <div class="border-t border-[#A0A0A0] border mt-12 w-1/2" />
+            <p class="text-[#404040] pt-3 text-lg">
+                {{ sysInfo?.profile }}
+            </p>
+            <div class="flex w-80 justify-around pt-20">
+                <template v-for="(url, key) in sysInfo?.contacts" :key="key">
+                    <div v-if="url">
+                        <a :href="url">
+                            <img class="w-6" :src="getSvgPath(key)" :alt="key" />
+                        </a>
+                    </div>
+                </template>
+            </div>
+        </div>
+        <div class="flex-grow">
+            <div class="relative h-screen w-full">
+                <picture>
+                    <source srcset="@/assets/banner.avif" type="image/avif" />
+                    <source srcset="@/assets/banner.webp" type="image/webp" />
+                    <img
+                        src="@/assets/banner.jpg"
+                        class="absolute inset-0 object-cover w-full h-full filter brightness-90"
+                    />
+                </picture>
+                <div
+                    class="relative flex items-center justify-center h-full w-full pb-10 text-white text-5xl tracking-widest text-shadow-xl"
+                >
+                    {{ sysInfo?.slogan }}
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
