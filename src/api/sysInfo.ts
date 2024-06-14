@@ -45,7 +45,6 @@ async function getSystemInfo(): Promise<SystemInfo> {
                 content: content as string
             })
         )
-        console.log('Contacts:', contacts)
         const findContact = (name: string) => {
             const item = contacts.find((item) => item.title === name)
             return item ? item.content : ''
@@ -71,7 +70,6 @@ async function getSystemInfo(): Promise<SystemInfo> {
                 linkedin: findContact('linkedin')
             }
         }
-        console.log('System info:', systemInfo)
         return systemInfo
     } catch (error) {
         console.error(`Error occurred while fetching system info: ${error}`)

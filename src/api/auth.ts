@@ -43,7 +43,8 @@ axiosInstance.interceptors.response.use(
         if (
             error.response &&
             error.response.status === 401 &&
-            !error.config.url.endsWith('token/')
+            !error.config.url.endsWith('token/') &&
+            !error.config.url.endsWith('token/refresh/')
         ) {
             // 获取当前的请求
             const config = error.response.config
@@ -70,6 +71,7 @@ axiosInstance.interceptors.response.use(
                         // 刷新token错误跳转到登陆页面
                         removeToken()
                         alert('登录无效/过期，请重新登录')
+                        location.reload()
                     })
                     .finally(() => {
                         isRefreshing = false
@@ -77,7 +79,6 @@ axiosInstance.interceptors.response.use(
             }
             return retryOriginalRequest // 将token过期期间请求的接口包装成promise返回，等待刷新token后重新请求
         } else {
-            console.error('Error Message:未处理', error.message)
             return Promise.reject(new Error(error.message || 'Error'))
         }
     }
