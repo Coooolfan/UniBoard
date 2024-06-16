@@ -19,6 +19,7 @@ interface SystemInfo {
         instagram: string
         linkedin: string
     }
+    links: Array<Link>
 }
 
 interface SystemInfoItem {
@@ -30,6 +31,14 @@ interface SystemInfoItem {
 interface ContactItem {
     title: string
     content: string
+}
+
+interface Link {
+    icon: string
+    title: string
+    desc: string
+    url: string
+    color: string
 }
 
 async function getSystemInfo(): Promise<SystemInfo> {
@@ -45,6 +54,7 @@ async function getSystemInfo(): Promise<SystemInfo> {
                 content: content as string
             })
         )
+        const links: Array<Link> = JSON.parse(decodeURIComponent(window.atob(findValue('links'))))
         const findContact = (name: string) => {
             const item = contacts.find((item) => item.title === name)
             return item ? item.content : ''
@@ -57,6 +67,7 @@ async function getSystemInfo(): Promise<SystemInfo> {
             avatar: findValue('avatar'),
             slogan: findValue('slogan'),
             banner: findValue('banner'),
+            links: links,
             contacts: {
                 telegram: findContact('telegram'),
                 qq: findContact('qq'),
@@ -70,6 +81,7 @@ async function getSystemInfo(): Promise<SystemInfo> {
                 linkedin: findContact('linkedin')
             }
         }
+        // console.log(systemInfo)
         return systemInfo
     } catch (error) {
         console.error(`Error occurred while fetching system info: ${error}`)
@@ -78,4 +90,4 @@ async function getSystemInfo(): Promise<SystemInfo> {
 }
 
 export { getSystemInfo }
-export type { SystemInfo, SystemInfoItem }
+export type { SystemInfo, Link }

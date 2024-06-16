@@ -4,6 +4,8 @@ export default {
     theme: {
         extend: {
             boxShadow: {
+                // TODO:
+                // 此处的阴影后续将有SVG生成，暂时只提供了一些基础的阴影
                 ultra: '5px 0 100px 12px' // 修改这里的值以自定义阴影
             }
         }
@@ -12,7 +14,7 @@ export default {
         function ({ addUtilities }) {
             const newUtilities = {
                 '.text-shadow-s': {
-                    textShadow: '1px 1px 1px rgba(0, 0, 0, 0.5)'
+                    textShadow: '1px 1px 1px rgba(0, 0, 0, 0.1)'
                 },
                 '.text-shadow-m': {
                     textShadow: '2px 2px 2px rgba(0, 0, 0, 0.5)'

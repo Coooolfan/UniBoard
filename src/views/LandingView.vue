@@ -2,6 +2,7 @@
 import { getSystemInfo } from '@/api/sysInfo'
 import type { SystemInfo } from '@/api/sysInfo'
 import { ref, onMounted } from 'vue'
+import LandingPageLink from '@/components/LandingPageLink.vue'
 const sysInfo = ref<SystemInfo | null>(null)
 onMounted(async () => {
     sysInfo.value = await getSystemInfo()
@@ -14,6 +15,12 @@ function getSvgPath(name: string) {
     // 使用动态import语法导入SVG文件
     // https://www.iconfinder.com/
     return new URL(`../assets/svg/${name}.svg`, import.meta.url).href
+}
+
+function changeColor() {
+    if (sysInfo.value) {
+        sysInfo.value.links[0].color = '#ff0000'
+    }
 }
 </script>
 <template>
@@ -62,5 +69,11 @@ function getSvgPath(name: string) {
                 </div>
             </div>
         </div>
+    </div>
+    <div class="flex h-screen first-page items-center w-auto justify-around bg-[#f2f2f2]">
+        <template v-for="link in sysInfo?.links" :key="link.id">
+            <LandingPageLink :linkData="link" />
+        </template>
+        <button @click="changeColor">123</button>
     </div>
 </template>
