@@ -16,12 +16,6 @@ function getSvgPath(name: string) {
     // https://www.iconfinder.com/
     return new URL(`../assets/svg/${name}.svg`, import.meta.url).href
 }
-
-function changeColor() {
-    if (sysInfo.value) {
-        sysInfo.value.links[0].color = '#ff0000'
-    }
-}
 </script>
 <template>
     <div class="flex h-screen first-page">
@@ -70,10 +64,14 @@ function changeColor() {
             </div>
         </div>
     </div>
-    <div class="flex h-screen first-page items-center w-auto justify-around bg-[#f2f2f2]">
-        <template v-for="link in sysInfo?.links" :key="link.id">
-            <LandingPageLink :linkData="link" />
-        </template>
-        <button @click="changeColor">123</button>
+    <div class="flex h-screen first-page items-center w-auto bg-[#f2f2f2] flex-col">
+        <p class="text-3xl font-extrabold mt-[15vh]">选择一个页面以继续</p>
+        <div class="border-t border-[#A0A0A0] border mt-5 mb-5 w-1/2" />
+        <p class="text-base mb-20 italic text-gray-800">此页面的中的内容并非全部公开项</p>
+        <div class="grid w-4/5 grid-cols-2 mx-auto">
+            <template v-for="link in sysInfo?.links" :key="link.id">
+                <LandingPageLink :linkData="link" />
+            </template>
+        </div>
     </div>
 </template>
