@@ -3,10 +3,8 @@ export default {
     content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
     theme: {
         extend: {
-            boxShadow: {
-                // TODO:
-                // 此处的阴影后续将有SVG生成，暂时只提供了一些基础的阴影
-                ultra: '5px 0 100px 12px' // 修改这里的值以自定义阴影
+            dropShadow: {
+                '5xl': '13px 0px 50px'
             }
         }
     },

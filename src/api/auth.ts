@@ -119,4 +119,29 @@ async function login(username: string, password: string): Promise<boolean> {
     }
 }
 
-export { axiosInstance, login, setRefreshToken, setAccessToken, getRefreshToken, removeToken }
+async function loginByTOTP(key: string): Promise<boolean> {
+    try {
+        const response = await axiosInstance.post('token/totp/', {
+            key: key
+        })
+        if (response.status === 200) {
+            setAccessToken(response.data.access)
+            setRefreshToken(response.data.refresh)
+            return true
+        }
+        return false
+    } catch (error) {
+        console.error(`Error occurred while logging in: ${error}`)
+        return false
+    }
+}
+
+export {
+    axiosInstance,
+    login,
+    setRefreshToken,
+    setAccessToken,
+    getRefreshToken,
+    removeToken,
+    loginByTOTP
+}
