@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { getSystemInfo } from '@/api/sysInfo'
 import type { SystemInfo } from '@/api/sysInfo'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import LandingPageLink from '@/components/LandingPageLink.vue'
+import { loginByTOTP } from '@/api/auth'
+import InputOtp from 'primevue/inputotp'
+import router from '@/router'
 const sysInfo = ref<SystemInfo | null>(null)
 onMounted(async () => {
     sysInfo.value = await getSystemInfo()
@@ -16,11 +19,36 @@ function getSvgPath(name: string) {
     // https://www.iconfinder.com/
     return new URL(`../assets/svg/${name}.svg`, import.meta.url).href
 }
+const otpTypping = ref(false)
+const otp = ref('')
+function switchOtp() {
+    console.log('switchOtp')
+    otp.value = ''
+    otpTypping.value = !otpTypping.value
+}
+
+watch(otp, (newVal) => {
+    if (newVal.length === 6) {
+        login()
+    }
+})
+
+async function login() {
+    console.log('logining...' + otp.value)
+    if (await loginByTOTP(otp.value)) {
+        // 登录成功后跳转到首页
+        router.push('/uniboard')
+    } else {
+        console.log('login failed')
+        otp.value = ''
+        otpTypping.value = false
+    }
+}
 </script>
 <template>
-    <div class="h-screen first-page relative bg-green-500 -z-10">
+    <div class="h-screen first-page relative bg-transparent">
         <svg
-            class="h-screen w-auto absolute top-0 left-0 z-20 drop-shadow-5xl shadow-black"
+            class="h-screen w-auto absolute top-0 left-0 -z-10 drop-shadow-5xl shadow-black"
             width="1638.389"
             height="2160"
             viewBox="0 0 433.49 571.5"
@@ -42,10 +70,10 @@ function getSvgPath(name: string) {
             <source :srcset="sysInfo?.banner + '.webp'" type="image/webp" />
             <img
                 :src="sysInfo?.banner + '.jpg'"
-                class="absolute inset-0 object-cover w-full h-full filter brightness-90"
+                class="absolute inset-0 object-cover w-full h-full filter brightness-90 -z-20"
             />
         </picture>
-        <div class="flex">
+        <div class="flex z-30">
             <div
                 class="w-4/12 min-w-[35rem] flex flex-col items-center pt-[15vh] z-30 translate-x-6"
             >
@@ -54,13 +82,16 @@ function getSvgPath(name: string) {
                     <source :srcset="sysInfo?.avatar + '.webp'" type="image/webp" />
                     <img
                         :src="sysInfo?.avatar + '.jpg'"
-                        class="rounded-full w-60 border-10 border-gray-200 shadow-md cursor-pointer"
+                        class="rounded-full w-60 border-10 border-gray-200 shadow-md"
                         alt="avater"
                     />
                 </picture>
-                <p class="font-bold text-6xl font-[arial] mt-12 drop-shadow-xl">
+                <div
+                    class="font-bold text-6xl font-[arial] mt-12 drop-shadow-xl z-50 cursor-pointer"
+                    @click="switchOtp"
+                >
                     {{ sysInfo?.name }}
-                </p>
+                </div>
                 <div class="border-[#A0A0A0] border border-t-0 border-l-0 border-r-0 mt-20 w-3/5" />
                 <p class="text-[#404040] mt-5 text-lg">
                     {{ sysInfo?.profile }}
@@ -80,14 +111,26 @@ function getSvgPath(name: string) {
                     <div
                         class="relative flex items-center justify-center h-full w-full pb-10 text-white text-5xl tracking-widest text-shadow-xl"
                     >
-                        {{ sysInfo?.slogan }}
+                        <InputOtp v-show="otpTypping" v-model="otp" :length="6">
+                            <template #default="{ attrs, events }">
+                                <input
+                                    type="text"
+                                    v-bind="attrs"
+                                    v-on="events"
+                                    class="animate-slide-up text-shadow shadow-black/50 ml-2.5 w-10 text-4xl border-0 appearance-none text-center transition-all duration-200 bg-transparent outline-none border-b-2 border-gray-300 focus:outline-none focus:border-b-gray-200"
+                                />
+                            </template>
+                        </InputOtp>
+                        <span v-show="!otpTypping" class="animate-slide-up">
+                            {{ sysInfo?.slogan }}</span
+                        >
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div
-        class="flex h-screen second-page items-center w-auto bg-[#f2f2f2] flex-col shadow-inner z-20"
+        class="flex h-screen second-page items-center w-auto flex-col shadow-inner z-20 bg-gradient-to-b from-[#f2f2f2] to-[#f2f2f2]"
     >
         <p class="text-4xl font-extrabold mt-[10vh]">选择一个页面以继续</p>
         <div class="border-[#A0A0A0] border border-t-0 border-l-0 border-r-0 mt-5 mb-5 w-1/2" />
