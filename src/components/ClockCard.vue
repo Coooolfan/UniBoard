@@ -8,11 +8,13 @@ setInterval(() => {
 const time_formatted = computed(() => time.value.toLocaleTimeString())
 </script>
 <template>
-    <div
-        v-for="(item, index) in time_formatted"
-        :key="index"
-        class="min-w-16 text-center text-9xl inline-block"
-    >
-        {{ item }}
+    <div>
+        <div
+            v-for="(item, index) in time_formatted"
+            :key="index"
+            class="min-w-16 text-center text-9xl inline-block"
+        >
+            {{ item }}
+        </div>
     </div>
 </template>

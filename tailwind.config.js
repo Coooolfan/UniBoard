@@ -3,9 +3,6 @@ export default {
     content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
     theme: {
         extend: {
-            dropShadow: {
-                '5xl': '13px 0px 50px'
-            },
             keyframes: {
                 'slide-up': {
                     '0%': { transform: 'translateY(5px)', opacity: 0 },
@@ -37,6 +34,13 @@ export default {
                 }
             }
             addUtilities(newUtilities)
+        },
+        function ({ addBase }) {
+            addBase({
+                ':root': {
+                    '--p-card-body-padding': '0'
+                }
+            })
         }
     ]
 }
