@@ -3,7 +3,7 @@ import { getSystemInfo } from '@/api/sysInfo'
 import type { SystemInfo } from '@/api/sysInfo'
 import { ref, onMounted, watch } from 'vue'
 import LandingPageLink from '@/components/LandingPageLink.vue'
-import { loginByTOTP } from '@/api/auth'
+import { loginByTOTP, verifyTokenLocal } from '@/api/auth'
 import InputOtp from 'primevue/inputotp'
 import router from '@/router'
 const sysInfo = ref<SystemInfo | null>(null)
@@ -22,6 +22,11 @@ function getSvgPath(name: string) {
 const otpTypping = ref(false)
 const otp = ref('')
 function switchOtp() {
+    // 如果已经登录，直接跳转到首页
+    if (verifyTokenLocal()) {
+        router.push('/uniboard')
+        return
+    }
     console.log('switchOtp')
     otp.value = ''
     otpTypping.value = !otpTypping.value

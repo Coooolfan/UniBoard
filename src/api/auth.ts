@@ -1,4 +1,6 @@
 import axios from 'axios'
+import { jwtDecode } from 'jwt-decode'
+
 let isRefreshing = false // 是否正在刷新token
 
 // 失效后同时发送请求的容器 -- 缓存接口
@@ -93,7 +95,7 @@ function setAccessToken(token: string) {
 }
 
 function getRefreshToken() {
-    return localStorage.getItem('refresh_token')
+    return localStorage.getItem('refresh_token') || ''
 }
 
 function removeToken() {
@@ -136,6 +138,20 @@ async function loginByTOTP(key: string): Promise<boolean> {
     }
 }
 
+function verifyTokenLocal(): boolean {
+    const token = getRefreshToken()
+    try {
+        const decoded = jwtDecode(token)
+        if (decoded.exp && decoded.exp > Date.now() / 1000) {
+            return true
+        }
+        return false
+    } catch (error) {
+        console.log(`Error occurred while verifying token: ${error}`)
+        return false
+    }
+}
+
 export {
     axiosInstance,
     login,
@@ -143,5 +159,6 @@ export {
     setAccessToken,
     getRefreshToken,
     removeToken,
-    loginByTOTP
+    loginByTOTP,
+    verifyTokenLocal
 }

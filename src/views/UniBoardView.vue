@@ -6,6 +6,10 @@ const router = useRouter()
 function handleClick() {
     router.push('/')
 }
+// TODO
+// 0. 设置以浮窗的形式展示
+// 1. 着陆页首屏的设置
+// 2. 着陆页的第二屏的设置
 </script>
 <template>
     <ClockCard />
