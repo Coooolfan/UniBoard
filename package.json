@@ -13,11 +13,11 @@
         "format": "prettier --write src/"
     },
     "dependencies": {
-        "@primevue/themes": "4.0.0-rc.2",
+        "@primevue/themes": "4.0.0-rc.3",
         "axios": "^1.7.2",
         "jwt-decode": "^4.0.0",
         "primeicons": "^7.0.0",
-        "primevue": "4.0.0-rc.2",
+        "primevue": "4.0.0-rc.3",
         "vue": "^3.4.21",
         "vue-router": "^4.3.2"
     },
