@@ -3,16 +3,20 @@ import { getSystemInfo } from '@/api/sysInfo'
 import type { SystemInfo } from '@/api/sysInfo'
 import { ref, onMounted, watch } from 'vue'
 import LandingPageLink from '@/components/LandingPageLink.vue'
+import { getHyperLinks } from '@/api/hyperLink'
+import type { HyperLink } from '@/api/hyperLink'
 import { loginByTOTP, verifyTokenLocal } from '@/api/auth'
 import InputOtp from 'primevue/inputotp'
 import router from '@/router'
 const sysInfo = ref<SystemInfo | null>(null)
+const links = ref<Array<HyperLink>>([])
 onMounted(async () => {
     sysInfo.value = await getSystemInfo()
+    links.value = await getHyperLinks()
     // 修改页面标题和头像
     document.title = sysInfo.value.name
     const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement
-    favicon.href = sysInfo.value.avatar + '.avif'
+    favicon.href = sysInfo.value.avatar
 })
 function getSvgPath(name: string) {
     // 使用动态import语法导入SVG文件
@@ -71,10 +75,8 @@ async function login() {
             />
         </svg>
         <picture>
-            <source :srcset="sysInfo?.banner + '.avif'" type="image/avif" />
-            <source :srcset="sysInfo?.banner + '.webp'" type="image/webp" />
             <img
-                :src="sysInfo?.banner + '.jpg'"
+                :src="sysInfo?.banner"
                 class="absolute inset-0 object-cover w-full h-full filter brightness-90 -z-20"
             />
         </picture>
@@ -83,10 +85,8 @@ async function login() {
                 class="w-4/12 min-w-[35rem] flex flex-col items-center pt-[15vh] z-30 translate-x-6"
             >
                 <picture>
-                    <source :srcset="sysInfo?.avatar + '.avif'" type="image/avif" />
-                    <source :srcset="sysInfo?.avatar + '.webp'" type="image/webp" />
                     <img
-                        :src="sysInfo?.avatar + '.jpg'"
+                        :src="sysInfo?.avatar"
                         class="rounded-full w-60 border-10 border-gray-200 shadow-md"
                         alt="avater"
                     />
@@ -141,7 +141,7 @@ async function login() {
         <div class="border-[#A0A0A0] border border-t-0 border-l-0 border-r-0 mt-5 mb-5 w-1/2" />
         <p class="text-base mb-20 italic text-gray-800">此页面的中的内容并非全部公开项</p>
         <div class="grid w-4/5 grid-cols-2 mx-auto">
-            <template v-for="link in sysInfo?.links" :key="link.id">
+            <template v-for="link in links" :key="link.id">
                 <LandingPageLink :linkData="link" />
             </template>
         </div>

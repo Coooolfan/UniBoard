@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import type { Link } from '@/api/sysInfo'
-
+import type { HyperLink } from '@/api/hyperLink'
 const props = defineProps<{
-    linkData: Link
+    linkData: HyperLink
 }>()
 
 const hoverring = ref(false)

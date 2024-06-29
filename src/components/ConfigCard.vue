@@ -2,40 +2,78 @@
 import { inject, onMounted, ref } from 'vue'
 import Button from 'primevue/button'
 import type { SystemInfo } from '@/api/sysInfo'
-import { getSystemInfo } from '@/api/sysInfo'
-import FloatLabel from 'primevue/floatlabel'
+import { getSystemInfo, updateSystemInfo } from '@/api/sysInfo'
 import InputText from 'primevue/inputtext'
+import Image from 'primevue/image'
+import FileUpload from 'primevue/fileupload'
 import Skeleton from 'primevue/skeleton'
+import { useToast } from 'primevue/usetoast'
+const toast = useToast()
 const dialogRef: any = inject('dialogRef')
+const systemInfo = ref<SystemInfo>()
+const updatting = ref(false)
+onMounted(async () => {
+    systemInfo.value = await getSystemInfo()
+})
 
 const closeDialog = () => {
     dialogRef.value.close()
 }
-// interface SystemInfo {
-//     name: string
-//     version: string
-//     profile: string
-//     avatar: string
-//     slogan: string
-//     banner: string
-//     contacts: {
-//         telegram: string
-//         qq: string
-//         email: string
-//         github: string
-//         weibo: string
-//         zhihu: string
-//         twitter: string
-//         facebook: string
-//         instagram: string
-//         linkedin: string
-//     }
-//     links: Array<Link>
-// }
-const systemInfo = ref<SystemInfo>()
-onMounted(async () => {
-    systemInfo.value = await getSystemInfo()
-})
+
+const choseAvatar = ref()
+const choseBanner = ref()
+
+async function saveAndCloseDialog() {
+    if (!systemInfo.value) {
+        return
+    }
+    updatting.value = true
+    let res = await updateSystemInfo(systemInfo.value)
+    if (res) {
+        toast.add({
+            severity: 'success',
+            summary: '保存成功',
+            detail: '系统信息更新成功',
+            life: 3000
+        })
+        closeDialog()
+    } else {
+        toast.add({
+            severity: 'error',
+            summary: '保存失败',
+            detail: '系统信息更新失败',
+            life: 3000
+        })
+    }
+    updatting.value = false
+    console.log('data:', systemInfo.value)
+}
+
+function handleFileRead(type: 'avatar' | 'banner', file: File, systemInfo: { value: any }) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+        if (e.target?.result && systemInfo.value) {
+            systemInfo.value[type] = e.target.result as string
+        }
+    }
+    reader.readAsDataURL(file)
+}
+
+function onFileChooseHandler(type: 'avatar' | 'banner') {
+    console.log('onFileChooseHandler', type)
+    const choseAvatarElement = choseAvatar.value
+    const choseBannerElement = choseBanner.value
+
+    if (type === 'avatar' && choseAvatarElement?.files.length) {
+        handleFileRead(type, choseAvatarElement.files[0], systemInfo)
+        console.log('Chosen avatar:', choseAvatarElement.files[0])
+    } else if (type === 'banner' && choseBannerElement?.files.length) {
+        handleFileRead(type, choseBannerElement.files[0], systemInfo)
+        console.log('Chosen banner:', choseBannerElement.files[0])
+    } else {
+        console.error('No file chosen or invalid type:', type)
+    }
+}
 </script>
 <template>
     <div class="flex items-center space-x-2 min-w-[40vw]">
@@ -70,15 +108,26 @@ onMounted(async () => {
         </div>
     </div>
     <div class="flex items-center space-x-2 mt-4">
-        <label for="avatar" class="flex-shrink-0 w-24 text-right">头像链接</label>
+        <label for="avatar" class="flex-shrink-0 w-24 text-right">头像</label>
         <div class="flex-grow">
-            <InputText
+            <Image
                 v-if="systemInfo"
                 id="avatar"
-                v-model="systemInfo.avatar"
-                class="w-full h-10"
+                :src="systemInfo.avatar"
+                height="96px"
+                width="96px"
             />
-            <Skeleton v-else height="2.5rem"></Skeleton>
+            <Skeleton v-else height="96px"></Skeleton>
+            <div class="float-start mt-2">
+                <FileUpload
+                    ref="choseAvatar"
+                    mode="basic"
+                    accept="image/*"
+                    chooseLabel="选择新头像"
+                    :maxFileSize="1000000"
+                    @select="onFileChooseHandler('avatar')"
+                />
+            </div>
         </div>
     </div>
     <div class="flex items-center space-x-2 mt-4">
@@ -94,15 +143,20 @@ onMounted(async () => {
         </div>
     </div>
     <div class="flex items-center space-x-2 mt-4">
-        <label for="banner" class="flex-shrink-0 w-24 text-right">横幅链接</label>
+        <label for="banner" class="flex-shrink-0 w-24 text-right">横幅</label>
         <div class="flex-grow">
-            <InputText
-                v-if="systemInfo"
-                id="banner"
-                v-model="systemInfo.banner"
-                class="w-full h-10"
-            />
-            <Skeleton v-else height="2.5rem"></Skeleton>
+            <Image v-if="systemInfo" id="banner" :src="systemInfo.banner" width="200px" />
+            <Skeleton v-else height="120px"></Skeleton>
+            <div class="float-start mt-2">
+                <FileUpload
+                    ref="choseBanner"
+                    mode="basic"
+                    accept="image/*"
+                    chooseLabel="选择新横幅"
+                    :maxFileSize="1000000"
+                    @select="onFileChooseHandler('banner')"
+                />
+            </div>
         </div>
     </div>
     <div class="flex items-center space-x-2 mt-4">
@@ -160,6 +214,7 @@ onMounted(async () => {
                     id="contacts.email"
                     v-model="systemInfo.contacts.email"
                     class="h-10 w-full"
+                    placeholder="mailto://mailto:name@email.com"
                 />
                 <Skeleton v-else height="2.5rem"></Skeleton>
             </div>
@@ -256,7 +311,7 @@ onMounted(async () => {
         </div>
     </div>
     <div class="mt-8 float-right">
-        <Button @click="closeDialog" label="Save" />
-        <Button @click="closeDialog" class="ml-8" label="Save and close" />
+        <Button @click="closeDialog" label="关闭" />
+        <Button @click="saveAndCloseDialog" class="ml-8" :loading="updatting" label="保存并关闭" />
     </div>
 </template>

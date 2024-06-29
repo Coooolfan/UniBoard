@@ -8,8 +8,7 @@ import ConfigCard from '@/components/ConfigCard.vue'
 import NoteCard from '@/components/NoteCard.vue'
 import LinkCard from '@/components/LinkCard.vue'
 import FileCard from '@/components/FileCard.vue'
-import { ref } from 'vue'
-
+import Toast from 'primevue/toast'
 const router = useRouter()
 const dialog = useDialog()
 
@@ -55,15 +54,13 @@ function ConfigHandler() {
         }
     })
 }
-// TODO
-// 0. 设置以浮窗的形式展示
-// 1. 着陆页首屏的设置
-// 2. 着陆页的第二屏的设置
+
 </script>
 <template>
     <div class="flex flex-col items-center min-h-screen bg-[#f2f2f2]">
         <ClockCard class="mt-28" />
         <DynamicDialog />
+        <Toast />
         <div class="flex justify-between w-2/5 max-w-96 mt-10">
             <i
                 class="pi text-black grid place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-pencil"

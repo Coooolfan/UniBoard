@@ -19,69 +19,12 @@ interface SystemInfo {
         instagram: string
         linkedin: string
     }
-    links: Array<Link>
-}
-
-interface SystemInfoItem {
-    id: number
-    name: string
-    value: string
-}
-
-interface ContactItem {
-    title: string
-    content: string
-}
-
-interface Link {
-    icon: string
-    title: string
-    desc: string
-    url: string
-    color: string
 }
 
 async function getSystemInfo(): Promise<SystemInfo> {
     try {
-        const response = await axiosInstance.get<Array<SystemInfoItem>>('sysInfo/')
-        const findValue = (name: string) => {
-            const item = response.data.find((item) => item.name === name)
-            return item ? item.value : ''
-        }
-        const contacts: Array<ContactItem> = Object.entries(JSON.parse(findValue('contacts'))).map(
-            ([title, content]) => ({
-                title: title as string,
-                content: content as string
-            })
-        )
-        const links: Array<Link> = JSON.parse(decodeURIComponent(window.atob(findValue('links'))))
-        const findContact = (name: string) => {
-            const item = contacts.find((item) => item.title === name)
-            return item ? item.content : ''
-        }
-
-        const systemInfo: SystemInfo = {
-            name: findValue('name'),
-            version: findValue('version'),
-            profile: findValue('profile'),
-            avatar: findValue('avatar'),
-            slogan: findValue('slogan'),
-            banner: findValue('banner'),
-            links: links,
-            contacts: {
-                telegram: findContact('telegram'),
-                qq: findContact('qq'),
-                email: findContact('email'),
-                github: findContact('github'),
-                weibo: findContact('weibo'),
-                zhihu: findContact('zhihu'),
-                twitter: findContact('twitter'),
-                facebook: findContact('facebook'),
-                instagram: findContact('instagram'),
-                linkedin: findContact('linkedin')
-            }
-        }
-        // console.log(systemInfo)
+        const response = await axiosInstance.get<Array<SystemInfo>>('sysInfo/')
+        const systemInfo = response.data[0]
         return systemInfo
     } catch (error) {
         console.error(`Error occurred while fetching system info: ${error}`)
@@ -89,5 +32,49 @@ async function getSystemInfo(): Promise<SystemInfo> {
     }
 }
 
-export { getSystemInfo }
-export type { SystemInfo, Link }
+async function updateSystemInfo(systemInfo: SystemInfo): Promise<boolean> {
+    try {
+        // 创建FormData对象并附加systemInfo对象的属性
+        // 需要传入二进制对象
+        const formData = new FormData()
+        formData.append('name', systemInfo.name)
+        formData.append('version', systemInfo.version)
+        formData.append('profile', systemInfo.profile)
+        formData.append('slogan', systemInfo.slogan)
+        formData.append('contacts', JSON.stringify(systemInfo.contacts))
+        // 将base64字符串转换为Blob对象并附加到FormData对象, 如果是URL则说明没有修改
+        if (systemInfo.avatar.startsWith('data:image')) {
+            formData.append('avatar', base64ToFile(systemInfo.avatar))
+        }
+        if (systemInfo.banner.startsWith('data:image')) {
+            formData.append('banner', base64ToFile(systemInfo.banner))
+        }
+
+        // 设置Content-Type为multipart/form-data
+        const response = await axiosInstance.patch('sysInfo/1/', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        return response.status.toString().startsWith('2')
+    } catch (error) {
+        console.error(`Error occurred while updating system info: ${error}`)
+        return false
+    }
+}
+
+function base64ToFile(urlData: any) {
+    let arr = urlData.split(',')
+    let mime = arr[0].match(/:(.*?);/)[1]
+    let bytes = atob(arr[1]) // 解码base64
+    let n = bytes.length
+    let ia = new Uint8Array(n)
+    while (n--) {
+        ia[n] = bytes.charCodeAt(n)
+    }
+    let fileName = 'file_' + Date.now() + '.' + mime.split('/')[1]
+    return new File([ia], fileName, { type: mime })
+}
+
+export { getSystemInfo, updateSystemInfo }
+export type { SystemInfo }
