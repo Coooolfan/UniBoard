@@ -2,7 +2,7 @@
 import { getSystemInfo } from '@/api/sysInfo'
 import type { SystemInfo } from '@/api/sysInfo'
 import { ref, onMounted, watch } from 'vue'
-import LandingPageLink from '@/components/LandingPageLink.vue'
+import LandingPageLink from '@/components/HyperLinkCard.vue'
 import { getHyperLinks } from '@/api/hyperLink'
 import type { HyperLink } from '@/api/hyperLink'
 import { loginByTOTP, verifyTokenLocal } from '@/api/auth'

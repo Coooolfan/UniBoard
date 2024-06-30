@@ -38,7 +38,6 @@ async function updateSystemInfo(systemInfo: SystemInfo): Promise<boolean> {
         // 需要传入二进制对象
         const formData = new FormData()
         formData.append('name', systemInfo.name)
-        formData.append('version', systemInfo.version)
         formData.append('profile', systemInfo.profile)
         formData.append('slogan', systemInfo.slogan)
         formData.append('contacts', JSON.stringify(systemInfo.contacts))

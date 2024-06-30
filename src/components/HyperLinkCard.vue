@@ -13,7 +13,8 @@ function reverseHoverring() {
 }
 
 const bgGradientFrom = computed(() => {
-    return props.linkData.color
+    if (props.linkData.color.startsWith('#')) return props.linkData.color
+    return `#${props.linkData.color}`
 })
 const bgGradientTo = computed(() => {
     return whiteColor
