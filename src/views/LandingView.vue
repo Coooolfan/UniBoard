@@ -140,7 +140,7 @@ async function login() {
         <p class="text-4xl font-extrabold mt-[10vh]">选择一个页面以继续</p>
         <div class="border-[#A0A0A0] border border-t-0 border-l-0 border-r-0 mt-5 mb-5 w-1/2" />
         <p class="text-base mb-20 italic text-gray-800">此页面的中的内容并非全部公开项</p>
-        <div class="grid w-4/5 grid-cols-2 mx-auto">
+        <div class="grid w-4/5 grid-cols-3 mx-auto gap-10">
             <template v-for="link in links" :key="link.id">
                 <LandingPageLink :linkData="link" />
             </template>
