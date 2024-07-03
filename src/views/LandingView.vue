@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { getSystemInfo } from '@/api/sysInfo'
 import type { SystemInfo } from '@/api/sysInfo'
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 import LandingPageLink from '@/components/HyperLinkCard.vue'
 import { getHyperLinks } from '@/api/hyperLink'
 import type { HyperLink } from '@/api/hyperLink'
-import { loginByTOTP, verifyTokenLocal } from '@/api/auth'
+import { loginByPassword, loginByTOTP, verifyTokenLocal } from '@/api/auth'
 import InputOtp from 'primevue/inputotp'
 import router from '@/router'
 const sysInfo = ref<SystemInfo | null>(null)
@@ -23,16 +23,35 @@ function getSvgPath(name: string) {
     // https://www.iconfinder.com/
     return new URL(`../assets/svg/${name}.svg`, import.meta.url).href
 }
-const otpTypping = ref(false)
+const sloganType = ref<'slogan' | 'otp' | 'password'>('slogan')
 const otp = ref('')
-function switchOtp() {
+const username = ref('')
+const password = ref('')
+const otpInput = ref<HTMLInputElement>()
+const usernameInput = ref<HTMLInputElement>()
+
+async function switchSloganType(usePassword?: boolean) {
     // 如果已经登录，直接跳转到首页
     if (verifyTokenLocal()) {
         router.push('/uniboard')
         return
     }
     otp.value = ''
-    otpTypping.value = !otpTypping.value
+    if (usePassword) {
+        sloganType.value = 'password'
+        await nextTick()
+        usernameInput.value?.focus()
+
+        return
+    }
+    if (sloganType.value !== 'slogan') {
+        sloganType.value = 'slogan'
+        return
+    }
+
+    sloganType.value = 'otp'
+    await nextTick()
+    otpInput.value?.focus()
 }
 
 watch(otp, (newVal) => {
@@ -42,12 +61,18 @@ watch(otp, (newVal) => {
 })
 
 async function login() {
-    if (await loginByTOTP(otp.value)) {
+    if (sloganType.value === 'otp' && (await loginByTOTP(otp.value))) {
+        // 登录成功后跳转到首页
+        router.push('/uniboard')
+    } else if (
+        sloganType.value === 'password' &&
+        (await loginByPassword(username.value, password.value))
+    ) {
         // 登录成功后跳转到首页
         router.push('/uniboard')
     } else {
         otp.value = ''
-        otpTypping.value = false
+        sloganType.value = 'slogan'
     }
 }
 </script>
@@ -90,7 +115,7 @@ async function login() {
                 </picture>
                 <div
                     class="font-bold text-6xl font-[arial] mt-12 drop-shadow-xl z-50 cursor-pointer"
-                    @click="switchOtp"
+                    @click="switchSloganType()"
                 >
                     {{ sysInfo?.name }}
                 </div>
@@ -113,17 +138,49 @@ async function login() {
                     <div
                         class="relative flex items-center justify-center h-full w-full pb-10 text-white text-5xl tracking-widest text-shadow-xl"
                     >
-                        <InputOtp v-show="otpTypping" v-model="otp" :length="6">
-                            <template #default="{ attrs, events }">
+                        <InputOtp v-show="sloganType === 'otp'" v-model="otp" :length="6">
+                            <template #default="{ attrs, events, index }">
                                 <input
+                                    v-if="index === 1"
+                                    ref="otpInput"
                                     type="text"
                                     v-bind="attrs"
                                     v-on="events"
                                     class="animate-slide-up text-shadow shadow-black/50 ml-2.5 w-10 text-4xl border-0 appearance-none text-center transition-all duration-200 bg-transparent outline-none border-b-2 border-gray-300 focus:outline-none focus:border-b-gray-200"
                                 />
+                                <input
+                                    v-else
+                                    type="text"
+                                    v-bind="attrs"
+                                    v-on="events"
+                                    class="animate-slide-up text-shadow shadow-black/50 ml-2.5 w-10 text-4xl border-0 appearance-none text-center transition-all duration-200 bg-transparent outline-none border-b-2 border-gray-300 focus:outline-none focus:border-b-gray-200"
+                                />
+                                <i
+                                    class="animate-slide-up pi pi-angle-double-right pl-4 text-white cursor-pointer"
+                                    v-if="index === 6"
+                                    @click="switchSloganType(true)"
+                                ></i>
                             </template>
                         </InputOtp>
-                        <span v-show="!otpTypping" class="animate-slide-up">
+                        <form
+                            v-show="sloganType === 'password'"
+                            class="animate-slide-up flex"
+                            @submit.native.prevent
+                        >
+                            <input
+                                type="text"
+                                ref="usernameInput"
+                                v-model="username"
+                                class="text-shadow shadow-black/50 ml-2.5 w-36 text-xl border-0 appearance-none text-center bg-transparent outline-none border-b-2 border-gray-100 focus:outline-none focus:border-b-gray-200"
+                            />
+                            <input
+                                type="password"
+                                v-model="password"
+                                class="text-shadow shadow-black/50 ml-2.5 w-36 text-xl border-0 appearance-none text-center bg-transparent outline-none border-b-2 border-gray-100 focus:outline-none focus:border-b-gray-200"
+                            />
+                            <button class="pi pi-arrow-right ml-4" @click="login" />
+                        </form>
+                        <span v-show="sloganType === 'slogan'" class="animate-slide-up">
                             {{ sysInfo?.slogan }}</span
                         >
                     </div>

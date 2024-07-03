@@ -103,7 +103,7 @@ function removeToken() {
     localStorage.removeItem('refresh_token')
 }
 
-async function login(username: string, password: string): Promise<boolean> {
+async function loginByPassword(username: string, password: string): Promise<boolean> {
     try {
         const response = await axiosInstance.post('token/', {
             username: username,
@@ -154,7 +154,7 @@ function verifyTokenLocal(): boolean {
 
 export {
     axiosInstance,
-    login,
+    loginByPassword,
     setRefreshToken,
     setAccessToken,
     getRefreshToken,
