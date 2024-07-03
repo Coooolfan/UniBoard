@@ -31,7 +31,6 @@ function switchOtp() {
         router.push('/uniboard')
         return
     }
-    console.log('switchOtp')
     otp.value = ''
     otpTypping.value = !otpTypping.value
 }
@@ -43,12 +42,10 @@ watch(otp, (newVal) => {
 })
 
 async function login() {
-    console.log('logining...' + otp.value)
     if (await loginByTOTP(otp.value)) {
         // 登录成功后跳转到首页
         router.push('/uniboard')
     } else {
-        console.log('login failed')
         otp.value = ''
         otpTypping.value = false
     }

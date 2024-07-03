@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import ClockCard from '@/components/ClockCard.vue'
-import { removeToken } from '@/api/auth'
 import { useDialog } from 'primevue/usedialog'
 import DynamicDialog from 'primevue/dynamicdialog'
 import ConfigCard from '@/components/ConfigCard.vue'
@@ -12,8 +11,7 @@ import Toast from 'primevue/toast'
 const router = useRouter()
 const dialog = useDialog()
 
-function signOut() {
-    removeToken()
+function router2Landing() {
     router.push('/')
 }
 
@@ -80,7 +78,7 @@ function ConfigHandler() {
             ></i>
             <i
                 class="pi text-black grid place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-sign-out"
-                @click="signOut"
+                @click="router2Landing"
             ></i>
         </div>
     </div>

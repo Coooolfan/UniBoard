@@ -3,6 +3,7 @@ import { inject, onMounted, ref } from 'vue'
 import Button from 'primevue/button'
 import type { SystemInfo } from '@/api/sysInfo'
 import { getSystemInfo, updateSystemInfo } from '@/api/sysInfo'
+import { removeToken } from '@/api/auth'
 import InputText from 'primevue/inputtext'
 import Image from 'primevue/image'
 import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
@@ -20,8 +21,9 @@ import {
 } from '@/api/hyperLink'
 import HyperLinkCard from './HyperLinkCard.vue'
 import ColorPicker from 'primevue/colorpicker'
-import { axiosInstance } from '@/api/auth'
+import { useRouter } from 'vue-router'
 const toast = useToast()
+const router = useRouter()
 const dialogRef: any = inject('dialogRef')
 const systemInfo = ref<SystemInfo>()
 const hyperLinkCacheList = ref<Array<HyperLinkCache>>([])
@@ -30,6 +32,11 @@ onMounted(async () => {
     systemInfo.value = await getSystemInfo()
     hyperLinkCacheList.value = await gethyperLinkCacheList()
 })
+
+function logout() {
+    removeToken()
+    router.push('/')
+}
 
 const closeDialog = () => {
     dialogRef.value.close()
@@ -138,11 +145,6 @@ function onFileChooseHandler(
 function appendNewHyperLinkCache() {
     hyperLinkCacheList.value.push(structuredClone(defaultHyperLinkCache))
 }
-function ttt() {
-    axiosInstance.get('hyperlink-caches/39/').then((res) => {
-        console.log(res)
-    })
-}
 let attempt = 0
 let maxAttempts = 8
 async function refreshFromServer(index: number) {
@@ -205,7 +207,6 @@ async function refreshFromServer(index: number) {
 }
 </script>
 <template>
-    <Button @click="ttt" />
     <Fieldset legend="着陆页首屏设置">
         <div class="flex items-center space-x-2 min-w-[80vw]">
             <label for="name" class="flex-shrink-0 w-24 text-right">展示姓名</label>
@@ -536,5 +537,10 @@ async function refreshFromServer(index: number) {
             <Button label="新增超链接" class="float-end" @click="appendNewHyperLinkCache" />
         </div>
     </Fieldset>
-    <div class="m-4 float-end"><Button @click="closeDialog" label="关闭" /></div>
+    <div class="flex mt-4 justify-end gap-4">
+        <Button @click="logout" label="退出登录" severity="danger" /><Button
+            @click="closeDialog"
+            label="关闭"
+        />
+    </div>
 </template>
