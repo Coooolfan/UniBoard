@@ -2,9 +2,8 @@
 import { inject, onMounted, ref } from 'vue'
 import Button from 'primevue/button'
 import type { SystemInfo } from '@/api/sysInfo'
-import { getSystemInfo, updateSystemInfo } from '@/api/sysInfo'
+import { defaultSystemInfo, getSystemInfo, updateSystemInfo } from '@/api/sysInfo'
 import { removeToken } from '@/api/auth'
-import InputText from 'primevue/inputtext'
 import Image from 'primevue/image'
 import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
 import Skeleton from 'primevue/skeleton'
@@ -20,12 +19,13 @@ import {
     type HyperLinkCache
 } from '@/api/hyperLink'
 import HyperLinkCard from './HyperLinkCard.vue'
+import LabelAndInput from './LabelAndInput.vue'
 import ColorPicker from 'primevue/colorpicker'
 import { useRouter } from 'vue-router'
 const toast = useToast()
 const router = useRouter()
 const dialogRef: any = inject('dialogRef')
-const systemInfo = ref<SystemInfo>()
+const systemInfo = ref<SystemInfo>(structuredClone(defaultSystemInfo))
 const hyperLinkCacheList = ref<Array<HyperLinkCache>>([])
 const updatting = ref(false)
 onMounted(async () => {
@@ -207,41 +207,11 @@ async function refreshFromServer(index: number) {
 }
 </script>
 <template>
-    <Fieldset legend="着陆页首屏设置">
-        <div class="flex items-center space-x-2 min-w-[80vw]">
-            <label for="name" class="flex-shrink-0 w-24 text-right">展示姓名</label>
-            <div class="flex-grow">
-                <InputText
-                    v-if="systemInfo"
-                    id="name"
-                    v-model="systemInfo.name"
-                    class="w-full h-10"
-                />
-                <Skeleton v-else height="2.5rem"></Skeleton>
-            </div>
-        </div>
+    <Fieldset legend="着陆页首屏设置" class="w-[80vw]">
         <div class="flex items-center space-x-2 mt-4">
-            <label for="profile" class="flex-shrink-0 w-24 text-right">个人简介</label>
+            <label for="avatar" class="flex-shrink-0 w-20 text-right">头像</label>
             <div class="flex-grow">
-                <InputText
-                    v-if="systemInfo"
-                    id="profile"
-                    v-model="systemInfo.profile"
-                    class="w-full h-10"
-                />
-                <Skeleton v-else height="2.5rem"></Skeleton>
-            </div>
-        </div>
-        <div class="flex items-center space-x-2 mt-4">
-            <label for="avatar" class="flex-shrink-0 w-24 text-right">头像</label>
-            <div class="flex-grow">
-                <Image
-                    v-if="systemInfo"
-                    id="avatar"
-                    :src="systemInfo.avatar"
-                    height="96px"
-                    width="96px"
-                />
+                <Image v-if="systemInfo" id="avatar" :src="systemInfo.avatar" width="96px" />
                 <Skeleton v-else height="96px"></Skeleton>
                 <div class="float-start mt-2">
                     <FileUpload
@@ -255,19 +225,7 @@ async function refreshFromServer(index: number) {
             </div>
         </div>
         <div class="flex items-center space-x-2 mt-4">
-            <label for="slogan" class="flex-shrink-0 w-24 text-right">个人标语</label>
-            <div class="flex-grow">
-                <InputText
-                    v-if="systemInfo"
-                    id="slogan"
-                    v-model="systemInfo.slogan"
-                    class="w-full h-10"
-                />
-                <Skeleton v-else height="2.5rem"></Skeleton>
-            </div>
-        </div>
-        <div class="flex items-center space-x-2 mt-4">
-            <label for="banner" class="flex-shrink-0 w-24 text-right">横幅</label>
+            <label for="banner" class="flex-shrink-0 w-20 text-right">横幅</label>
             <div class="flex-grow">
                 <Image v-if="systemInfo" id="banner" :src="systemInfo.banner" width="200px" />
                 <Skeleton v-else height="120px"></Skeleton>
@@ -282,157 +240,74 @@ async function refreshFromServer(index: number) {
                 </div>
             </div>
         </div>
-        <div class="flex items-center space-x-2 mt-4">
-            <label for="banner" class="flex-shrink-0 w-24 text-right">媒体链接</label>
-            <div class="flex items-center space-x-2 w-full">
-                <label for="banner" class="flex-shrink-0 w-20 text-right">github</label>
-                <div class="flex-grow">
-                    <InputText
-                        v-if="systemInfo"
-                        id="contacts.github"
-                        v-model="systemInfo.contacts.github"
-                        class="h-10 w-full"
-                    />
-                    <Skeleton v-else height="2.5rem"></Skeleton>
-                </div>
-            </div>
-        </div>
-        <div class="flex items-center space-x-2 mt-4">
-            <label for="banner" class="flex-shrink-0 w-24 text-right"></label>
-            <div class="flex items-center space-x-2 w-full">
-                <label for="banner" class="flex-shrink-0 w-20 text-right">telegram</label>
-                <div class="flex-grow">
-                    <InputText
-                        v-if="systemInfo"
-                        id="contacts.telegram"
-                        v-model="systemInfo.contacts.telegram"
-                        class="h-10 w-full"
-                    />
-                    <Skeleton v-else height="2.5rem"></Skeleton>
-                </div>
-            </div>
-        </div>
-        <div class="flex items-center space-x-2 mt-4">
-            <label for="banner" class="flex-shrink-0 w-24 text-right"></label>
-            <div class="flex items-center space-x-2 w-full">
-                <label for="banner" class="flex-shrink-0 w-20 text-right">QQ</label>
-                <div class="flex-grow">
-                    <InputText
-                        v-if="systemInfo"
-                        id="contacts.qq"
-                        v-model="systemInfo.contacts.qq"
-                        class="h-10 w-full"
-                    />
-                    <Skeleton v-else height="2.5rem"></Skeleton>
-                </div>
-            </div>
-        </div>
-        <div class="flex items-center space-x-2 mt-4">
-            <label for="banner" class="flex-shrink-0 w-24 text-right"></label>
-            <div class="flex items-center space-x-2 w-full">
-                <label for="banner" class="flex-shrink-0 w-20 text-right">email</label>
-                <div class="flex-grow">
-                    <InputText
-                        v-if="systemInfo"
-                        id="contacts.email"
-                        v-model="systemInfo.contacts.email"
-                        class="h-10 w-full"
-                        placeholder="mailto://name@email.com"
-                    />
-                    <Skeleton v-else height="2.5rem"></Skeleton>
-                </div>
-            </div>
-        </div>
-        <div class="flex items-center space-x-2 mt-4">
-            <label for="banner" class="flex-shrink-0 w-24 text-right"></label>
-            <div class="flex items-center space-x-2 w-full">
-                <label for="banner" class="flex-shrink-0 w-20 text-right">weibo</label>
-                <div class="flex-grow">
-                    <InputText
-                        v-if="systemInfo"
-                        id="contacts.weibo"
-                        v-model="systemInfo.contacts.weibo"
-                        class="h-10 w-full"
-                    />
-                    <Skeleton v-else height="2.5rem"></Skeleton>
-                </div>
-            </div>
-        </div>
-        <div class="flex items-center space-x-2 mt-4">
-            <label for="banner" class="flex-shrink-0 w-24 text-right"></label>
-            <div class="flex items-center space-x-2 w-full">
-                <label for="banner" class="flex-shrink-0 w-20 text-right">zhihu</label>
-                <div class="flex-grow">
-                    <InputText
-                        v-if="systemInfo"
-                        id="contacts.zhihu"
-                        v-model="systemInfo.contacts.zhihu"
-                        class="h-10 w-full"
-                    />
-                    <Skeleton v-else height="2.5rem"></Skeleton>
-                </div>
-            </div>
-        </div>
-        <div class="flex items-center space-x-2 mt-4">
-            <label for="banner" class="flex-shrink-0 w-24 text-right"></label>
-            <div class="flex items-center space-x-2 w-full">
-                <label for="banner" class="flex-shrink-0 w-20 text-right">twitter</label>
-                <div class="flex-grow">
-                    <InputText
-                        v-if="systemInfo"
-                        id="contacts.twitter"
-                        v-model="systemInfo.contacts.twitter"
-                        class="h-10 w-full"
-                    />
-                    <Skeleton v-else height="2.5rem"></Skeleton>
-                </div>
-            </div>
-        </div>
-        <div class="flex items-center space-x-2 mt-4">
-            <label for="banner" class="flex-shrink-0 w-24 text-right"></label>
-            <div class="flex items-center space-x-2 w-full">
-                <label for="banner" class="flex-shrink-0 w-20 text-right">facebook</label>
-                <div class="flex-grow">
-                    <InputText
-                        v-if="systemInfo"
-                        id="contacts.facebook"
-                        v-model="systemInfo.contacts.facebook"
-                        class="h-10 w-full"
-                    />
-                    <Skeleton v-else height="2.5rem"></Skeleton>
-                </div>
-            </div>
-        </div>
-        <div class="flex items-center space-x-2 mt-4">
-            <label for="banner" class="flex-shrink-0 w-24 text-right"></label>
-            <div class="flex items-center space-x-2 w-full">
-                <label for="banner" class="flex-shrink-0 w-20 text-right">instagram</label>
-                <div class="flex-grow">
-                    <InputText
-                        v-if="systemInfo"
-                        id="contacts.instagram"
-                        v-model="systemInfo.contacts.instagram"
-                        class="h-10 w-full"
-                    />
-                    <Skeleton v-else height="2.5rem"></Skeleton>
-                </div>
-            </div>
-        </div>
-        <div class="flex items-center space-x-2 mt-4">
-            <label for="banner" class="flex-shrink-0 w-24 text-right"></label>
-            <div class="flex items-center space-x-2 w-full">
-                <label for="banner" class="flex-shrink-0 w-20 text-right">linkedin</label>
-                <div class="flex-grow">
-                    <InputText
-                        v-if="systemInfo"
-                        id="contacts.linkedin"
-                        v-model="systemInfo.contacts.linkedin"
-                        class="h-10 w-full"
-                    />
-                    <Skeleton v-else height="2.5rem"></Skeleton>
-                </div>
-            </div>
-        </div>
+        <LabelAndInput
+            id="name"
+            label="展示姓名"
+            v-model="systemInfo.name"
+            :loading="systemInfo.loading" />
+        <LabelAndInput
+            id="profile"
+            label="个人简介"
+            v-model="systemInfo.profile"
+            :loading="systemInfo.loading" />
+
+        <LabelAndInput
+            id="title"
+            label="个人标语"
+            v-model="systemInfo.slogan"
+            :loading="systemInfo.loading" />
+
+        <LabelAndInput
+            id="contacts.github"
+            label="github"
+            v-model="systemInfo.contacts.github"
+            :loading="systemInfo.loading" />
+        <LabelAndInput
+            id="contacts.telegram"
+            label="telegram"
+            v-model="systemInfo.contacts.telegram"
+            :loading="systemInfo.loading" />
+        <LabelAndInput
+            id="contacts.qq"
+            label="QQ"
+            v-model="systemInfo.contacts.qq"
+            :loading="systemInfo.loading" />
+        <LabelAndInput
+            id="contacts.email"
+            label="email"
+            v-model="systemInfo.contacts.email"
+            :loading="systemInfo.loading"
+            placeholder="mailto://name@email.com" />
+        <LabelAndInput
+            id="contacts.weibo"
+            label="weibo"
+            v-model="systemInfo.contacts.weibo"
+            :loading="systemInfo.loading" />
+        <LabelAndInput
+            id="contacts.zhihu"
+            label="zhihu"
+            v-model="systemInfo.contacts.zhihu"
+            :loading="systemInfo.loading" />
+        <LabelAndInput
+            id="contacts.twitter"
+            label="twitter"
+            v-model="systemInfo.contacts.twitter"
+            :loading="systemInfo.loading" />
+        <LabelAndInput
+            id="contacts.facebook"
+            label="facebook"
+            v-model="systemInfo.contacts.facebook"
+            :loading="systemInfo.loading" />
+        <LabelAndInput
+            id="contacts.instagram"
+            label="instagram"
+            v-model="systemInfo.contacts.instagram"
+            :loading="systemInfo.loading" />
+        <LabelAndInput
+            id="contacts.linkedin"
+            label="linkedin"
+            v-model="systemInfo.contacts.linkedin"
+            :loading="systemInfo.loading" />
         <div class="mt-8 float-right">
             <Button @click="saveConfigPage1" class="ml-8" :loading="updatting" label="保存" /></div
     ></Fieldset>
@@ -444,47 +319,29 @@ async function refreshFromServer(index: number) {
                 class="m-4 flex justify-around content-around pb-4 items-center border-b-[1px]"
             >
                 <div>
-                    <div class="flex items-center space-x-2">
-                        <label for="name" class="flex-shrink-0 w-24 text-right">标题</label>
-                        <div class="flex-grow">
-                            <InputText
-                                v-if="hyperLinkCacheList"
-                                id="name"
-                                v-model="item.title"
-                                class="h-10"
-                                :disabled="item.uploading"
-                            />
-                            <Skeleton v-else height="2.5rem" />
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-2 mt-1">
-                        <label for="name" class="flex-shrink-0 w-24 text-right">描述</label>
-                        <div class="flex-grow">
-                            <InputText
-                                v-if="hyperLinkCacheList"
-                                id="name"
-                                v-model="item.desc"
-                                class="h-10"
-                                :disabled="item.uploading"
-                            />
-                            <Skeleton v-else height="2.5rem" />
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-2 mt-1">
-                        <label for="name" class="flex-shrink-0 w-24 text-right">目标链接</label>
-                        <div class="flex-grow">
-                            <InputText
-                                v-if="hyperLinkCacheList"
-                                id="name"
-                                v-model="item.url"
-                                class="h-10"
-                                :disabled="item.uploading"
-                            />
-                            <Skeleton v-else height="2.5rem" />
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-2 mt-1">
-                        <label for="name" class="flex-shrink-0 w-24 text-right">主题色</label>
+                    <LabelAndInput
+                        id="title"
+                        label="标题"
+                        v-model="item.title"
+                        :loading="!item.uploading.valueOf()"
+                        :disabled="item.uploading"
+                    />
+                    <LabelAndInput
+                        id="desc"
+                        label="描述"
+                        v-model="item.desc"
+                        :loading="!item.uploading.valueOf()"
+                        :disabled="item.uploading"
+                    />
+                    <LabelAndInput
+                        id="url"
+                        label="目标链接"
+                        v-model="item.url"
+                        :loading="!item.uploading.valueOf()"
+                        :disabled="item.uploading"
+                    />
+                    <div class="flex items-center space-x-2 mt-4">
+                        <label for="name" class="flex-shrink-0 w-20 text-right">主题色</label>
                         <div class="flex-grow flex items-center">
                             <ColorPicker
                                 v-if="hyperLinkCacheList"

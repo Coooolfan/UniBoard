@@ -20,6 +20,29 @@ interface SystemInfo {
         instagram: string
         linkedin: string
     }
+    loading: boolean
+}
+
+const defaultSystemInfo: SystemInfo = {
+    name: '',
+    version: '',
+    profile: '',
+    avatar: '',
+    slogan: '',
+    banner: '',
+    contacts: {
+        telegram: '',
+        qq: '',
+        email: '',
+        github: '',
+        weibo: '',
+        zhihu: '',
+        twitter: '',
+        facebook: '',
+        instagram: '',
+        linkedin: ''
+    },
+    loading: false
 }
 
 async function getSystemInfo(): Promise<SystemInfo> {
@@ -63,5 +86,5 @@ async function updateSystemInfo(systemInfo: SystemInfo): Promise<boolean> {
     }
 }
 
-export { getSystemInfo, updateSystemInfo }
+export { getSystemInfo, updateSystemInfo, defaultSystemInfo }
 export type { SystemInfo }
