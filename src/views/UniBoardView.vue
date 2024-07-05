@@ -5,7 +5,7 @@ import { useDialog } from 'primevue/usedialog'
 import DynamicDialog from 'primevue/dynamicdialog'
 import ConfigCard from '@/components/ConfigCard.vue'
 import NoteCard from '@/components/NoteCard.vue'
-import LinkCard from '@/components/LinkCard.vue'
+import LinkCard from '@/components/ShortLinkCard.vue'
 import FileCard from '@/components/FileCard.vue'
 import Toast from 'primevue/toast'
 const router = useRouter()
