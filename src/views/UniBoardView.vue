@@ -28,7 +28,9 @@ function LinkHandler() {
     dialog.open(LinkCard, {
         props: {
             modal: true,
-            closable: false
+            closable: false,
+            header: '短链接',
+            maximizable: true
         }
     })
 }
@@ -52,7 +54,6 @@ function ConfigHandler() {
         }
     })
 }
-
 </script>
 <template>
     <div class="flex flex-col items-center min-h-screen bg-[#f2f2f2]">

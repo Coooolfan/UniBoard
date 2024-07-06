@@ -5,9 +5,10 @@ interface ShortUrl {
     long_url: string
     short_url: string
     gmt_create: string
+    local_create?: string
 }
 
-interface getShortUrlListAPI{
+interface getShortUrlListAPI {
     count: number
     results: Array<ShortUrl>
 }
@@ -19,9 +20,9 @@ async function postShortUrl(long_url: string): Promise<ShortUrl> {
     return response.data
 }
 
-async function getShortUrlList(page?: string, size?: string): Promise<getShortUrlListAPI> {
-    if (page == undefined) page = '1'
-    if (size == undefined) size = '10'
+async function getShortUrlList(page?: number, size?: number): Promise<getShortUrlListAPI> {
+    if (page == undefined) page = 1
+    if (size == undefined) size = 10
     const response = await axiosInstance.get<getShortUrlListAPI>('short-urls/', {
         params: {
             page: page,
@@ -31,5 +32,17 @@ async function getShortUrlList(page?: string, size?: string): Promise<getShortUr
     return response.data
 }
 
-export { postShortUrl, getShortUrlList }
+async function deleteShortUrl(id: number): Promise<Boolean> {
+    try {
+        let resp = await axiosInstance.delete(`short-urls/${id}/`)
+        if (resp.status.toString().startsWith('2')) {
+            return true
+        }
+    } catch (error) {
+        return false
+    }
+    return false
+}
+
+export { postShortUrl, getShortUrlList, deleteShortUrl }
 export type { ShortUrl }
