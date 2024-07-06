@@ -8,6 +8,7 @@ import { deleteShortUrl, getShortUrlList, postShortUrl, type ShortUrl } from '@/
 import { useToast } from 'primevue/usetoast'
 import ConfirmPopup from 'primevue/confirmpopup'
 import { useConfirm } from 'primevue/useconfirm'
+import { getSysConfig } from '@/api/sysConfig'
 const dialogRef: any = inject('dialogRef')
 const confirm = useConfirm()
 const closeDialog = () => {
@@ -21,6 +22,7 @@ const newLongUrl = ref('')
 const newLongUrlLoading = ref(false)
 const page = ref(1)
 const size = ref(5)
+const host = ref(window.location.host)
 onMounted(async () => {
     let resp = await getShortUrlList()
     shortUrls.value = resp.results
@@ -28,6 +30,7 @@ onMounted(async () => {
     shortUrls.value.forEach((shortUrl) => {
         shortUrl.local_create = localTime(shortUrl.gmt_create)
     })
+    host.value = (await getSysConfig()).host
 })
 async function refreshPage(originalEvent?: DataTablePageEvent) {
     if (originalEvent?.page !== undefined) {
@@ -52,14 +55,15 @@ async function addShortUrl() {
     newLongUrlLoading.value = true
     let resp = await postShortUrl(newLongUrl.value)
     let newShortUrl = resp.short_url
-    copy2Clipboard(newShortUrl)
+    copyShortUrl(newShortUrl)
     newLongUrlLoading.value = false
     refreshPage()
 }
 
-async function copy2Clipboard(content: string) {
+async function copyShortUrl(content: string) {
+    const shortUrl = host.value + '/s/' + content
     try {
-        await navigator.clipboard.writeText(content)
+        await navigator.clipboard.writeText(shortUrl)
         toast.add({
             severity: 'success',
             summary: '复制成功',
@@ -162,7 +166,7 @@ function confirmDelete(event: any, index: number) {
                     :icon="'pi pi-copy'"
                     text
                     size="small"
-                    @click="copy2Clipboard(data.short_url)"
+                    @click="copyShortUrl(data.short_url)"
                 />
                 <Button
                     type="button"

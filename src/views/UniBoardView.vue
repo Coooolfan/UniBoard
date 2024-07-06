@@ -5,7 +5,7 @@ import { useDialog } from 'primevue/usedialog'
 import DynamicDialog from 'primevue/dynamicdialog'
 import ConfigCard from '@/components/ConfigCard.vue'
 import NoteCard from '@/components/NoteCard.vue'
-import LinkCard from '@/components/ShortLinkCard.vue'
+import ShortUrlCard from '@/components/ShortUrlCard.vue'
 import FileCard from '@/components/FileCard.vue'
 import Toast from 'primevue/toast'
 const router = useRouter()
@@ -25,7 +25,7 @@ function NoteHandler() {
 }
 
 function LinkHandler() {
-    dialog.open(LinkCard, {
+    dialog.open(ShortUrlCard, {
         props: {
             modal: true,
             closable: false,

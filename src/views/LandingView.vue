@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { getSystemInfo } from '@/api/sysInfo'
-import type { SystemInfo } from '@/api/sysInfo'
+import { getUserInfo } from '@/api/userInfo'
+import type { UserInfo } from '@/api/userInfo'
 import { ref, onMounted, watch, nextTick } from 'vue'
 import LandingPageLink from '@/components/HyperLinkCard.vue'
 import { getHyperLinks } from '@/api/hyperLink'
@@ -8,15 +8,15 @@ import type { HyperLink } from '@/api/hyperLink'
 import { loginByPassword, loginByTOTP, verifyTokenLocal } from '@/api/auth'
 import InputOtp from 'primevue/inputotp'
 import router from '@/router'
-const sysInfo = ref<SystemInfo | null>(null)
+const userInfo = ref<UserInfo | null>(null)
 const links = ref<Array<HyperLink>>([])
 onMounted(async () => {
-    sysInfo.value = await getSystemInfo()
+    userInfo.value = await getUserInfo()
     links.value = await getHyperLinks()
     // 修改页面标题和头像
-    document.title = sysInfo.value.name
+    document.title = userInfo.value.name
     const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement
-    favicon.href = sysInfo.value.avatar
+    favicon.href = userInfo.value.avatar
 })
 function getSvgPath(name: string) {
     // 使用动态import语法导入SVG文件
@@ -98,7 +98,7 @@ async function login() {
         </svg>
         <picture>
             <img
-                :src="sysInfo?.banner"
+                :src="userInfo?.banner"
                 class="absolute inset-0 object-cover w-full h-full filter brightness-90 -z-20"
             />
         </picture>
@@ -108,7 +108,7 @@ async function login() {
             >
                 <picture>
                     <img
-                        :src="sysInfo?.avatar"
+                        :src="userInfo?.avatar"
                         class="rounded-full w-60 border-10 border-gray-200 shadow-md"
                         alt="avater"
                     />
@@ -117,14 +117,14 @@ async function login() {
                     class="font-bold text-6xl font-[arial] mt-12 drop-shadow-xl z-50 cursor-pointer"
                     @click="switchSloganType()"
                 >
-                    {{ sysInfo?.name }}
+                    {{ userInfo?.name }}
                 </div>
                 <div class="border-[#A0A0A0] border border-t-0 border-l-0 border-r-0 mt-20 w-3/5" />
                 <p class="text-[#404040] mt-5 text-lg">
-                    {{ sysInfo?.profile }}
+                    {{ userInfo?.profile }}
                 </p>
                 <div class="flex w-80 justify-around mt-24">
-                    <template v-for="(url, key) in sysInfo?.contacts" :key="key">
+                    <template v-for="(url, key) in userInfo?.contacts" :key="key">
                         <div v-if="url">
                             <a :href="url">
                                 <img class="w-6" :src="getSvgPath(key)" :alt="key" />
@@ -181,7 +181,7 @@ async function login() {
                             <button class="pi pi-arrow-right ml-4" @click="login" />
                         </form>
                         <span v-show="sloganType === 'slogan'" class="animate-slide-up">
-                            {{ sysInfo?.slogan }}</span
+                            {{ userInfo?.slogan }}</span
                         >
                     </div>
                 </div>

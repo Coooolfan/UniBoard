@@ -1,7 +1,7 @@
 import { axiosInstance } from '@/api/auth'
 import { base64ToFile } from '@/assets/utils/Base64Utils'
 
-interface SystemInfo {
+interface UserInfo {
     name: string
     version: string
     profile: string
@@ -23,7 +23,7 @@ interface SystemInfo {
     loading: boolean
 }
 
-const defaultSystemInfo: SystemInfo = {
+const defaultUserInfo: UserInfo = {
     name: '',
     version: '',
     profile: '',
@@ -45,46 +45,46 @@ const defaultSystemInfo: SystemInfo = {
     loading: false
 }
 
-async function getSystemInfo(): Promise<SystemInfo> {
+async function getUserInfo(): Promise<UserInfo> {
     try {
-        const response = await axiosInstance.get<Array<SystemInfo>>('sysInfo/')
-        const systemInfo = response.data[0]
-        return systemInfo
+        const response = await axiosInstance.get<Array<UserInfo>>('user-info/')
+        const userInfo = response.data[0]
+        return userInfo
     } catch (error) {
-        console.error(`Error occurred while fetching system info: ${error}`)
+        console.error(`Error occurred while fetching user info: ${error}`)
         throw error // Or return an object with error info
     }
 }
 
-async function updateSystemInfo(systemInfo: SystemInfo): Promise<boolean> {
+async function patchUserInfo(userInfo: UserInfo): Promise<boolean> {
     try {
-        // 创建FormData对象并附加systemInfo对象的属性
+        // 创建FormData对象并附加userInfo对象的属性
         // 需要传入二进制对象
         const formData = new FormData()
-        formData.append('name', systemInfo.name)
-        formData.append('profile', systemInfo.profile)
-        formData.append('slogan', systemInfo.slogan)
-        formData.append('contacts', JSON.stringify(systemInfo.contacts))
+        formData.append('name', userInfo.name)
+        formData.append('profile', userInfo.profile)
+        formData.append('slogan', userInfo.slogan)
+        formData.append('contacts', JSON.stringify(userInfo.contacts))
         // 将base64字符串转换为Blob对象并附加到FormData对象, 如果是URL则说明没有修改
-        if (systemInfo.avatar.startsWith('data:image')) {
-            formData.append('avatar', base64ToFile(systemInfo.avatar))
+        if (userInfo.avatar.startsWith('data:image')) {
+            formData.append('avatar', base64ToFile(userInfo.avatar))
         }
-        if (systemInfo.banner.startsWith('data:image')) {
-            formData.append('banner', base64ToFile(systemInfo.banner))
+        if (userInfo.banner.startsWith('data:image')) {
+            formData.append('banner', base64ToFile(userInfo.banner))
         }
 
         // 设置Content-Type为multipart/form-data
-        const response = await axiosInstance.patch('sysInfo/1/', formData, {
+        const response = await axiosInstance.patch('user-info/1/', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         })
         return response.status.toString().startsWith('2')
     } catch (error) {
-        console.error(`Error occurred while updating system info: ${error}`)
+        console.error(`Error occurred while updating user info: ${error}`)
         return false
     }
 }
 
-export { getSystemInfo, updateSystemInfo, defaultSystemInfo }
-export type { SystemInfo }
+export { getUserInfo, patchUserInfo, defaultUserInfo }
+export type { UserInfo }
