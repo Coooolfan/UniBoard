@@ -19,6 +19,7 @@
         "jwt-decode": "^4.0.0",
         "primeicons": "^7.0.0",
         "primevue": "^4.0.0",
+        "vditor": "^3.10.4",
         "vue": "^3.4.31",
         "vue-router": "^4.4.0"
     },

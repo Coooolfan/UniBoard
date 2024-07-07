@@ -19,7 +19,9 @@ function NoteHandler() {
     dialog.open(NoteCard, {
         props: {
             modal: true,
-            closable: false
+            closable: false,
+            header: '笔记',
+            maximizable: true
         }
     })
 }
