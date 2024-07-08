@@ -25,7 +25,7 @@ const bgGradientTo = computed(() => {
     <a
         :href="linkData.url"
         target="_self"
-        class="group relative block max-w-96 h-44 drop-shadow-lg cursor-pointer group-hover:drop-shadow-2xl transition-all duration-700 ease-in-out"
+        class="group relative block max-w-96 min-w-80 h-44 drop-shadow-lg cursor-pointer group-hover:drop-shadow-2xl transition-all duration-700 ease-in-out"
         @mouseenter="reverseHoverring"
         @mouseleave="reverseHoverring"
     >
