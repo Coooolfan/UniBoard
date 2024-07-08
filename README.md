@@ -1,18 +1,39 @@
 # UniBoard
-See and view all your devices or Service.
 
-此仓库为此项目的前端文件。此项目实现了一个个人信息展示页和设备与服务监控看板。同时提供了一个时钟和一个云同步的笔记模块。
+此项目正在重构……
 
-[点此查看此项目的后端仓库UniBoard-Service](https://github.com/Coooolfan/UniBoard-Service)
+## Recommended IDE Setup
 
-### 运行
-```bash
-npm i
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+
+## Type Support for `.vue` Imports in TS
+
+TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+
+## Customize configuration
+
+See [Vite Configuration Reference](https://vitejs.dev/config/).
+
+## Project Setup
+
+```sh
+npm install
+```
+
+### Compile and Hot-Reload for Development
+
+```sh
 npm run dev
 ```
 
-### 编译
-```bash
-npm i
+### Type-Check, Compile and Minify for Production
+
+```sh
 npm run build
+```
+
+### Lint with [ESLint](https://eslint.org/)
+
+```sh
+npm run lint
 ```
