@@ -5,6 +5,7 @@ import Vditor from 'vditor'
 import ConfirmPopup from 'primevue/confirmpopup'
 import Tree, { type TreeSelectionKeys } from 'primevue/tree'
 import 'vditor/dist/index.css'
+import ProgressSpinner from 'primevue/progressspinner'
 import type { TreeNode } from 'primevue/treenode'
 import {
     defaultNote,
@@ -19,6 +20,7 @@ import { useConfirm } from 'primevue/useconfirm'
 const confirm = useConfirm()
 const editNote = ref<Note>(structuredClone(defaultNote))
 const vditor = ref<Vditor>()
+const vditorLoading = ref(true)
 const selectedKey = ref<TreeSelectionKeys>([])
 // const loadingLabel = computed(() => (editNote.value.loading ? 'Loading...' : 'Saved'))
 const treeNode = ref<TreeNode[]>([
@@ -42,7 +44,11 @@ onMounted(() => {
         cache: {
             enable: false
         },
-        height: '68vh'
+        after: () => {
+            vditorLoading.value = false
+        },
+        height: '68vh',
+        cdn: '/vditor'
     })
 })
 
@@ -85,6 +91,7 @@ async function uploadEvent() {
         let resp = await postNoteDetail(editNote.value.title, value)
         editNote.value.loading = false
         editNote.value.id = resp.id
+        editNote.value.title = resp.title
         refreshTree()
     } else {
         // 修改
@@ -98,6 +105,7 @@ async function uploadEvent() {
 async function deleteHandler(index: number) {
     await deleteNoteDetail(index)
     editNote.value = structuredClone(defaultNote)
+    vditor.value?.setValue('')
     refreshTree()
 }
 
@@ -159,7 +167,12 @@ async function newNote() {
                     />
                 </div>
             </div>
-            <div id="vditor"></div>
+            <div v-show="vditorLoading" class="flex flex-col justify-center items-center pt-8">
+                <ProgressSpinner />
+                <p class="mt-8">等待编辑器组件加载……</p>
+            </div>
+
+            <div v-show="!vditorLoading" id="vditor"></div>
         </div>
     </div>
     <Button @click="closeDialog" label="Close" />
