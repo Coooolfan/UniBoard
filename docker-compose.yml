@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  frontend:
+    image: uniboard:0.1.3
+    container_name: uniboard-frontend
+    ports:
+      - "8888:80"
+    depends_on:
+      - backend
+
+  backend:
+    image: uniboard-service:0.1.8
+    container_name: uniboard-backend
+    # 挂载当前路径的media文件夹到容器的/app/media文件夹
+    volumes:
+      - ./media:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:latest
+    container_name: uniboard-postgres
+    environment:
+      POSTGRES_PASSWORD: XFdWwID02qJxerertfTrYFiok7G1bg  # 设置Postgres密码
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:latest
+    container_name: uniboard-redis
+    command: [ "redis-server", "--requirepass", "GdlkOVEmA3vp8JA6ZoAiqIPxSwZR5" ]  # 设置Redis密码
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  postgres_data:
+  redis_data:

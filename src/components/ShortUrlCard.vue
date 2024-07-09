@@ -22,7 +22,7 @@ const newLongUrl = ref('')
 const newLongUrlLoading = ref(false)
 const page = ref(1)
 const size = ref(5)
-const host = ref(window.location.host)
+const host = window.location.host
 onMounted(async () => {
     let resp = await getShortUrlList()
     shortUrls.value = resp.results
@@ -30,7 +30,6 @@ onMounted(async () => {
     shortUrls.value.forEach((shortUrl) => {
         shortUrl.local_create = localTime(shortUrl.gmt_create)
     })
-    host.value = (await getSysConfig()).host
 })
 async function refreshPage(originalEvent?: DataTablePageEvent) {
     if (originalEvent?.page !== undefined) {
@@ -61,7 +60,7 @@ async function addShortUrl() {
 }
 
 async function copyShortUrl(content: string) {
-    const shortUrl = host.value + '/s/' + content
+    const shortUrl = host + '/s/' + content
     try {
         await navigator.clipboard.writeText(shortUrl)
         toast.add({
