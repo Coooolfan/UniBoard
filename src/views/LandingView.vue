@@ -17,12 +17,12 @@ onMounted(async () => {
 
     // 本地开发环境
     // let backendUrl = 'http://192.168.6.125:8000'
-    let backendUrl = 'http://127.0.0.1:8000'
-    userInfo.value.avatar = backendUrl + userInfo.value.avatar
-    userInfo.value.banner = backendUrl + userInfo.value.banner
-    for (let i = 0; i < links.value.length; i++) {
-        links.value[i].icon = backendUrl + links.value[i].icon
-    }
+    // let backendUrl = 'http://127.0.0.1:8000'
+    // userInfo.value.avatar = backendUrl + userInfo.value.avatar
+    // userInfo.value.banner = backendUrl + userInfo.value.banner
+    // for (let i = 0; i < links.value.length; i++) {
+    //     links.value[i].icon = backendUrl + links.value[i].icon
+    // }
 
     document.title = userInfo.value.name
     const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement
@@ -87,7 +87,7 @@ async function login() {
 }
 </script>
 <template>
-    <div class="h-screen first-page relative bg-[#f2f2f2] lg:bg-transparent">
+    <div class="h-screen first-page relative bg-[#f2f2f2] transition-all lg:bg-transparent">
         <svg
             class="h-screen w-auto absolute top-0 left-0 -z-10 drop-shadow-5xl shadow-black hidden lg:block"
             width="1638.389"
@@ -114,7 +114,7 @@ async function login() {
         </picture>
         <div class="flex z-30 flex-col lg:flex-row">
             <div
-                class="min-w-[35vw] xl:min-w-[35rem] flex flex-col items-center pt-[5vh] xl:pt-[15vh] z-30 translate-x-0 xl:translate-x-6"
+                class="min-w-[35rem] xl:min-w-[35rem] flex flex-col items-center pt-[5vh] xl:pt-[15vh] z-30 translate-x-0 2xl:translate-x-6"
             >
                 <picture>
                     <img
