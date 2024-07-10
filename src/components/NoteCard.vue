@@ -48,7 +48,7 @@ onMounted(() => {
             vditorLoading.value = false
         },
         height: '68vh',
-        cdn: '/vditor'
+        cdn: '',
     })
 })
 

@@ -18,7 +18,7 @@ function addCallbacks(callback: Function) {
 }
 const axiosInstance = axios.create({
     baseURL: '/api',
-    // baseURL: 'http://192.168.6.125:8000/api',
+    // baseURL: 'http://127.0.0.1:8001/api',
     headers: {
         'Content-Type': 'application/json'
     }
