@@ -13,17 +13,6 @@ const links = ref<Array<HyperLink>>([])
 onMounted(async () => {
     userInfo.value = await getUserInfo()
     links.value = await getHyperLinks()
-    // 修改页面标题和头像
-
-    // 本地开发环境
-    // let backendUrl = 'http://192.168.6.125:8000'
-    // let backendUrl = 'http://127.0.0.1:8000'
-    // userInfo.value.avatar = backendUrl + userInfo.value.avatar
-    // userInfo.value.banner = backendUrl + userInfo.value.banner
-    // for (let i = 0; i < links.value.length; i++) {
-    //     links.value[i].icon = backendUrl + links.value[i].icon
-    // }
-
     document.title = userInfo.value.name
     const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement
     favicon.href = userInfo.value.avatar

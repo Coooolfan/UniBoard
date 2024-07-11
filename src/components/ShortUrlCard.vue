@@ -8,7 +8,6 @@ import { deleteShortUrl, getShortUrlList, postShortUrl, type ShortUrl } from '@/
 import { useToast } from 'primevue/usetoast'
 import ConfirmPopup from 'primevue/confirmpopup'
 import { useConfirm } from 'primevue/useconfirm'
-import { getSysConfig } from '@/api/sysConfig'
 const dialogRef: any = inject('dialogRef')
 const confirm = useConfirm()
 const closeDialog = () => {
