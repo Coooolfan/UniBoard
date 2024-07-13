@@ -2,12 +2,14 @@ version: '3'
 
 services:
   frontend:
-    image: uniboard:0.1.5
+    image: uniboard:0.1.9
     container_name: uniboard-frontend
     ports:
       - "8888:80"
     env_file:
       - .env 
+    volumes:
+      - backend_file:/usr/share/nginx/media
     depends_on:
       - backend
 

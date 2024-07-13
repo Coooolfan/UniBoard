@@ -99,6 +99,7 @@ async function login() {
             <img
                 :src="userInfo?.banner"
                 class="absolute inset-0 object-cover w-full h-full filter brightness-90 -z-20 hidden md:block"
+                alt="banner"
             />
         </picture>
         <div class="flex z-30 flex-col lg:flex-row">
