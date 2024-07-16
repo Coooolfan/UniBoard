@@ -104,7 +104,7 @@ async function login() {
         </picture>
         <div class="flex z-30 flex-col lg:flex-row">
             <div
-                class="min-w-[35rem] xl:min-w-[35rem] flex flex-col items-center pt-[5vh] xl:pt-[15vh] z-30 translate-x-0 2xl:translate-x-6"
+                class="md:min-w-[35rem] flex flex-col items-center pt-[5vh] md:pt-[15vh] z-30 translate-x-0 2xl:translate-x-6 transition-all"
             >
                 <picture>
                     <img
@@ -180,7 +180,7 @@ async function login() {
                                 v-model="password"
                                 class="text-shadow shadow-black/50 lg:ml-2.5 lg:w-36 text-xl border-0 appearance-none text-center bg-transparent outline-none border-b-2 border-black mt-10 lg:border-gray-100 lg:mt-0 focus:outline-none focus:border-b-green-800"
                             />
-                            <button class="pi pi-arrow-right ml-4" @click="login" />
+                            <button class="pi pi-arrow-right ml-4 mt-4" @click="login" />
                         </form>
                         <span
                             v-show="sloganType === 'slogan'"
