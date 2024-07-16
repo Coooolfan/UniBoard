@@ -22,13 +22,15 @@
 
 ### Docker
 
+此README的wget目标可能未指向最新版本，建议**前往releases查看各个版本的部署指南**
+
 1. 下载`.env`文件和`docker-compsoe.yml`文件
 
     ```shell
     mkdir uniboard
     cd uniboard
-    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.1.10-alpha/docker-compose.yml
-    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.1.10-alpha/example.env
+    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.1.11-beta/docker-compose.yml    
+    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.1.11-beta/example.env
     ```
 
 2. 按照需要修改`.env`文件和`docker-compsoe.yml`
