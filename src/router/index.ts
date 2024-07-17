@@ -1,9 +1,8 @@
 // router
 // 仅声明Landing页面和UniBoard页面
 import { createRouter, createMemoryHistory } from 'vue-router'
-import Landing from '@/views/LandingView.vue'
-import UniBoard from '@/views/UniBoardView.vue'
-
+const Landing = () => import('@/views/LandingView.vue')
+const UniBoard = () => import('@/views/UniBoardView.vue')
 const routes = [
     {
         path: '/',
