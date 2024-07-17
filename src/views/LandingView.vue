@@ -10,13 +10,24 @@ import InputOtp from 'primevue/inputotp'
 import router from '@/router'
 const userInfo = ref<UserInfo | null>(null)
 const links = ref<Array<HyperLink>>([])
+const fontFamily = ref('arial')
+
 onMounted(async () => {
     userInfo.value = await getUserInfo()
     links.value = await getHyperLinks()
     document.title = userInfo.value.name
     const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement
     favicon.href = userInfo.value.avatar
+    loadFont()
 })
+
+async function loadFont() {
+    const font = new FontFace('CustomFont', `url(${userInfo.value?.name_font})`)
+    await font.load()
+    document.fonts.add(font)
+    fontFamily.value = 'CustomFont'
+}
+
 function getSvgPath(name: string) {
     // 使用动态import语法导入SVG文件
     // https://www.iconfinder.com/
@@ -114,8 +125,9 @@ async function login() {
                     />
                 </picture>
                 <div
-                    class="font-bold text-6xl font-[arial] mt-12 drop-shadow-xl z-50 cursor-pointer"
+                    class="font-bold text-6xl mt-12 drop-shadow-xl z-50 cursor-pointer"
                     @click="switchSloganType()"
+                    :style="{ fontFamily: fontFamily }"
                 >
                     {{ userInfo?.name }}
                 </div>

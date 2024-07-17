@@ -8,6 +8,7 @@ interface UserInfo {
     avatar: string
     slogan: string
     banner: string
+    name_font: string | Blob
     contacts: {
         telegram: string
         qq: string
@@ -30,6 +31,7 @@ const defaultUserInfo: UserInfo = {
     avatar: '',
     slogan: '',
     banner: '',
+    name_font: 'fonts/fonnts.com-Congenial_Bold.otf',
     contacts: {
         telegram: '',
         qq: '',
@@ -71,6 +73,9 @@ async function patchUserInfo(userInfo: UserInfo): Promise<boolean> {
         }
         if (userInfo.banner.startsWith('data:image')) {
             formData.append('banner', base64ToFile(userInfo.banner))
+        }
+        if (typeof userInfo.name_font === 'object') {
+            formData.append('name_font', userInfo.name_font)
         }
 
         // 设置Content-Type为multipart/form-data

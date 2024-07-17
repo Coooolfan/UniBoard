@@ -14,7 +14,7 @@ services:
             - backend
 
     backend:
-        image: coolfan1024/uniboard-service:0.1.16
+        image: coolfan1024/uniboard-service:0.1.17
         container_name: uniboard-backend
         # 挂载backend_file卷到/app/media文件夹
         volumes:

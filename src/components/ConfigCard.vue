@@ -118,7 +118,7 @@ async function saveHyperLinkConfig(index: number) {
     }
 }
 
-function handleFileRead(type: 'avatar' | 'banner' | 'icon', file: File, index?: number) {
+function handleFileRead(type: 'avatar' | 'banner' | 'icon' | 'font', file: File, index?: number) {
     const reader = new FileReader()
     reader.onload = (e) => {
         if (!e.target?.result) return
@@ -126,13 +126,17 @@ function handleFileRead(type: 'avatar' | 'banner' | 'icon', file: File, index?: 
             userInfo.value[type] = e.target.result as string
         } else if (type === 'icon' && index !== undefined) {
             hyperLinkCacheList.value[index].icon = e.target.result as string
+        } else if (type === 'font' && userInfo.value) {
+            // 直接保存Blob对象
+            userInfo.value.name_font = file
+            return
         }
     }
     reader.readAsDataURL(file)
 }
 function onFileChooseHandler(
     e: FileUploadSelectEvent,
-    type: 'avatar' | 'banner' | 'icon',
+    type: 'avatar' | 'banner' | 'icon' | 'font',
     index?: number
 ) {
     if (!e.files[0]) return
@@ -140,6 +144,8 @@ function onFileChooseHandler(
         handleFileRead(type, e.files[0])
     } else if (type === 'icon' && index !== undefined) {
         handleFileRead(type, e.files[0], index)
+    } else if (type === 'font' && userInfo.value) {
+        handleFileRead(type, e.files[0])
     }
 }
 function appendNewHyperLinkCache() {
@@ -240,11 +246,23 @@ async function refreshFromServer(index: number) {
                 </div>
             </div>
         </div>
-        <LabelAndInput
-            id="name"
-            label="展示姓名"
-            v-model="userInfo.name"
-            :loading="userInfo.loading" />
+        <div class="flex items-center">
+            <LabelAndInput
+                id="name"
+                label="展示姓名"
+                v-model="userInfo.name"
+                :loading="userInfo.loading"
+            />
+            <div class="w-2/4 ml-4 mt-4 flex">
+                <FileUpload
+                    mode="basic"
+                    chooseLabel="选择字体"
+                    :maxFileSize="1000000"
+                    @select="(e) => onFileChooseHandler(e, 'font')"
+                    class="h-10"
+                />
+            </div>
+        </div>
         <LabelAndInput
             id="profile"
             label="个人简介"
