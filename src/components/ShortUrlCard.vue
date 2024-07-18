@@ -158,7 +158,7 @@ function confirmDelete(event: any, index: number) {
         <Column field="long_url" header="原始链接"></Column>
         <Column field="local_create" header="创建时间"></Column>
         <Column>
-            <template #body="{ data, frozenRow, index }">
+            <template #body="{ data, index }">
                 <Button
                     type="button"
                     :icon="'pi pi-copy'"
@@ -170,6 +170,7 @@ function confirmDelete(event: any, index: number) {
                     type="button"
                     :icon="'pi pi-trash'"
                     text
+                    severity="danger"
                     size="small"
                     @click="confirmDelete($event, index)"
                 />
