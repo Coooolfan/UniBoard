@@ -41,7 +41,9 @@ function FileHandler() {
     dialog.open(FileCard, {
         props: {
             modal: true,
-            closable: false
+            closable: false,
+            header: '文件',
+            maximizable: true
         }
     })
 }

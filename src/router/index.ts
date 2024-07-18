@@ -1,8 +1,9 @@
 // router
 // 仅声明Landing页面和UniBoard页面
-import { createRouter, createMemoryHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 const Landing = () => import('@/views/LandingView.vue')
 const UniBoard = () => import('@/views/UniBoardView.vue')
+const FileShare = () => import('@/views/FileShareView.vue')
 const routes = [
     {
         path: '/',
@@ -10,14 +11,19 @@ const routes = [
         component: Landing
     },
     {
-        path: '/uniboard',
-        name: 'UniBoard',
+        path: '/dashboard',
+        name: 'Dashboard',
         component: UniBoard
+    },
+    {
+        path: '/f/:fileId',
+        name: 'FileShare',
+        component: FileShare
     }
 ]
 
 const router = createRouter({
-    history: createMemoryHistory(),
+    history: createWebHistory(),
     routes
 })
 

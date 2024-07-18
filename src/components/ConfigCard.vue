@@ -30,7 +30,11 @@ const hyperLinkCacheList = ref<Array<HyperLinkCache>>([])
 const updatting = ref(false)
 onMounted(async () => {
     userInfo.value = await getUserInfo()
+    userInfo.value.loading = false
     hyperLinkCacheList.value = await gethyperLinkCacheList()
+    hyperLinkCacheList.value.forEach((item) => {
+        item.uploading = false
+    })
 })
 
 function logout() {
@@ -341,21 +345,21 @@ async function refreshFromServer(index: number) {
                         id="title"
                         label="标题"
                         v-model="item.title"
-                        :loading="!item.uploading.valueOf()"
+                        :loading="item.uploading.valueOf()"
                         :disabled="item.uploading"
                     />
                     <LabelAndInput
                         id="desc"
                         label="描述"
                         v-model="item.desc"
-                        :loading="!item.uploading.valueOf()"
+                        :loading="item.uploading.valueOf()"
                         :disabled="item.uploading"
                     />
                     <LabelAndInput
                         id="url"
                         label="目标链接"
                         v-model="item.url"
-                        :loading="!item.uploading.valueOf()"
+                        :loading="item.uploading.valueOf()"
                         :disabled="item.uploading"
                     />
                     <div class="flex items-center space-x-2 mt-4">

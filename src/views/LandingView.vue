@@ -43,7 +43,7 @@ const usernameInput = ref<HTMLInputElement>()
 async function switchSloganType(usePassword?: boolean) {
     // 如果已经登录，直接跳转到首页
     if (verifyTokenLocal()) {
-        router.push('/uniboard')
+        router.push('/dashboard')
         return
     }
     otp.value = ''
@@ -73,13 +73,13 @@ watch(otp, (newVal) => {
 async function login() {
     if (sloganType.value === 'otp' && (await loginByTOTP(otp.value))) {
         // 登录成功后跳转到首页
-        router.push('/uniboard')
+        router.push('/dashboard')
     } else if (
         sloganType.value === 'password' &&
         (await loginByPassword(username.value, password.value))
     ) {
         // 登录成功后跳转到首页
-        router.push('/uniboard')
+        router.push('/dashboard')
     } else {
         otp.value = ''
         sloganType.value = 'slogan'

@@ -43,8 +43,8 @@ axiosInstance.interceptors.response.use(
          * 只有当token刷新成功后，onAccessTokenFetched 这个函数执行了回调函数，返回了 resolve 状态
          */
         if (
-            error.response &&
-            error.response.status === 401 &&
+            (error.response.status.toString() === '401' ||
+                error.response.status.toString() === '403') &&
             !error.config.url.endsWith('token/') &&
             !error.config.url.endsWith('token/refresh/')
         ) {
