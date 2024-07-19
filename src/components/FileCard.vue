@@ -33,6 +33,7 @@ const visible = ref(false)
 const page = ref(1)
 const size = ref(5)
 const dialogType = ref<'new' | 'edit'>('new')
+const host = window.location.origin
 const newFileRecord = ref<FileRecord>(structuredClone(defaultFileRecord))
 onMounted(async () => {
     let resp = await getFileRecordList()
@@ -68,16 +69,6 @@ function onFileChooseHandler(e: FileUploadSelectEvent) {
 
 async function newFileRecordUpload() {
     newFileRecord.value.loading = true
-    if (newFileRecord.value.desc === '') {
-        toast.add({
-            severity: 'error',
-            summary: '描述不能为空',
-            detail: '文件描述不能为空',
-            life: 3000
-        })
-        newFileRecord.value.loading = false
-        return
-    }
     if (newFileRecord.value.permission === '3' && newFileRecord.value.password === '') {
         toast.add({
             severity: 'error',
@@ -123,7 +114,7 @@ async function deleteHandler(index: number) {
         toast.add({
             severity: 'success',
             summary: '删除成功',
-            detail: '短链已删除',
+            detail: '文件已删除',
             life: 3000
         })
         fileRecords.value.splice(index, 1)
@@ -170,6 +161,25 @@ function showEditDialog(index: number) {
     newFileRecord.value.password = fileRecords.value[index].password
     visible.value = true
 }
+async function copyFileLink(fileId: number) {
+    const shortUrl = host + '/f/' + fileId + '/'
+    try {
+        await navigator.clipboard.writeText(shortUrl)
+        toast.add({
+            severity: 'success',
+            summary: '复制成功',
+            detail: '文件分享链接已复制到剪贴板',
+            life: 3000
+        })
+    } catch (error) {
+        toast.add({
+            severity: 'error',
+            summary: '复制失败',
+            detail: '请重试',
+            life: 3000
+        })
+    }
+}
 </script>
 <template>
     <ConfirmPopup></ConfirmPopup>
@@ -209,6 +219,14 @@ function showEditDialog(index: number) {
         <Column header="权限">
             <template #body="{ data, index }">
                 <span>{{ permissionMap[data.permission as keyof typeof permissionMap] }}</span>
+                <Button
+                    v-if="data.permission !== 2"
+                    type="button"
+                    :icon="'pi pi-link'"
+                    text
+                    size="small"
+                    @click="copyFileLink(data.id)"
+                />
             </template>
         </Column>
         <Column field="local_create" header="上传时间"></Column>
