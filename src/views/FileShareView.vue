@@ -1,17 +1,11 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import Card, { type CardPassThroughOptions } from 'primevue/card'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import { defaultFileRecord } from '@/api/fileRecord'
 import { defaultUserInfo } from '@/api/userInfo'
 const route = useRoute()
-const pt: CardPassThroughOptions = {
-    body: {
-        class: 'h-full justify-between bg-[#f2f2f2] rounded-xl hover:bg-[#f9f9f9] transition-all duration-500'
-    }
-}
 const fileId = route.params.fileId
 const passwordInput = ref('')
 const fileRecord = ref(structuredClone(defaultFileRecord))
@@ -21,9 +15,15 @@ onMounted(() => {
     getUserInfoDetail()
 })
 function getFileRecordDetail() {
+    // 获取文件详情
+    // 如果服务器返回了404，说明文件不存在
     fetch(`/api/file-records/${fileId}`)
         .then((response) => response.json())
         .then((data) => (fileRecord.value = data))
+        .catch((error) => {
+            console.error(error)
+            fileRecord.value.file_name = '文件不存在'
+        })
 }
 function getUserInfoDetail() {
     fetch(`/api/user-info/1/`)
@@ -32,9 +32,26 @@ function getUserInfoDetail() {
 }
 
 const descIsEmpty = computed(() => fileRecord.value.desc === '')
+
+const titleString = computed(() => {
+    if (fileRecord.value.file_name === '文件不存在') {
+        return 'Oh! 这个链接似乎没有对应的文件'
+    }
+    return userInfo.value.name + ' 向您发送了一份文件' + (descIsEmpty.value ? '' : '并附言') + '：'
+})
+
+async function downloadHandler() {
+    // 构建一个下载请求
+    let a = document.createElement('a')
+    a.style.display = 'none'
+    a.href = `/file/${fileRecord.value.id}/?pw=${passwordInput.value}`
+    a.download = fileRecord.value.file_name
+    console.log(a.href)
+    a.click()
+}
 </script>
 <template>
-    <div class="relative h-screen pt-28 pl-20 pr-20">
+    <div class="relative h-screen p-32">
         <picture>
             <img
                 :src="userInfo.banner"
@@ -42,35 +59,33 @@ const descIsEmpty = computed(() => fileRecord.value.desc === '')
                 alt="background-image"
             />
         </picture>
-        <div class="flex gap-14">
-            <Card
-                class="w-80 h-96 drop-shadow-xl shadow-black transition-all duration-500 hover:drop-shadow-2xl"
-                :pt="pt"
+        <div class="flex gap-14 items-center h-full -translate-y-6">
+            <div
+                class="flex flex-col w-80 p-4 h-96 drop-shadow-xl backdrop-blur-3xl bg-white/80 shadow-black justify-between rounded-xl transition-all duration-500 hover:drop-shadow-2xl hover:backdrop-blur-0"
             >
-                <template #content>
-                    <div class="flex flex-col items-center pt-4">
-                        <i class="pi pi-file" style="font-size: 4rem" />
-                        <p class="mt-4 font-bold tracking-wide">{{ fileRecord.file_name }}</p>
-                    </div>
-                </template>
-                <template #footer>
-                    <div class="flex gap-4">
-                        <InputText
-                            v-if="fileRecord.permission.toString() === '3'"
-                            v-model="passwordInput"
-                            type="text"
-                            placeholder="Password"
-                        />
-                        <Button severity="contrast" label="下载" class="w-full"></Button>
-                    </div>
-                </template>
-            </Card>
-            <div class="p-2">
-                <p class="text-3xl font-bold tracking-wider" v-if="descIsEmpty">
-                    {{ userInfo.name + ' 向您发送了一份文件：' }}
-                </p>
-                <p class="text-3xl font-bold tracking-wider" v-else>
-                    {{ userInfo.name + ' 向您发送了一份文件并附言：' }}
+                <div class="flex flex-col items-center pt-4">
+                    <i class="pi pi-file" style="font-size: 4rem" />
+                    <p class="mt-4 font-bold tracking-wide">{{ fileRecord.file_name }}</p>
+                </div>
+                <div class="flex gap-4">
+                    <InputText
+                        v-if="fileRecord.permission.toString() === '3'"
+                        v-model="passwordInput"
+                        type="text"
+                        placeholder="Password"
+                    />
+                    <Button
+                        severity="contrast"
+                        label="下载"
+                        @click="downloadHandler"
+                        class="w-full"
+                        :disabled="fileRecord.file_name === '文件不存在'"
+                    ></Button>
+                </div>
+            </div>
+            <div class="p-2 h-96 -translate-y-8">
+                <p class="text-4xl font-bold tracking-wider">
+                    {{ titleString }}
                 </p>
                 <p class="mt-8">{{ fileRecord.desc }}</p>
             </div>

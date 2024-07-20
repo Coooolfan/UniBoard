@@ -17,6 +17,12 @@ interface getFileRecordListAPI {
     results: Array<FileRecord>
 }
 
+interface getFileRecordTokenAPI {
+    file_id: string
+    file_name: string
+    token: string
+}
+
 const permissionMap = {
     private: '私有',
     public: '完全公开',
@@ -93,11 +99,17 @@ async function deleteFileRecord(id: number): Promise<boolean> {
     return resp.status === 204
 }
 
+async function getFileRecordToken(id: number): Promise<getFileRecordTokenAPI> {
+    const response = await axiosInstance.get<getFileRecordTokenAPI>(`/file-records/${id}/token/`)
+    return response.data
+}
+
 export {
     getFileRecordList,
     postFileRecord,
     deleteFileRecord,
     patchFileRecord,
+    getFileRecordToken,
     defaultFileRecord,
     permissionMap
 }

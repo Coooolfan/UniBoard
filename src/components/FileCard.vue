@@ -16,7 +16,8 @@ import {
     permissionMap,
     type FileRecord,
     deleteFileRecord,
-    patchFileRecord
+    patchFileRecord,
+    getFileRecordToken
 } from '@/api/fileRecord'
 import LabelAndInput from './LabelAndInput.vue'
 const dialogRef: any = inject('dialogRef')
@@ -180,6 +181,39 @@ async function copyFileLink(fileId: number) {
         })
     }
 }
+async function downloadHandler(index: number) {
+    let resp = await getFileRecordToken(fileRecords.value[index].id)
+    let DirectLinkToken = resp.token
+    let DirectLink = host + '/file/' + DirectLinkToken + '/'
+    let a = document.createElement('a')
+    a.style.display = 'none'
+    a.href = DirectLink
+    a.download = fileRecords.value[index].file_name
+    a.click()
+    a.remove()
+}
+
+async function copyDirctLink() {
+    let resp = await getFileRecordToken(newFileRecord.value.id)
+    let DirectLinkToken = resp.token
+    let DirectLink = host + '/file/' + DirectLinkToken
+    try {
+        await navigator.clipboard.writeText(DirectLink)
+        toast.add({
+            severity: 'success',
+            summary: '复制成功',
+            detail: '文件下载直链已复制到剪贴板\n有效期 5 分钟',
+            life: 3000
+        })
+    } catch (error) {
+        toast.add({
+            severity: 'error',
+            summary: '复制失败',
+            detail: '请重试',
+            life: 3000
+        })
+    }
+}
 </script>
 <template>
     <ConfirmPopup></ConfirmPopup>
@@ -232,6 +266,13 @@ async function copyFileLink(fileId: number) {
         <Column field="local_create" header="上传时间"></Column>
         <Column>
             <template #body="{ data, index }">
+                <Button
+                    type="button"
+                    :icon="'pi pi-download'"
+                    text
+                    size="small"
+                    @click="downloadHandler(index)"
+                />
                 <Button
                     type="button"
                     :icon="'pi pi-pencil'"
@@ -318,6 +359,13 @@ async function copyFileLink(fileId: number) {
             v-model="newFileRecord.password"
         />
         <template #footer>
+            <Button
+                v-if="dialogType === 'edit'"
+                label="复制临时直链"
+                text
+                severity="secondary"
+                @click="copyDirctLink"
+            />
             <Button label="取消" text severity="secondary" @click="visible = false" />
             <Button
                 label="保存"

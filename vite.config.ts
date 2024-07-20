@@ -16,6 +16,7 @@ export default defineConfig({
             '/api/': 'http://127.0.0.1:8001',
             '/media/': 'http://127.0.0.1:8001',
             '/s/': 'http://127.0.0.1:8001',
+            '/file/': 'http://127.0.0.1:8001',
             '/admin/': 'http://127.0.0.1:8001'
         }
     }
