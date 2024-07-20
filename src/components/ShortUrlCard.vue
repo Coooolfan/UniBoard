@@ -155,7 +155,11 @@ function confirmDelete(event: any, index: number) {
         </template>
         <Column field="id" header="ID"></Column>
         <Column field="short_url" header="短链"></Column>
-        <Column field="long_url" header="原始链接"></Column>
+        <Column field="long_url" header="原始链接">
+            <template #body="{ data }">
+                <a :href="data.long_url">{{ data.long_url }}</a>
+            </template>
+        </Column>
         <Column field="local_create" header="创建时间"></Column>
         <Column>
             <template #body="{ data, index }">
