@@ -74,7 +74,7 @@ async function patchUserInfo(userInfo: UserInfo): Promise<boolean> {
         if (userInfo.banner.startsWith('data:image')) {
             formData.append('banner', base64ToFile(userInfo.banner))
         }
-        if (typeof userInfo.name_font === 'object') {
+        if (typeof userInfo.name_font === 'object' && userInfo.name_font !== null) {
             formData.append('name_font', userInfo.name_font)
         }
 

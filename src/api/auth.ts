@@ -73,7 +73,7 @@ axiosInstance.interceptors.response.use(
                         // 刷新token错误跳转到登陆页面
                         removeToken()
                         alert('登录无效/过期，请重新登录')
-                        location.reload()
+                        location.href = window.location.origin
                     })
                     .finally(() => {
                         isRefreshing = false
