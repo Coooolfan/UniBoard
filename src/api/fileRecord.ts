@@ -8,6 +8,7 @@ interface FileRecord {
     permission: string
     password: string
     create_time: string
+    share_code: string
     loading: boolean
     local_create?: string
 }
@@ -38,6 +39,7 @@ const defaultFileRecord: FileRecord = {
     file: '',
     desc: '',
     permission: '2',
+    share_code: '',
     password: '',
     loading: false,
     create_time: ''

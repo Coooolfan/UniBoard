@@ -162,8 +162,8 @@ function showEditDialog(index: number) {
     newFileRecord.value.password = fileRecords.value[index].password
     visible.value = true
 }
-async function copyFileLink(fileId: number) {
-    const shortUrl = host + '/f/' + fileId + '/'
+async function copyFileLink(index: number) {
+    const shortUrl = host + '/f/' + fileRecords.value[index].share_code + '/'
     try {
         await navigator.clipboard.writeText(shortUrl)
         toast.add({
@@ -259,7 +259,7 @@ async function copyDirctLink() {
                     :icon="'pi pi-link'"
                     text
                     size="small"
-                    @click="copyFileLink(data.id)"
+                    @click="copyFileLink(index)"
                 />
             </template>
         </Column>
