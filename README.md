@@ -69,3 +69,28 @@
     ```
 
 4. 使用浏览器访问站点，默认为`8888`端口，如果您在本机部署，即访问`http://localhost:8888`即可
+
+### API
+
+可见：<https://github.com/Coooolfan/UniBoard-Service/blob/main/api/urls/index.py>和<https://github.com/Coooolfan/UniBoard-Service/blob/main/UniBoard/urls.py>
+
+其中`api.urls.index.py`中的路径需要加上`/api/`的前缀。
+
+#### 与文件相关的API说明
+
+注意：所有涉及**增删改**的操作都要带上`jwt_token`，即在请求头中加上`Authorization : Bearer <token string>`。
+
+1. 上传文件
+    - `POST /api/file-records/`：上传文件，参数为[`FileRecord`对象](https://github.com/Coooolfan/UniBoard-Service/blob/main/api/models/FileRecord.py)，返回新增成功的`FileRecord`对象。注意上传时使用`multipart/form-data`格式，以携带二进制文件。
+
+2. 编辑文件信息  
+    - `PATCH /api/file-records/<int:file_id>/`：编辑文件信息，参数为[`FileRecord`对象](https://github.com/Coooolfan/UniBoard-Service/blob/main/api/models/FileRecord.py)，返回修改成功的`FileRecord`对象。如果要修改文件的`file`字段，需要使用`multipart/form-data`格式，以携带二进制文件。
+
+3. 获取文件列表
+    - `GET /api/file-records/`：获取文件列表，返回[`FileRecord`对象](https://github.com/Coooolfan/UniBoard-Service/blob/main/api/models/FileRecord.py)列表。（此方法需要携带`jwt_token`）
+
+4. 获取文件下载直链
+    - `GET /api/file-records/<int:file_id>/token/`：获取文件下载直链，返回一个UUID。使用`5`中的API，替换`<str:share_code>`为UUID即可。获取的地址在5分钟后会失效。（此方法需要携带`jwt_token`，对所有文件都有效）
+
+5. 使用API直接下载非私有文件
+    - `GET /file/<str:share_code>/?pw=<str:password>`：使用此API直接下载非私有文件，`share_code`为文件的`share_code`字段，`password`为文件的`password`字段。此API不需要携带`jwt_token`，对非私有文件有效。(由于使用nginx直接返回，有些客户端可能无法获取文件名，需要手动修改)
