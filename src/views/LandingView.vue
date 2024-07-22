@@ -104,7 +104,7 @@ async function login() {
                 alt="banner"
             />
         </picture>
-        <div class="flex z-30 flex-col lg:flex-row">
+        <div class="flex z-30 flex-col lg:flex-row xl:gap-96">
             <div
                 class="flex flex-col items-center justify-center gap-0 2xl:gap-4 mt-[10vh] md:mt-0 md:pl-5 xl:pl-0 z-30 translate-x-0 xl:translate-x-16 2xl:translate-x-28 transition-all"
             >
@@ -200,6 +200,7 @@ async function login() {
         </div>
     </div>
     <div
+        v-show="links.length > 0"
         class="flex min-h-screen second-page items-center w-auto flex-col shadow-inner z-20 bg-gradient-to-b bg-[#f2f2f2]"
     >
         <p class="text-4xl font-extrabold mt-[10vh]">选择一个页面以继续</p>
@@ -213,7 +214,7 @@ async function login() {
             </template>
         </div>
     </div>
-    <footer class="bg-[#f2f2f2] items-center text-center pt-8 pb-2">
+    <footer class="bg-[#f2f2f2] items-center text-center pt-8 pb-2 hidden">
         <a href="https://github.com/Coooolfan/" target="_blank">@Coooolfan</a>
         Source Code
         <a href="https://github.com/Coooolfan/UniBoard" target="_blank">UniBoard</a>
