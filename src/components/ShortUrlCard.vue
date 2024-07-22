@@ -51,6 +51,16 @@ function localTime(time: string) {
 }
 async function addShortUrl() {
     newLongUrlLoading.value = true
+    if(newLongUrl.value === '') {
+        toast.add({
+            severity: 'error',
+            summary: '添加失败',
+            detail: '链接不能为空',
+            life: 3000
+        })
+        newLongUrlLoading.value = false
+        return
+    }
     let resp = await postShortUrl(newLongUrl.value)
     let newShortUrl = resp.short_url
     copyShortUrl(newShortUrl)

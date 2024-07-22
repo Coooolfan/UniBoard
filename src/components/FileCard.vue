@@ -70,6 +70,16 @@ function onFileChooseHandler(e: FileUploadSelectEvent) {
 
 async function newFileRecordUpload() {
     newFileRecord.value.loading = true
+    if (newFileRecord.value.file_name === '') {
+        toast.add({
+            severity: 'error',
+            summary: '空文件名',
+            detail: '文件名不能为空',
+            life: 3000
+        })
+        newFileRecord.value.loading = false
+        return
+    }
     if (newFileRecord.value.permission === '3' && newFileRecord.value.password === '') {
         toast.add({
             severity: 'error',

@@ -40,6 +40,13 @@ const titleString = computed(() => {
     return userInfo.value.name + ' 向您发送了一份文件' + (descIsEmpty.value ? '' : '并附言') + '：'
 })
 
+const titleStringMobile = computed(() => {
+    if (fileRecord.value.file_name === '文件不存在') {
+        return 'Oh! 这个链接似乎没有对应的文件'
+    }
+    return descIsEmpty.value ? '' : '附言:'
+})
+
 async function downloadHandler() {
     // 构建一个下载请求
     let a = document.createElement('a')
@@ -59,31 +66,38 @@ async function downloadHandler() {
                 alt="background-image"
             />
         </picture>
-        <div class="flex gap-14 items-center h-full -translate-y-6">
+        <div class="flex flex-col md:flex-row gap-14 items-center h-full -translate-y-6">
             <div
-                class="flex flex-col w-80 p-4 h-96 drop-shadow-xl backdrop-blur-3xl bg-white/80 shadow-black justify-between rounded-xl transition-all duration-500 hover:drop-shadow-2xl hover:backdrop-blur-0"
+                class="flex flex-col w-80 p-4 h-2/3 md:h-96 drop-shadow-xl backdrop-blur-3xl bg-white/80 shadow-black justify-between rounded-xl transition-all duration-500 hover:drop-shadow-2xl hover:backdrop-blur-0"
             >
                 <div class="flex flex-col items-center pt-4">
                     <i class="pi pi-file" style="font-size: 4rem" />
                     <p class="mt-4 font-bold tracking-wide">{{ fileRecord.file_name }}</p>
                 </div>
-                <div class="flex gap-4">
+                <div class="pt-4 h-96 block md:hidden">
+                    <p class="text-xl">
+                        {{ titleStringMobile }}
+                    </p>
+                    <p class="">{{ fileRecord.desc }}</p>
+                </div>
+                <div class="flex gap-3">
                     <InputText
                         v-if="fileRecord.permission.toString() === '3'"
                         v-model="passwordInput"
                         type="text"
+                        class="w-full"
                         placeholder="Password"
                     />
                     <Button
                         severity="contrast"
                         label="下载"
                         @click="downloadHandler"
-                        class="w-full"
+                        :class="{ 'w-20': fileRecord.permission.toString() === '3' }"
                         :disabled="fileRecord.file_name === '文件不存在'"
                     ></Button>
                 </div>
             </div>
-            <div class="p-2 h-96 -translate-y-8">
+            <div class="p-2 h-96 hidden md:block -translate-y-8">
                 <p class="text-4xl font-bold tracking-wider">
                     {{ titleString }}
                 </p>

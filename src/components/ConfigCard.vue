@@ -338,9 +338,9 @@ async function refreshFromServer(index: number) {
             <div
                 v-for="(item, index) of hyperLinkCacheList"
                 :key="index"
-                class="m-4 flex justify-around content-around pb-4 items-center border-b-[1px]"
+                class="m-4 flex justify-around pb-4 items-center border-b-[1px]"
             >
-                <div>
+                <div class="w-1/3">
                     <LabelAndInput
                         id="title"
                         label="标题"
