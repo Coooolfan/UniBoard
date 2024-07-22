@@ -46,22 +46,13 @@ async function switchSloganType(usePassword?: boolean) {
         router.push('/dashboard')
         return
     }
-    otp.value = ''
-    if (usePassword) {
+    if (sloganType.value === 'slogan') {
         sloganType.value = 'password'
         await nextTick()
         usernameInput.value?.focus()
-
         return
     }
-    if (sloganType.value !== 'slogan') {
-        sloganType.value = 'slogan'
-        return
-    }
-
-    sloganType.value = 'otp'
-    await nextTick()
-    otpInput.value?.focus()
+    sloganType.value = 'slogan'
 }
 
 watch(otp, (newVal) => {
@@ -87,9 +78,9 @@ async function login() {
 }
 </script>
 <template>
-    <div class="h-screen first-page relative bg-[#f2f2f2] transition-all lg:bg-transparent">
+    <div class="min-h-screen first-page relative bg-[#f2f2f2] transition-all lg:bg-transparent">
         <svg
-            class="h-screen w-auto absolute top-0 left-0 -z-10 drop-shadow-5xl shadow-black hidden lg:block"
+            class="h-screen w-auto absolute top-0 left-0 -z-10 drop-shadow-5xl shadow-black hidden overflow-hidden lg:block md:-translate-x-6 2xl:translate-x-0"
             width="1638.389"
             height="2160"
             viewBox="0 0 433.49 571.5"
@@ -115,12 +106,12 @@ async function login() {
         </picture>
         <div class="flex z-30 flex-col lg:flex-row">
             <div
-                class="md:min-w-[35rem] flex flex-col items-center pt-[5vh] md:pt-[15vh] z-30 translate-x-0 2xl:translate-x-6 transition-all"
+                class="flex flex-col items-center justify-center gap-0 2xl:gap-4 mt-[10vh] md:mt-0 md:pl-5 xl:pl-0 z-30 translate-x-0 xl:translate-x-16 2xl:translate-x-28 transition-all"
             >
                 <picture>
                     <img
                         :src="userInfo?.avatar"
-                        class="rounded-full w-48 xl:w-60 border-10 border-gray-200 shadow-md"
+                        class="rounded-full w-48 h-48 xl:w-60 xl:h-60 border-10 border-gray-200 shadow-md"
                         alt="avater"
                     />
                 </picture>
@@ -185,14 +176,17 @@ async function login() {
                                 type="text"
                                 ref="usernameInput"
                                 v-model="username"
-                                class="text-shadow shadow-black/50 lg:ml-2.5 lg:w-36 text-xl border-0 appearance-none text-center bg-transparent outline-none border-b-2 border-black mt-10 lg:border-gray-100 lg:mt-0 focus:outline-none focus:border-b-green-800"
+                                class="text-shadow-m caret-black shadow-black/50 lg:ml-2.5 lg:w-36 text-xl border-0 appearance-none text-center bg-transparent outline-none border-b-2 border-black mt-10 lg:border-gray-100 lg:mt-0 focus:outline-none focus:border-b-green-800"
                             />
                             <input
                                 type="password"
                                 v-model="password"
-                                class="text-shadow shadow-black/50 lg:ml-2.5 lg:w-36 text-xl border-0 appearance-none text-center bg-transparent outline-none border-b-2 border-black mt-10 lg:border-gray-100 lg:mt-0 focus:outline-none focus:border-b-green-800"
+                                class="text-shadow-m caret-black shadow-black/50 lg:ml-2.5 lg:w-36 text-xl border-0 appearance-none text-center bg-transparent outline-none border-b-2 border-black mt-10 lg:border-gray-100 lg:mt-0 focus:outline-none focus:border-b-green-800"
                             />
-                            <button class="pi pi-arrow-right ml-4 mt-4" @click="login" />
+                            <button
+                                class="pi pi-arrow-right ml-4 mt-4 text-shadow-m shadow-black"
+                                @click="login"
+                            />
                         </form>
                         <span
                             v-show="sloganType === 'slogan'"
