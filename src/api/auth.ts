@@ -45,8 +45,8 @@ axiosInstance.interceptors.response.use(
         if (
             (error.response.status.toString() === '401' ||
                 error.response.status.toString() === '403') &&
-            !error.config.url.endsWith('token/') &&
-            !error.config.url.endsWith('token/refresh/')
+            !(error.config.url === 'token/') &&
+            !(error.config.url === 'token/refresh/')
         ) {
             // 获取当前的请求
             const config = error.response.config
