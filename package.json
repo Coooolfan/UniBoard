@@ -14,13 +14,13 @@
     },
     "dependencies": {
         "@primeuix/styled": "^0.0.5",
-        "@primevue/themes": "^4.0.0",
+        "@primevue/themes": "^4.0.2",
         "axios": "^1.7.2",
         "jwt-decode": "^4.0.0",
         "primeicons": "^7.0.0",
-        "primevue": "^4.0.0",
+        "primevue": "^4.0.2",
         "vditor": "^3.10.4",
-        "vue": "^3.4.31",
+        "vue": "^3.4.34",
         "vue-router": "^4.4.0"
     },
     "devDependencies": {
