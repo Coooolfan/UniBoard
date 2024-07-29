@@ -11,6 +11,7 @@ interface FileRecord {
     share_code: string
     loading: boolean
     local_create?: string
+    processing: number
 }
 
 interface getFileRecordListAPI {
@@ -42,7 +43,8 @@ const defaultFileRecord: FileRecord = {
     share_code: '',
     password: '',
     loading: false,
-    create_time: ''
+    create_time: '',
+    processing: 0
 }
 
 async function getFileRecordList(page?: number, size?: number): Promise<getFileRecordListAPI> {
@@ -68,6 +70,13 @@ async function postFileRecord(fileRecord: FileRecord): Promise<boolean> {
         const response = await axiosInstance.post('file-records/', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
+            },
+            // 回调，用于更新上传进度
+            onUploadProgress: function (progressEvent) {
+                let percentCompleted = Math.round(
+                    (progressEvent.loaded * 100) / progressEvent.total!
+                )
+                fileRecord.processing = percentCompleted
             }
         })
         return response.status.toString().startsWith('2')

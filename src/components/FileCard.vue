@@ -378,7 +378,7 @@ async function copyDirctLink() {
             />
             <Button label="取消" text severity="secondary" @click="visible = false" />
             <Button
-                label="保存"
+                :label="newFileRecord.loading ? newFileRecord.processing + '%' : '上传'"
                 severity="prime"
                 @click="newFileRecordUpload"
                 :loading="newFileRecord.loading"
