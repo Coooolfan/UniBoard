@@ -90,7 +90,10 @@
     - `GET /api/file-records/`：获取文件列表，返回[`FileRecord`对象](https://github.com/Coooolfan/UniBoard-Service/blob/main/api/models/FileRecord.py)列表。（此方法需要携带`jwt_token`）
 
 4. 获取文件下载直链
-    - `GET /api/file-records/<int:file_id>/token/`：获取文件下载直链，返回一个UUID。使用`5`中的API，替换`<str:share_code>`为UUID即可。获取的地址在5分钟后会失效。（此方法需要携带`jwt_token`，对所有文件都有效）
+    - `GET /api/file-records/<int:file_id>/token/`：获取文件下载直链，返回一个UUID。使用`5`中的API，替换`<str:UUID>`为UUID即可。获取的地址在5分钟后会失效。（此方法需要携带`jwt_token`，对所有文件都有效）
 
-5. 使用API直接下载非私有文件
-    - `GET /file/<str:share_code>/?pw=<str:password>`：使用此API直接下载非私有文件，`share_code`为文件的`share_code`字段，`password`为文件的`password`字段。此API不需要携带`jwt_token`，对非私有文件有效。(由于使用nginx直接返回，有些客户端可能无法获取文件名，需要手动修改)
+5. 使用API直接下载文件
+
+    此API不需要携带`jwt_token`，对非私有文件有效。(wget下载时需要加上`--content-disposition`参数)
+    - `GET /file/<str:UUID>/`：使用此API直接下载文件，`UUID`为`4`中返回的UUID。此API不需要携带`jwt_token`，对所有文件有效。
+    - `GET /file/<int:file_id>/?pw=<str:password>`：使用此API直接下载**非私有文件**，`file_id`为文件的`ID`字段，`password`即为文件设置的密码，**密码参数可选**。
