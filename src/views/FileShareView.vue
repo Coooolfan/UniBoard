@@ -92,7 +92,10 @@ async function downloadHandler() {
                         severity="contrast"
                         label="下载"
                         @click="downloadHandler"
-                        :class="{ 'w-20': fileRecord.permission.toString() === '3' }"
+                        :class="{
+                            'w-20': fileRecord.permission.toString() === '3',
+                            'w-full': fileRecord.permission.toString() !== '3'
+                        }"
                         :disabled="fileRecord.file_name === '文件不存在'"
                     ></Button>
                 </div>
