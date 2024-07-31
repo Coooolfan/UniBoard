@@ -28,7 +28,7 @@ services:
                 condition: service_healthy
 
     postgres:
-        image: postgres:latest
+        image: postgres:12.19-bookworm
         container_name: uniboard-postgres
         environment:
             POSTGRES_DB: uniboard
@@ -44,7 +44,7 @@ services:
             retries: 10
 
     redis:
-        image: redis:latest
+        image: redis:7.4.0-bookworm
         container_name: uniboard-redis
         command: ['redis-server', '--requirepass', 'GdlkOVEmA3vp8JA6ZoAiqIPxSwZR5'] # 设置Redis密码
         env_file:
