@@ -51,7 +51,7 @@ function localTime(time: string) {
 }
 async function addShortUrl() {
     newLongUrlLoading.value = true
-    if(newLongUrl.value === '') {
+    if (newLongUrl.value === '') {
         toast.add({
             severity: 'error',
             summary: '添加失败',
@@ -167,7 +167,11 @@ function confirmDelete(event: any, index: number) {
         <Column field="short_url" header="短链"></Column>
         <Column field="long_url" header="原始链接">
             <template #body="{ data }">
-                <a :href="data.long_url">{{ data.long_url }}</a>
+                <a :href="data.long_url" :title="data.long_url">
+                    <div class="max-w-72 overflow-auto lg:max-w-none">
+                        {{ data.long_url }}
+                    </div></a
+                >
             </template>
         </Column>
         <Column field="local_create" header="创建时间"></Column>

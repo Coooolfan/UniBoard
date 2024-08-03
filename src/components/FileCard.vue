@@ -259,7 +259,13 @@ async function copyDirctLink() {
         </template>
         <Column field="id" header="ID"></Column>
         <Column field="file_name" header="文件名"></Column>
-        <Column field="desc" header="描述"></Column>
+        <Column field="desc" header="描述">
+            <template #body="{ data }">
+                <div class="max-w-72 overflow-auto lg:max-w-none" :title="data.desc">
+                    {{ data.desc }}
+                </div>
+            </template>
+        </Column>
         <Column header="权限">
             <template #body="{ data, index }">
                 <span>{{ permissionMap[data.permission as keyof typeof permissionMap] }}</span>
