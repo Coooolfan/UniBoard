@@ -281,6 +281,19 @@ async function copyDirctLink() {
         </Column>
         <Column field="local_create" header="上传时间"></Column>
         <Column>
+            <template #header>
+                <span
+                    title="用户可能使用多线程下载器，无法保证数据的准确"
+                    class="p-datatable-column-title"
+                    data-pc-section="columntitle"
+                    >统计</span
+                >
+            </template>
+            <template #body="{ data }">
+                <span>{{ data.count }}</span>
+            </template>
+        </Column>
+        <Column>
             <template #body="{ data, index }">
                 <Button
                     type="button"

@@ -5,6 +5,7 @@ interface ShortUrl {
     long_url: string
     short_url: string
     gmt_create: string
+    count: number
     local_create?: string
 }
 

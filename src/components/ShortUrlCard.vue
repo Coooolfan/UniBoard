@@ -175,6 +175,7 @@ function confirmDelete(event: any, index: number) {
             </template>
         </Column>
         <Column field="local_create" header="创建时间"></Column>
+        <Column field="count" header="统计"></Column>
         <Column>
             <template #body="{ data, index }">
                 <Button

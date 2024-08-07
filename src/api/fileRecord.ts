@@ -9,6 +9,7 @@ interface FileRecord {
     password: string
     create_time: string
     share_code: string
+    count: number
     loading: boolean
     local_create?: string
     processing: number
@@ -44,6 +45,7 @@ const defaultFileRecord: FileRecord = {
     password: '',
     loading: false,
     create_time: '',
+    count: 0,
     processing: 0
 }
 
