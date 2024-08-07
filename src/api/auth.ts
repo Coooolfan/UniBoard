@@ -61,8 +61,12 @@ axiosInstance.interceptors.response.use(
             // 无感刷新Token
             if (!isRefreshing) {
                 isRefreshing = true
-                axiosInstance
-                    .post('/token/refresh/', { refresh: getRefreshToken() })
+                axios
+                    .post(
+                        '/token/refresh/',
+                        { refresh: getRefreshToken() },
+                        { baseURL: '/api', headers: { 'Content-Type': 'application/json' } }
+                    )
                     .then((response) => {
                         // 用refreshToken获取新的token
                         const accessToken = response.data.access
