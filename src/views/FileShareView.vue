@@ -51,7 +51,7 @@ async function downloadHandler() {
     // 构建一个下载请求
     let a = document.createElement('a')
     a.style.display = 'none'
-    a.href = `/file/${fileRecord.value.id}/?pw=${passwordInput.value}`
+    a.href = `/file/${fileRecord.value.id}/${fileRecord.value.file_name}?pw=${passwordInput.value}`
     a.download = fileRecord.value.file_name
     console.log(a.href)
     a.click()

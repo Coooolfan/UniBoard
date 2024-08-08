@@ -194,7 +194,7 @@ async function copyFileLink(index: number) {
 async function downloadHandler(index: number) {
     let resp = await getFileRecordToken(fileRecords.value[index].id)
     let DirectLinkToken = resp.token
-    let DirectLink = host + '/file/' + DirectLinkToken + '/'
+    let DirectLink = host + '/file/' + DirectLinkToken + '/' + fileRecords.value[index].file_name
     let a = document.createElement('a')
     a.style.display = 'none'
     a.href = DirectLink
@@ -206,7 +206,7 @@ async function downloadHandler(index: number) {
 async function copyDirctLink() {
     let resp = await getFileRecordToken(newFileRecord.value.id)
     let DirectLinkToken = resp.token
-    let DirectLink = host + '/file/' + DirectLinkToken
+    let DirectLink = host + '/file/' + DirectLinkToken + '/' + newFileRecord.value.file_name
     try {
         await navigator.clipboard.writeText(DirectLink)
         toast.add({
