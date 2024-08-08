@@ -9,7 +9,7 @@ services:
         env_file:
             - .env
         volumes:
-            - backend_file:/usr/share/nginx/media
+            - ./service/media:/usr/share/nginx/media
         depends_on:
             - backend
 
@@ -18,7 +18,8 @@ services:
         container_name: uniboard-backend
         # 挂载backend_file卷到/app/media文件夹
         volumes:
-            - backend_file:/app/media
+            - ./service/media:/app/media
+            - ./service/migrations:/app/api/migrations
         env_file:
             - .env
         depends_on:
@@ -28,7 +29,7 @@ services:
                 condition: service_healthy
 
     postgres:
-        image: postgres:12.19-bookworm
+        image: postgres:16.3-bookworm
         container_name: uniboard-postgres
         environment:
             POSTGRES_DB: uniboard
@@ -36,7 +37,7 @@ services:
         env_file:
             - .env
         volumes:
-            - postgres_data:/var/lib/postgresql/data
+            - ./database/postgres_data:/var/lib/postgresql/data
         healthcheck:
             test: ['CMD-SHELL', 'pg_isready -U postgres']
             interval: 3s
@@ -50,14 +51,9 @@ services:
         env_file:
             - .env
         volumes:
-            - redis_data:/data
+            - ./database/redis_data:/data
         healthcheck:
             test: ['CMD', 'redis-cli', 'ping']
             interval: 3s
             timeout: 3s
             retries: 10
-
-volumes:
-    postgres_data:
-    redis_data:
-    backend_file:
