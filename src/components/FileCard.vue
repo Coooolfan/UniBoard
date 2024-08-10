@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, onMounted, ref } from 'vue'
+import { computed, inject, onMounted, ref } from 'vue'
 import Button from 'primevue/button'
 import DataTable, { type DataTablePageEvent } from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -224,6 +224,11 @@ async function copyDirctLink() {
         })
     }
 }
+
+const submitText = computed(() => {
+    if (dialogType.value === 'edit') return '修改'
+    else return newFileRecord.value.loading ? newFileRecord.value.processing + '%' : '上传'
+})
 </script>
 <template>
     <ConfirmPopup></ConfirmPopup>
@@ -397,7 +402,7 @@ async function copyDirctLink() {
             />
             <Button label="取消" text severity="secondary" @click="visible = false" />
             <Button
-                :label="newFileRecord.loading ? newFileRecord.processing + '%' : '上传'"
+                :label="submitText"
                 severity="prime"
                 @click="newFileRecordUpload"
                 :loading="newFileRecord.loading"
