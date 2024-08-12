@@ -97,3 +97,4 @@
     此API不需要携带`jwt_token`，对非私有文件有效。(wget下载时需要加上`--content-disposition`参数)
     - `GET /file/<str:UUID>/`：使用此API直接下载文件，`UUID`为`4`中返回的UUID。此API不需要携带`jwt_token`，对所有文件有效。
     - `GET /file/<int:file_id>/?pw=<str:password>`：使用此API直接下载**非私有文件**，`file_id`为文件的`ID`字段，`password`即为文件设置的密码，**密码参数可选**。
+    - 部分客户端默认不支持使用content-disposition设定文件名，您可以在路径最后加上文件名来为这些客户端提供文件名。比如`localhost/file/UUID/文件名`或者`localhost/file/file_id/文件名`。其中`文件名`不参与任何服务端的逻辑，仅用于客户端显性显示文件名。对于密码保护的文件，需要在路径中加上`?pw=文件密码`。例如`localhost/file/623/sky.png?pw=123456`，这样可以直接下载`ID`为`623`的文件并显性地向客户端文件名为`sky.png`，其中密码为`123456`。
