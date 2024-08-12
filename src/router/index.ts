@@ -16,7 +16,7 @@ const routes = [
         component: UniBoard
     },
     {
-        path: '/f/:fileId',
+        path: '/f/:fileShareCode',
         name: 'FileShare',
         component: FileShare
     }

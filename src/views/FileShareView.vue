@@ -6,7 +6,7 @@ import InputText from 'primevue/inputtext'
 import { defaultFileRecord } from '@/api/fileRecord'
 import { defaultUserInfo } from '@/api/userInfo'
 const route = useRoute()
-const fileId = route.params.fileId
+const shareCode = route.params.fileShareCode
 const passwordInput = ref('')
 const fileRecord = ref(structuredClone(defaultFileRecord))
 const userInfo = ref(structuredClone(defaultUserInfo))
@@ -17,7 +17,7 @@ onMounted(() => {
 function getFileRecordDetail() {
     // 获取文件详情
     // 如果服务器返回了404，说明文件不存在
-    fetch(`/api/file-records/${fileId}`)
+    fetch(`/api/file-records/${shareCode}`)
         .then((response) => response.json())
         .then((data) => (fileRecord.value = data))
         .catch((error) => {
@@ -51,7 +51,7 @@ async function downloadHandler() {
     // 构建一个下载请求
     let a = document.createElement('a')
     a.style.display = 'none'
-    a.href = `/file/${fileRecord.value.id}/${fileRecord.value.file_name}?pw=${passwordInput.value}`
+    a.href = `/file/${shareCode}/${fileRecord.value.file_name}?pw=${passwordInput.value}`
     a.download = fileRecord.value.file_name
     console.log(a.href)
     a.click()

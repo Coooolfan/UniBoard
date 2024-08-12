@@ -68,7 +68,7 @@ function onFileChooseHandler(e: FileUploadSelectEvent) {
     newFileRecord.value.file_name = e.files[0].name
 }
 
-async function newFileRecordUpload() {
+async function submitFileRecordUpload() {
     newFileRecord.value.loading = true
     if (newFileRecord.value.file_name === '') {
         toast.add({
@@ -404,7 +404,7 @@ const submitText = computed(() => {
             <Button
                 :label="submitText"
                 severity="prime"
-                @click="newFileRecordUpload"
+                @click="submitFileRecordUpload"
                 :loading="newFileRecord.loading"
             />
         </template>
