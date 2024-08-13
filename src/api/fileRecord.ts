@@ -108,7 +108,7 @@ async function patchFileRecord(fileRecord: FileRecord) {
 }
 
 async function deleteFileRecord(id: number): Promise<boolean> {
-    let resp = await axiosInstance.delete(`/file-records/${id}`)
+    let resp = await axiosInstance.delete(`/file-records/${id}/`)
     return resp.status === 204
 }
 

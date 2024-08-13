@@ -21,7 +21,6 @@ function NoteHandler() {
             modal: true,
             closable: false,
             header: '笔记',
-            maximizable: true
         }
     })
 }
@@ -32,7 +31,6 @@ function LinkHandler() {
             modal: true,
             closable: false,
             header: '短链接',
-            maximizable: true
         }
     })
 }
@@ -43,7 +41,6 @@ function FileHandler() {
             modal: true,
             closable: false,
             header: '文件',
-            maximizable: true
         }
     })
 }
@@ -54,7 +51,6 @@ function ConfigHandler() {
             modal: true,
             closable: false,
             header: '设置',
-            maximizable: true
         }
     })
 }

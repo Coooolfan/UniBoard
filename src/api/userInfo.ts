@@ -53,6 +53,7 @@ async function getUserInfo(): Promise<UserInfo> {
         const userInfo = response.data[0]
         return userInfo
     } catch (error) {
+        window.alert('无法从服务器获取信息，请检查后端服务是否正常启动！')
         console.error(`Error occurred while fetching user info: ${error}`)
         throw error // Or return an object with error info
     }
