@@ -1,6 +1,6 @@
 # UniBoard
 
-个人主页 + 导航页 + 笔记 + 短链接 + 文件中转站
+个人主页 + 导航页 + 笔记 + 短链接 + 文件分享
 
 此仓库仅为前端页面代码，使用 Vue3 + TS + Primevue4 构建。[后端仓库地址点此访问。](https://github.com/Coooolfan/UniBoard-Service)
 
@@ -48,15 +48,15 @@
     ```shell
     mkdir uniboard
     cd uniboard
-    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.0-beta/docker-compose.yml    
-    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.0-beta/example.env
+    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.1/docker-compose.yml    
+    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.1/example.env
     ```
 
 2. 按照需要修改`.env`文件和`docker-compsoe.yml`
 
     1. `docker-compsoe.yml`：默认只暴露`8888`端口（文件第8行），通过此端口向外暴露所有服务，如果您需要对`uniboard`配置反向代理，只需代理此端口即可。
     2. `.env`：按照提示修改即可，切记要修改`DJANGO_SUPERUSER_PASSWORD`的值，**不要使用默认值!**
-    3. 修改完成后复制`example.env`为`.env`文件供`docker compose`服务调取
+    3. 修改完成后复制`example.env`为`.env`文件,供`docker compose`服务调取
 
         ```shell
         cp example.env .env
@@ -69,6 +69,38 @@
     ```
 
 4. 使用浏览器访问站点，默认为`8888`端口，如果您在本机部署，即访问`http://localhost:8888`即可
+
+### 使用Nginx配置反向代理(可选)
+
+Uniboard程序本身不提供ssl相关功能，直接暴露8888端口不是一个好的选择。
+
+考虑到不同环境下Nginx的配置可能并不相同，下文仅提供思路和必要配置。
+
+1. 创建对应站点的conf文件
+
+2. 编辑监听的server_name, ssl相关内容
+
+3. 配置反向代理
+
+    ```conf
+    client_max_body_size 0; # 设置最大包大小为无上限
+    location / {
+        proxy_pass http://127.0.0.1:8888;
+        proxy_set_header Host $host; # 保留代理之前的host
+        proxy_set_header X-Real-IP $remote_addr; # 保留代理之前的真实客户端ip
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header HTTP_X_FORWARDED_FOR $remote_addr; # 在多级代理的情况下，记录每次代理之前的客户端真实ip
+        proxy_set_header X-Forwarded-Proto $scheme; # 表示客户端真实的协议（http还是https）
+        proxy_redirect default; # 指定修改被代理服务器返回的响应头中的location头域跟refresh头域数值
+        proxy_buffering off;
+    }
+    ```
+
+4. 让Nginx重新加载配置
+
+    ```shell
+    nginx -s reload
+    ```
 
 ### API
 

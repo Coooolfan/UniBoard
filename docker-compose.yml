@@ -2,7 +2,7 @@ version: '3'
 
 services:
     frontend:
-        image: coolfan1024/uniboard:0.2.0
+        image: coolfan1024/uniboard:0.2.1
         container_name: uniboard-frontend
         ports:
             - '8888:80'
@@ -14,9 +14,8 @@ services:
             - backend
 
     backend:
-        image: coolfan1024/uniboard-service:0.2.0
+        image: coolfan1024/uniboard-service:0.2.1
         container_name: uniboard-backend
-        # 挂载backend_file卷到/app/media文件夹
         volumes:
             - ./service/media:/app/media
             - ./service/migrations:/app/api/migrations
@@ -33,21 +32,21 @@ services:
         container_name: uniboard-postgres
         environment:
             POSTGRES_DB: uniboard
-            POSTGRES_PASSWORD: XFdWwID02qJxerertfTrYFiok7G1bg # 设置Postgres密码
+            POSTGRES_PASSWORD: XFdWwID02qJxerertfTrYFiok7G1bg
         env_file:
             - .env
         volumes:
             - ./database/postgres_data:/var/lib/postgresql/data
         healthcheck:
             test: ['CMD-SHELL', 'pg_isready -U postgres']
-            interval: 3s
-            timeout: 3s
+            interval: 10s
+            timeout: 10s
             retries: 10
 
     redis:
         image: redis:7.4.0-bookworm
         container_name: uniboard-redis
-        command: ['redis-server', '--requirepass', 'GdlkOVEmA3vp8JA6ZoAiqIPxSwZR5'] # 设置Redis密码
+        command: ['redis-server', '--requirepass', 'GdlkOVEmA3vp8JA6ZoAiqIPxSwZR5']
         env_file:
             - .env
         volumes:
