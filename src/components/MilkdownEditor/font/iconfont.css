@@ -1,0 +1,165 @@
+@font-face {
+    font-family: 'iconfont'; /* Project id 3482068 */
+    src: url('iconfont.woff2?t=1655980769284') format('woff2');
+}
+
+.iconfont {
+    font-family: 'iconfont' !important;
+    font-size: 16px;
+    line-height: 1;
+    padding: 5px;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.icon-drag:before {
+    content: '\e648';
+}
+
+.icon-text:before {
+    content: '\e768';
+}
+
+.icon-diagram:before {
+    content: '\ec09';
+}
+
+.icon-math_inline:before {
+    content: '\e73c';
+}
+
+.icon-math_block:before {
+    content: '\e616';
+}
+
+.icon-checkboxoutlineblank:before {
+    content: '\e63c';
+}
+
+.icon-formataligncenter:before {
+    content: '\eb81';
+}
+
+.icon-formatalignleft:before {
+    content: '\eb83';
+}
+
+.icon-formatalignright:before {
+    content: '\eb84';
+}
+
+.icon-format-bold:before {
+    content: '\eb85';
+}
+
+.icon-strike-throughs:before {
+    content: '\ed3d';
+}
+
+.icon-format_indent_decrease:before {
+    content: '\e86a';
+}
+
+.icon-format_indent_increase:before {
+    content: '\e86b';
+}
+
+.icon-broken_image:before {
+    content: '\e65d';
+}
+
+.icon-format-italic:before {
+    content: '\e762';
+}
+
+.icon-format-list-bulleted:before {
+    content: '\e764';
+}
+
+.icon-hourglass:before {
+    content: '\e7c3';
+}
+
+.icon-link:before {
+    content: '\e7e2';
+}
+
+.icon-code:before {
+    content: '\e7fc';
+}
+
+.icon-select-all:before {
+    content: '\e965';
+}
+
+.icon-format-list-numbered:before {
+    content: '\eb54';
+}
+
+.icon-delete:before {
+    content: '\e699';
+}
+
+.icon-image:before {
+    content: '\e68a';
+}
+
+.icon-format_quote:before {
+    content: '\e6f9';
+}
+
+.icon-table:before {
+    content: '\e613';
+}
+
+.icon-check_list:before {
+    content: '\e601';
+}
+
+.icon-arrow-left:before {
+    content: '\e7d2';
+}
+
+.icon-arrow-right:before {
+    content: '\e61b';
+}
+
+.icon-h1:before {
+    content: '\e835';
+}
+
+.icon-arrow-up:before {
+    content: '\e685';
+}
+
+.icon-arrow-down:before {
+    content: '\e686';
+}
+
+.icon-horizontal-rule:before {
+    content: '\e61a';
+}
+
+.icon-check_box:before {
+    content: '\e61e';
+}
+
+.icon-chevron-left:before {
+    content: '\e71c';
+}
+
+.icon-chevron-right:before {
+    content: '\e6a7';
+}
+
+.icon-h3:before {
+    content: '\e897';
+}
+
+.icon-table1:before {
+    content: '\eba8';
+}
+
+.icon-h2:before {
+    content: '\e77d';
+}

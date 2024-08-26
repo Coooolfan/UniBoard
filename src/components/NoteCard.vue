@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { inject, onMounted, ref, watch } from 'vue'
 import Button from 'primevue/button'
-import Vditor from 'vditor'
 import ConfirmPopup from 'primevue/confirmpopup'
 import Tree, { type TreeSelectionKeys } from 'primevue/tree'
 import 'vditor/dist/index.css'
@@ -17,10 +16,10 @@ import {
     type Note
 } from '@/api/note'
 import { useConfirm } from 'primevue/useconfirm'
+import editor from './MilkdownEditor/MilkdownEditorWrapper.vue'
+const milkdownRef = ref<InstanceType<typeof editor> | null>(null)
 const confirm = useConfirm()
 const editNote = ref<Note>(structuredClone(defaultNote))
-const vditor = ref<Vditor>()
-const vditorLoading = ref(true)
 const selectedKey = ref<TreeSelectionKeys>([])
 // const loadingLabel = computed(() => (editNote.value.loading ? 'Loading...' : 'Saved'))
 const treeNode = ref<TreeNode[]>([
@@ -32,28 +31,10 @@ const treeNode = ref<TreeNode[]>([
 ])
 onMounted(() => {
     refreshTree()
-    vditor.value = new Vditor('vditor', {
-        placeholder:
-            'UniBoard 使用 Vditor 作为 MarkDown 编辑器。 \nVditor 是一款浏览器端的 Markdown 编辑器，支持所见即所得（富文本）、即时渲染（类似 Typora ）和分屏预览模式',
-        input: (value: string) => {
-            uploadEvent()
-        },
-        counter: {
-            enable: true
-        },
-        cache: {
-            enable: false
-        },
-        after: () => {
-            vditorLoading.value = false
-        },
-        height: '68vh',
-        cdn: '',
-    })
 })
 
 async function refreshTree() {
-    const noteList = await (await getNoteList()).results
+    const noteList = (await getNoteList()).results
     treeNode.value[0].children = noteList.map((note) => {
         return {
             key: note.id.toString(),
@@ -79,33 +60,36 @@ watch(selectedKey, async (newVal) => {
 
     editNote.value.loading = true
     editNote.value = await getNoteDetail(selectedId)
-    vditor.value?.setValue(editNote.value.value)
+    milkdownRef.value?.setValue(editNote.value.value)
+    console.log(editNote.value)
+    // vditor.value?.setValue(editNote.value.value)
 })
 async function uploadEvent() {
-    let value = vditor.value?.getValue()
-    // 空值不上传
-    if (value === undefined || value === `\n`) return
-    // 新建
-    if (editNote.value.id === -1) {
-        editNote.value.loading = true
-        let resp = await postNoteDetail(editNote.value.title, value)
-        editNote.value.loading = false
-        editNote.value.id = resp.id
-        editNote.value.title = resp.title
-        refreshTree()
-    } else {
-        // 修改
-        editNote.value.loading = true
-        await patchNoteDetail(editNote.value.id, editNote.value.title, value)
-        editNote.value.loading = false
-        refreshTree()
-    }
+    return
+    // let value = vditor.value?.getValue()
+    // // 空值不上传
+    // if (value === undefined || value === `\n`) return
+    // // 新建
+    // if (editNote.value.id === -1) {
+    //     editNote.value.loading = true
+    //     let resp = await postNoteDetail(editNote.value.title, value)
+    //     editNote.value.loading = false
+    //     editNote.value.id = resp.id
+    //     editNote.value.title = resp.title
+    //     refreshTree()
+    // } else {
+    //     // 修改
+    //     editNote.value.loading = true
+    //     await patchNoteDetail(editNote.value.id, editNote.value.title, value)
+    //     editNote.value.loading = false
+    //     refreshTree()
+    // }
 }
 
 async function deleteHandler(index: number) {
     await deleteNoteDetail(index)
     editNote.value = structuredClone(defaultNote)
-    vditor.value?.setValue('')
+    // vditor.value?.setValue('')
     refreshTree()
 }
 
@@ -131,7 +115,7 @@ function confirmDelete(event: any, index: number) {
 async function newNote() {
     await uploadEvent()
     editNote.value = structuredClone(defaultNote)
-    vditor.value?.setValue('')
+    // vditor.value?.setValue('')
 }
 </script>
 <template>
@@ -167,12 +151,12 @@ async function newNote() {
                     />
                 </div>
             </div>
-            <div v-show="vditorLoading" class="flex flex-col justify-center items-center pt-8">
+            <editor ref="milkdownRef" />
+            <!-- <div v-show="vditorLoading" class="flex flex-col justify-center items-center pt-8">
                 <ProgressSpinner />
                 <p class="mt-8">等待编辑器组件加载……</p>
-            </div>
-
-            <div v-show="!vditorLoading" id="vditor"></div>
+            </div> -->
+            <!-- <div v-show="!vditorLoading" id="vditor"></div> -->
         </div>
     </div>
     <Button @click="closeDialog" label="Close" />
