@@ -175,5 +175,5 @@ async function newNote() {
             <div v-show="!vditorLoading" id="vditor"></div>
         </div>
     </div>
-    <Button @click="closeDialog" label="Close" />
+    <Button @click="closeDialog" label="关闭" />
 </template>

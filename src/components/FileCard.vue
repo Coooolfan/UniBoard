@@ -325,7 +325,7 @@ const submitText = computed(() => {
             </template>
         </Column>
     </DataTable>
-    <Button @click="closeDialog" label="Close" class="m-4 float-end" />
+    <Button @click="closeDialog" label="关闭" class="m-4 float-end" />
 
     <Dialog v-model:visible="visible" modal :closeOnEscape="false" :style="{ width: '40rem' }">
         <template #header>

@@ -69,7 +69,7 @@ async function addShortUrl() {
 }
 
 async function copyShortUrl(content: string) {
-    const shortUrl = host + '/s/' + content
+    const shortUrl = host + '/s/' + content + '/'
     try {
         await navigator.clipboard.writeText(shortUrl)
         toast.add({
@@ -196,5 +196,5 @@ function confirmDelete(event: any, index: number) {
             </template>
         </Column>
     </DataTable>
-    <Button @click="closeDialog" label="Close" class="m-4 float-end" />
+    <Button @click="closeDialog" label="关闭" class="m-4 float-end" />
 </template>
