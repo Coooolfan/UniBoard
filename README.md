@@ -48,8 +48,8 @@
     ```shell
     mkdir uniboard
     cd uniboard
-    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.2/docker-compose.yml    
-    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.2/example.env
+    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.3/docker-compose.yml    
+    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.3/example.env
     ```
 
 2. 按照需要修改`.env`文件和`docker-compsoe.yml`
