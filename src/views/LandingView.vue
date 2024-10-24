@@ -18,6 +18,7 @@ onMounted(async () => {
     document.title = userInfo.value.name
     const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement
     favicon.href = userInfo.value.avatar
+    loading.value = false
     loadFont()
 })
 
@@ -39,6 +40,7 @@ const username = ref('')
 const password = ref('')
 const otpInput = ref<HTMLInputElement>()
 const usernameInput = ref<HTMLInputElement>()
+const loading = ref(false)
 
 async function switchSloganType(usePassword?: boolean) {
     // 如果已经登录，直接跳转到首页
@@ -62,13 +64,16 @@ watch(otp, (newVal) => {
 })
 
 async function login() {
+    loading.value = true
     if (sloganType.value === 'otp' && (await loginByTOTP(otp.value))) {
         // 登录成功后跳转到首页
+        loading.value = false
         router.push('/dashboard')
     } else if (
         sloganType.value === 'password' &&
         (await loginByPassword(username.value, password.value))
     ) {
+        loading.value = false
         // 登录成功后跳转到首页
         router.push('/dashboard')
     } else {
@@ -169,7 +174,7 @@ async function login() {
                         </InputOtp>
                         <form
                             v-show="sloganType === 'password'"
-                            class="animate-slide-up flex flex-col lg:flex-row"
+                            class="animate-slide-up flex flex-col items-center justify-center lg:flex-row"
                             @submit.native.prevent
                         >
                             <input
@@ -181,10 +186,11 @@ async function login() {
                             <input
                                 type="password"
                                 v-model="password"
-                                class="text-shadow-m caret-black shadow-black/50 lg:ml-2.5 lg:w-36 text-xl border-0 appearance-none text-center bg-transparent outline-none border-b-2 border-black mt-10 lg:border-gray-100 lg:mt-0 focus:outline-none focus:border-b-green-800"
+                                class="text-shadow-m caret-black shadow-black/50 lg:ml-2.5 lg:w-36 text-xl border-0 appearance-none text-center bg-transparent outline-none border-b-2 border-black mt-10 lg:border-gray-100 lg:mt-0 lg:mr-4 focus:outline-none focus:border-b-green-800"
                             />
                             <button
-                                class="pi pi-arrow-right ml-4 mt-4 text-shadow-m shadow-black"
+                                :class="loading ? 'pi-spin pi-spinner' : 'pi-arrow-right'"
+                                class="pi text-shadow-m shadow-black"
                                 @click="login"
                             />
                         </form>
