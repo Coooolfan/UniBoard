@@ -43,6 +43,7 @@ const usernameInput = ref<HTMLInputElement>()
 const loading = ref(false)
 
 async function switchSloganType(usePassword?: boolean) {
+    loading.value = false
     // 如果已经登录，直接跳转到首页
     if (verifyTokenLocal()) {
         router.push('/dashboard')
@@ -116,7 +117,7 @@ async function login() {
                 <picture>
                     <img
                         :src="userInfo?.avatar"
-                        class="rounded-full w-48 h-48 xl:w-60 xl:h-60 border-10 border-gray-200 shadow-md"
+                        class="rounded-full object-cover w-48 h-48 xl:w-60 xl:h-60 border-10 border-gray-200 shadow-md"
                         alt="avater"
                     />
                 </picture>
