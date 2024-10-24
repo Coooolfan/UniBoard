@@ -102,13 +102,47 @@ Uniboard程序本身不提供ssl相关功能，直接暴露8888端口不是一�
     nginx -s reload
     ```
 
-### API
+## 升级
+
+除非特殊说明，升级时只需将容器版本指向最新版本即可。
+
+**建议参照Release页面的更新日志进行升级。如无警告，直接升级即可。**
+
+### 手动编辑`docker-compose.yml`文件
+
+1. 编辑`docker-compose.yml`文件第5行和第17行，将`image`字段最后一个`:`后的版本号改为最新版本即可。
+
+2. 重新启动服务
+
+    ```shell
+    # docker 会自动下载最新版本的镜像并启动服务
+    docker compose up -d
+    ```
+
+### 重新下载`docker-compose.yml`文件
+
+1. 下载最新的`docker-compose.yml`文件
+
+    ```shell
+    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.3/docker-compose.yml
+    ```
+
+2. 按照需要修改`docker-compose.yml`文件
+
+3. 重新启动服务
+
+    ```shell
+    # docker 会自动下载最新版本的镜像并启动服务
+    docker compose up -d
+    ```
+
+## API
 
 可见：<https://github.com/Coooolfan/UniBoard-Service/blob/main/api/urls/index.py>和<https://github.com/Coooolfan/UniBoard-Service/blob/main/UniBoard/urls.py>
 
 其中`api.urls.index.py`中的路径需要加上`/api/`的前缀。
 
-#### 与文件相关的API说明
+### 与文件相关的API说明
 
 注意：所有涉及**增删改**的操作都要带上`jwt_token`，即在请求头中加上`Authorization : Bearer <token string>`。
 
