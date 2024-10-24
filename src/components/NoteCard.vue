@@ -159,18 +159,24 @@ async function newNote() {
         <div class="w-full">
             <div class="flex justify-between items-center">
                 <input
-                    class="font-bold outline-none text-xl border-b-[1px] ml-1 w-80 transition-all focus:border-black focus:outline-none"
+                    class="font-bold outline-none text-xl border-b-[1px] ml-1 w-4/5 focus:border-black focus:outline-none"
                     v-model="editNote.title"
                 />
                 <div>
                     <Button
-                        class="h-8"
-                        :icon="editNote.id === -1 ? 'pi pi-cloud-upload' : 'pi pi-check'"
-                        :loading="editNote.loading"
+                        class="h-10 w-8"
+                        :icon="
+                            editNote.loading
+                                ? 'pi pi-spin pi-spinner'
+                                : editNote.id === -1
+                                  ? 'pi pi-cloud-upload'
+                                  : 'pi pi-check'
+                        "
                         text
                         @click="uploadEvent()"
                     />
                     <Button
+                        class="h-10 w-8"
                         v-show="editNote.id !== -1"
                         severity="danger"
                         :icon="'pi pi-trash'"

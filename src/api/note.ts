@@ -1,3 +1,4 @@
+import { BeautyLocalTime } from '@/assets/utils/BeautyDate'
 import { axiosInstance, refreshAccessToken } from './auth'
 
 interface Note {
@@ -44,8 +45,8 @@ async function addNote(note: Note): Promise<Note> {
 }
 
 async function postNoteDetail(title: string, value: string): Promise<Note> {
-    if (title === '') title = 'Untitled ' + new Date().getTime()
-    if (value === '' || value === `\n`) value = 'Empty note ' + new Date().getTime()
+    if (title === '') title = 'Untitled ' + BeautyLocalTime()
+    if (value === '' || value === `\n`) value = 'Empty note ' + BeautyLocalTime()
     let newNote = {
         title: title,
         value: value
@@ -57,8 +58,8 @@ async function postNoteDetail(title: string, value: string): Promise<Note> {
 }
 
 async function patchNoteDetail(id: number, title: string, value: string): Promise<Note> {
-    if (title === '') title = 'Untitled ' + new Date().getTime()
-    if (value === '' || value === `\n`) value = 'Empty note ' + new Date().getTime()
+    if (title === '') title = 'Untitled ' + BeautyLocalTime()
+    if (value === '' || value === `\n`) value = 'Empty note ' + BeautyLocalTime()
     let newNote = {
         title: title,
         value: value
