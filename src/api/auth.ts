@@ -25,7 +25,7 @@ const axiosInstance = axios.create({
 
 // 请求拦截器
 axiosInstance.interceptors.request.use((config) => {
-    const token = localStorage.getItem('access_token')
+    const token = getAccessToken()
     if (token) {
         config.headers.Authorization = `Bearer ${token}`
     }
@@ -90,12 +90,27 @@ axiosInstance.interceptors.response.use(
     }
 )
 
+function getAccessToken() {
+    return localStorage.getItem('access_token') || ''
+}
+
 function setRefreshToken(token: string) {
     localStorage.setItem('refresh_token', token)
 }
 
 function setAccessToken(token: string) {
     localStorage.setItem('access_token', token)
+}
+
+async function refreshAccessToken(): Promise<string> {
+    const resp = await axiosInstance.post('token/refresh/', {
+        refresh: getRefreshToken()
+    })
+    if (resp.status === 200) {
+        setAccessToken(resp.data.access)
+        return resp.data.access
+    }
+    return ''
 }
 
 function getRefreshToken() {
@@ -161,6 +176,8 @@ export {
     loginByPassword,
     setRefreshToken,
     setAccessToken,
+    refreshAccessToken,
+    getAccessToken,
     getRefreshToken,
     removeToken,
     loginByTOTP,

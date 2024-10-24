@@ -1,4 +1,4 @@
-import { axiosInstance } from './auth'
+import { axiosInstance, refreshAccessToken } from './auth'
 
 interface Note {
     title: string
@@ -69,6 +69,26 @@ async function patchNoteDetail(id: number, title: string, value: string): Promis
     return data
 }
 
+async function postNoteFileDetail(file: File[]): Promise<string> {
+    try {
+        const formData = new FormData()
+        // formData = FormData.append("file[]", File)
+        for (let i = 0; i < file.length; i++) {
+            formData.append('file[]', file[i])
+        }
+        await refreshAccessToken()
+        const resp = await axiosInstance.post('note-files/', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        return resp.data
+    } catch (error) {
+        console.error(`Error occurred while uploading file: ${error}`)
+        return `Error occurred while uploading file: ${error}`
+    }
+}
+
 async function deleteNoteDetail(id: number): Promise<boolean> {
     let resp = await axiosInstance.delete(`/note/${id}`)
     return resp.status === 204
@@ -81,6 +101,7 @@ export {
     patchNoteDetail,
     deleteNoteDetail,
     postNoteDetail,
+    postNoteFileDetail,
     defaultNote
 }
 export type { Note, NoteList }

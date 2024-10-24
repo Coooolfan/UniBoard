@@ -17,6 +17,7 @@ import {
     type Note
 } from '@/api/note'
 import { useConfirm } from 'primevue/useconfirm'
+import { getAccessToken } from '@/api/auth'
 const confirm = useConfirm()
 const editNote = ref<Note>(structuredClone(defaultNote))
 const vditor = ref<Vditor>()
@@ -49,11 +50,21 @@ onMounted(() => {
         },
         height: '68vh',
         cdn: '',
+        upload: {
+            url: '/api/note-files/',
+            setHeaders: () => {
+                const str = `Bearer ${getAccessToken()}`
+                console.log(str)
+                return {
+                    Authorization: str
+                }
+            }
+        }
     })
 })
 
 async function refreshTree() {
-    const noteList = await (await getNoteList()).results
+    const noteList = (await getNoteList()).results
     treeNode.value[0].children = noteList.map((note) => {
         return {
             key: note.id.toString(),
@@ -136,7 +147,7 @@ async function newNote() {
 </script>
 <template>
     <ConfirmPopup></ConfirmPopup>
-    <div class="w-[80vw] h-[75vh] flex items-start justify-start">
+    <div class="w-[80vw] h-[74vh] flex items-start justify-start">
         <div class="w-80 h-4/5 flex flex-col">
             <Button :icon="'pi pi-plus'" text class="ml-auto mr-4" @click="newNote" />
             <Tree
@@ -153,6 +164,7 @@ async function newNote() {
                 />
                 <div>
                     <Button
+                        class="h-8"
                         :icon="editNote.id === -1 ? 'pi pi-cloud-upload' : 'pi pi-check'"
                         :loading="editNote.loading"
                         text
