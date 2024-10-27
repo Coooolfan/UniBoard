@@ -3,11 +3,8 @@ import { useRouter } from 'vue-router'
 import ClockCard from '@/components/ClockCard.vue'
 import { useDialog } from 'primevue/usedialog'
 import DynamicDialog from 'primevue/dynamicdialog'
-import ConfigCard from '@/components/ConfigCard.vue'
-import NoteCard from '@/components/NoteCard.vue'
-import ShortUrlCard from '@/components/ShortUrlCard.vue'
-import FileCard from '@/components/FileCard.vue'
 import Toast from 'primevue/toast'
+
 const router = useRouter()
 const dialog = useDialog()
 
@@ -15,46 +12,56 @@ function router2Landing() {
     router.push('/')
 }
 
+// 异步导入组件
 function NoteHandler() {
-    dialog.open(NoteCard, {
-        props: {
-            modal: true,
-            closable: false,
-            header: '笔记',
-        }
+    import('@/components/NoteCard.vue').then((NoteCard) => {
+        dialog.open(NoteCard.default, {
+            props: {
+                modal: true,
+                closable: false,
+                header: '笔记'
+            }
+        })
     })
 }
 
 function LinkHandler() {
-    dialog.open(ShortUrlCard, {
-        props: {
-            modal: true,
-            closable: false,
-            header: '短链接',
-        }
+    import('@/components/ShortUrlCard.vue').then((ShortUrlCard) => {
+        dialog.open(ShortUrlCard.default, {
+            props: {
+                modal: true,
+                closable: false,
+                header: '短链接'
+            }
+        })
     })
 }
 
 function FileHandler() {
-    dialog.open(FileCard, {
-        props: {
-            modal: true,
-            closable: false,
-            header: '文件',
-        }
+    import('@/components/FileCard.vue').then((FileCard) => {
+        dialog.open(FileCard.default, {
+            props: {
+                modal: true,
+                closable: false,
+                header: '文件'
+            }
+        })
     })
 }
 
 function ConfigHandler() {
-    dialog.open(ConfigCard, {
-        props: {
-            modal: true,
-            closable: false,
-            header: '设置',
-        }
+    import('@/components/ConfigCard.vue').then((ConfigCard) => {
+        dialog.open(ConfigCard.default, {
+            props: {
+                modal: true,
+                closable: false,
+                header: '设置'
+            }
+        })
     })
 }
 </script>
+
 <template>
     <div class="flex flex-col items-center min-h-screen bg-[#f2f2f2]">
         <ClockCard class="mt-28" />
