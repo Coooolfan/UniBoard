@@ -12,14 +12,14 @@ interface HyperLink {
 interface HyperLinkCache {
     id: number
     cacheId?: number
-    finished: Boolean
+    finished: boolean
     url: string
     title: string
     desc: string
     icon: string
     color: string
-    uploading: Boolean
-    saved: Boolean
+    uploading: boolean
+    saved: boolean
 }
 
 const defaultHyperLinkCache: HyperLinkCache = {
@@ -73,7 +73,7 @@ async function gethyperLinkCacheList() {
     return hyperLinkCacheList
 }
 
-async function saveAndUpdateHyperLink(hyperLinkCache: HyperLinkCache): Promise<Boolean> {
+async function saveAndUpdateHyperLink(hyperLinkCache: HyperLinkCache): Promise<boolean> {
     try {
         if (hyperLinkCache.id === -1) {
             const formData = new FormData()
@@ -117,7 +117,7 @@ async function saveAndUpdateHyperLink(hyperLinkCache: HyperLinkCache): Promise<B
     }
 }
 
-async function deleteHyperLink(id: number): Promise<Boolean> {
+async function deleteHyperLink(id: number): Promise<boolean> {
     try {
         const response = await axiosInstance.delete(`hyperlinks/${id}/`)
         return response.status.toString().startsWith('2')

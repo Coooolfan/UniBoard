@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "vite --host",
         "build": "run-p type-check \"build-only {@}\" --",
+        "p": "vite preview",
         "preview": "vite preview",
         "build-only": "vite build",
         "type-check": "vue-tsc --build --force",
@@ -13,33 +14,36 @@
         "format": "prettier --write src/"
     },
     "dependencies": {
-        "@primeuix/styled": "^0.0.5",
-        "@primevue/themes": "^4.0.2",
-        "axios": "^1.7.2",
+        "@primeuix/styled": "^0.2.0",
+        "@primevue/themes": "^4.1.1",
+        "axios": "^1.7.7",
         "jwt-decode": "^4.0.0",
         "primeicons": "^7.0.0",
-        "primevue": "^4.0.2",
-        "vditor": "^3.10.4",
-        "vue": "^3.4.34",
-        "vue-router": "^4.4.0"
+        "primevue": "^4.1.1",
+        "vditor": "^3.10.7",
+        "vue": "^3.5.12",
+        "vue-router": "^4.4.5"
     },
     "devDependencies": {
-        "@rushstack/eslint-patch": "^1.8.0",
+        "@rushstack/eslint-patch": "^1.10.4",
         "@tsconfig/node20": "^20.1.4",
-        "@types/node": "^20.12.5",
+        "@types/node": "^22.8.1",
         "@vitejs/plugin-vue": "^5.0.4",
-        "@vue/eslint-config-prettier": "^9.0.0",
-        "@vue/eslint-config-typescript": "^13.0.0",
+        "@vue/eslint-config-prettier": "^10.1.0",
+        "@vue/eslint-config-typescript": "^14.1.3",
         "@vue/tsconfig": "^0.5.1",
-        "autoprefixer": "^10.4.19",
-        "eslint": "9.5.0",
-        "eslint-plugin-vue": "^9.23.0",
-        "npm-run-all2": "^6.1.2",
-        "postcss": "^8.4.38",
-        "prettier": "^3.2.5",
-        "tailwindcss": "^3.4.4",
-        "typescript": "5.5.2",
+        "autoprefixer": "^10.4.20",
+        "eslint": "9.13.0",
+        "eslint-plugin-vue": "^9.29.1",
+        "npm-run-all2": "^7.0.1",
+        "postcss": "^8.4.47",
+        "prettier": "^3.3.3",
+        "tailwindcss": "^3.4.14",
+        "typescript": "5.6.3",
         "vite": "^5.2.8",
-        "vue-tsc": "^2.0.11"
+        "vue-tsc": "^2.1.8"
+    },
+    "resolutions": {
+        "rollup": "4.24.0"
     }
 }

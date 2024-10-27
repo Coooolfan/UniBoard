@@ -33,7 +33,7 @@ async function getShortUrlList(page?: number, size?: number): Promise<getShortUr
     return response.data
 }
 
-async function deleteShortUrl(id: number): Promise<Boolean> {
+async function deleteShortUrl(id: number): Promise<boolean> {
     try {
         let resp = await axiosInstance.delete(`short-urls/${id}/`)
         if (resp.status.toString().startsWith('2')) {

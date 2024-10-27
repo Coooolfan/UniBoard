@@ -6,7 +6,7 @@
                 v-if="!loading"
                 :id="id"
                 :value="modelValue"
-                @input="$emit('update:modelValue', $event.target.value)"
+                @input="$emit('update:modelValue', $event.target)"
                 class="h-10 w-full"
                 :placeholder="placeholder"
             />
@@ -16,34 +16,22 @@
 </template>
 
 <script setup lang="ts">
-// thanks to Claude-3.5-Sonnet
 import InputText from 'primevue/inputtext'
 import Skeleton from 'primevue/skeleton'
 
-defineProps({
-    id: {
-        type: String,
-        required: true
-    },
-    label: {
-        type: String,
-        required: true
-    },
-    modelValue: {
-        type: String,
-        default: undefined,
-        required: true
-    },
-    placeholder: {
-        type: String,
-        default: ''
-    },
-    loading: {
-        type: Boolean,
-        required: true,
-        default: true
-    }
-})
+const {
+    id,
+    label,
+    modelValue,
+    placeholder = '',
+    loading = false
+} = defineProps<{
+    id: string
+    label: string
+    modelValue: string
+    placeholder?: string
+    loading: boolean
+}>()
 
 defineEmits(['update:modelValue'])
 </script>

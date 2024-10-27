@@ -260,7 +260,7 @@ const submitText = computed(() => {
             </div>
         </template>
         <template #paginatorstart>
-            <Button type="button" icon="pi pi-refresh" text @click="refreshPage" />
+            <Button type="button" icon="pi pi-refresh" text @click="refreshPage()" />
         </template>
         <Column field="id" header="ID"></Column>
         <Column field="file_name" header="文件名"></Column>

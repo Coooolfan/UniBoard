@@ -161,7 +161,7 @@ function confirmDelete(event: any, index: number) {
             </div>
         </template>
         <template #paginatorstart>
-            <Button type="button" icon="pi pi-refresh" text @click="refreshPage" />
+            <Button type="button" icon="pi pi-refresh" text @click="refreshPage()" />
         </template>
         <Column field="id" header="ID"></Column>
         <Column field="short_url" header="短链"></Column>

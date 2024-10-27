@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getUserInfo } from '@/api/userInfo'
 import type { UserInfo } from '@/api/userInfo'
-import { ref, onMounted, watch, nextTick } from 'vue'
+import { ref, onMounted, watch, nextTick, useTemplateRef } from 'vue'
 import LandingPageLink from '@/components/HyperLinkCard.vue'
 import { getHyperLinks } from '@/api/hyperLink'
 import type { HyperLink } from '@/api/hyperLink'
@@ -38,8 +38,8 @@ const sloganType = ref<'slogan' | 'otp' | 'password'>('slogan')
 const otp = ref('')
 const username = ref('')
 const password = ref('')
-const otpInput = ref<HTMLInputElement>()
-const usernameInput = ref<HTMLInputElement>()
+const otpInputRef = useTemplateRef('otpInput')
+const usernameInputRef = useTemplateRef('usernameInput')
 const loading = ref(false)
 
 async function switchSloganType(usePassword?: boolean) {
@@ -52,7 +52,7 @@ async function switchSloganType(usePassword?: boolean) {
     if (sloganType.value === 'slogan') {
         sloganType.value = 'password'
         await nextTick()
-        usernameInput.value?.focus()
+        usernameInputRef.value!.focus()
         return
     }
     sloganType.value = 'slogan'
