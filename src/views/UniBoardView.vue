@@ -13,6 +13,8 @@ function router2Landing() {
 }
 
 // 异步导入组件
+// TODO：当用户hover时，预加载组件
+// TODO：抽象组件导入函数、按钮事件
 function NoteHandler() {
     import('@/components/NoteCard.vue').then((NoteCard) => {
         dialog.open(NoteCard.default, {
