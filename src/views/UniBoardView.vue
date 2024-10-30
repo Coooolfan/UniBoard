@@ -4,6 +4,7 @@ import ClockCard from '@/components/ClockCard.vue'
 import { useDialog } from 'primevue/usedialog'
 import DynamicDialog from 'primevue/dynamicdialog'
 import Toast from 'primevue/toast'
+import { defineAsyncComponent, type Component } from 'vue'
 
 const router = useRouter()
 const dialog = useDialog()
@@ -13,54 +14,37 @@ function router2Landing() {
 }
 
 // 异步导入组件
+// Vite 不支持动态导入，import() 必须传入静态字符串
 // TODO：当用户hover时，预加载组件
-// TODO：抽象组件导入函数、按钮事件
-function NoteHandler() {
-    import('@/components/NoteCard.vue').then((NoteCard) => {
-        dialog.open(NoteCard.default, {
-            props: {
-                modal: true,
-                closable: false,
-                header: '笔记'
-            }
-        })
-    })
+
+// 组件映射
+const componentMap: Record<string, Component> = {
+    Note: defineAsyncComponent(() => import('@/components/NoteCard.vue')),
+    Link: defineAsyncComponent(() => import('@/components/ShortUrlCard.vue')),
+    File: defineAsyncComponent(() => import('@/components/FileCard.vue')),
+    Config: defineAsyncComponent(() => import('@/components/ConfigCard.vue'))
 }
 
-function LinkHandler() {
-    import('@/components/ShortUrlCard.vue').then((ShortUrlCard) => {
-        dialog.open(ShortUrlCard.default, {
-            props: {
-                modal: true,
-                closable: false,
-                header: '短链接'
-            }
-        })
-    })
+const componentNameMap: Record<string, string> = {
+    Note: '笔记',
+    Link: '链接',
+    File: '文件',
+    Config: '设置'
 }
 
-function FileHandler() {
-    import('@/components/FileCard.vue').then((FileCard) => {
-        dialog.open(FileCard.default, {
+function IHandler(componentName: string) {
+    const component = componentMap[componentName]
+    if (component) {
+        dialog.open(component, {
             props: {
                 modal: true,
                 closable: false,
-                header: '文件'
+                header: componentNameMap[componentName]
             }
         })
-    })
-}
-
-function ConfigHandler() {
-    import('@/components/ConfigCard.vue').then((ConfigCard) => {
-        dialog.open(ConfigCard.default, {
-            props: {
-                modal: true,
-                closable: false,
-                header: '设置'
-            }
-        })
-    })
+    } else {
+        console.error(`组件 "${componentName}" 未找到`)
+    }
 }
 </script>
 
@@ -72,19 +56,19 @@ function ConfigHandler() {
         <div class="flex justify-between w-2/5 max-w-96 mt-10">
             <i
                 class="pi text-black grid place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-pencil"
-                @click="NoteHandler"
+                @click="IHandler('Note')"
             ></i>
             <i
                 class="pi text-black grid place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-link"
-                @click="LinkHandler"
+                @click="IHandler('Link')"
             ></i>
             <i
                 class="pi text-black grid place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-copy"
-                @click="FileHandler"
+                @click="IHandler('File')"
             ></i>
             <i
                 class="pi text-black grid place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-cog"
-                @click="ConfigHandler"
+                @click="IHandler('Config')"
             ></i>
             <i
                 class="pi text-black grid place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-sign-out"
