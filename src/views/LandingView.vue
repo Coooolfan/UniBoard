@@ -221,9 +221,9 @@ async function login() {
             </template>
         </div>
     </div>
-    <footer class="bg-[#f2f2f2] items-center text-center pt-8 pb-2 hidden">
-        <a href="https://github.com/Coooolfan/" target="_blank">@Coooolfan</a>
+    <footer class="bg-[#f2f2f2] items-center text-center pt-8 pb-2">
+        <a href="https://github.com/Coooolfan/" class="italic" target="_blank">@Coooolfan</a>
         Source Code
-        <a href="https://github.com/Coooolfan/UniBoard" target="_blank">UniBoard</a>
+        <a href="https://github.com/Coooolfan/UniBoard" class="italic" target="_blank">UniBoard</a>
     </footer>
 </template>

@@ -1,30 +1,17 @@
 <script setup lang="ts">
-import { inject, onMounted, ref } from 'vue'
+import { inject} from 'vue'
 import Button from 'primevue/button'
-import type { UserInfo } from '@/api/userInfo'
-import { getUserInfo, defaultUserInfo } from '@/api/userInfo'
 import { removeToken } from '@/api/auth'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
-import { gethyperLinkCacheList, type HyperLinkCache } from '@/api/hyperLink'
 import { useRouter } from 'vue-router'
 import ConfigCardLanding from '@/components/ConfigCard/ConfigCardLanding.vue'
 import ConfigCardHyperLink from '@/components/ConfigCard/ConfigCardHyperLink.vue'
 const router = useRouter()
 const dialogRef: any = inject('dialogRef')
-const userInfo = ref<UserInfo>(structuredClone(defaultUserInfo))
-const hyperLinkCacheList = ref<Array<HyperLinkCache>>([])
-onMounted(async () => {
-    userInfo.value = await getUserInfo()
-    userInfo.value.loading = false
-    hyperLinkCacheList.value = await gethyperLinkCacheList()
-    hyperLinkCacheList.value.forEach((item) => {
-        item.uploading = false
-    })
-})
 
 function logout() {
     removeToken()

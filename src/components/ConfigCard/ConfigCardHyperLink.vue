@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import Button from 'primevue/button'
-import type { UserInfo } from '@/api/userInfo'
-import { getUserInfo, defaultUserInfo } from '@/api/userInfo'
 import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
 import Skeleton from 'primevue/skeleton'
 import { useToast } from 'primevue/usetoast'
@@ -19,11 +17,8 @@ import HyperLinkCard from '@/components/HyperLinkCard.vue'
 import LabelAndInput from '@/components/LabelAndInput.vue'
 import ColorPicker from 'primevue/colorpicker'
 const toast = useToast()
-const userInfo = ref<UserInfo>(structuredClone(defaultUserInfo))
 const hyperLinkCacheList = ref<Array<HyperLinkCache>>([])
 onMounted(async () => {
-    userInfo.value = await getUserInfo()
-    userInfo.value.loading = false
     hyperLinkCacheList.value = await gethyperLinkCacheList()
     hyperLinkCacheList.value.forEach((item) => {
         item.uploading = false
@@ -82,35 +77,17 @@ async function saveHyperLinkConfig(index: number) {
     }
 }
 
-function handleFileRead(type: 'avatar' | 'banner' | 'icon' | 'font', file: File, index?: number) {
+function handleFileRead(file: File, index: number) {
     const reader = new FileReader()
     reader.onload = (e) => {
         if (!e.target?.result) return
-        if ((type === 'avatar' || type === 'banner') && userInfo.value) {
-            userInfo.value[type] = e.target.result as string
-        } else if (type === 'icon' && index !== undefined) {
-            hyperLinkCacheList.value[index].icon = e.target.result as string
-        } else if (type === 'font' && userInfo.value) {
-            // 直接保存Blob对象
-            userInfo.value.name_font = file
-            return
-        }
+        hyperLinkCacheList.value[index].icon = e.target.result as string
     }
     reader.readAsDataURL(file)
 }
-function onFileChooseHandler(
-    e: FileUploadSelectEvent,
-    type: 'avatar' | 'banner' | 'icon' | 'font',
-    index?: number
-) {
+function onFileChooseHandler(e: FileUploadSelectEvent, index: number) {
     if (!e.files[0]) return
-    if ((type === 'avatar' || type === 'banner') && userInfo.value) {
-        handleFileRead(type, e.files[0])
-    } else if (type === 'icon' && index !== undefined) {
-        handleFileRead(type, e.files[0], index)
-    } else if (type === 'font' && userInfo.value) {
-        handleFileRead(type, e.files[0])
-    }
+    handleFileRead(e.files[0], index)
 }
 function appendNewHyperLinkCache() {
     hyperLinkCacheList.value.push(structuredClone(defaultHyperLinkCache))
@@ -223,11 +200,10 @@ async function refreshFromServer(index: number) {
                     mode="basic"
                     accept="image/*"
                     chooseLabel="选择新ICON"
-                    :maxFileSize="1000000"
                     :auto="true"
                     class="h-10"
                     :disabled="item.uploading"
-                    @select="(e) => onFileChooseHandler(e, 'icon', index)"
+                    @select="(e) => onFileChooseHandler(e, index)"
                 />
                 <Button
                     icon="pi pi-refresh"

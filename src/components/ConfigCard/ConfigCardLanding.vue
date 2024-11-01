@@ -7,19 +7,13 @@ import Image from 'primevue/image'
 import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
 import Skeleton from 'primevue/skeleton'
 import { useToast } from 'primevue/usetoast'
-import { gethyperLinkCacheList, type HyperLinkCache } from '@/api/hyperLink'
 import LabelAndInput from '@/components/LabelAndInput.vue'
 const toast = useToast()
 const userInfo = ref<UserInfo>(structuredClone(defaultUserInfo))
-const hyperLinkCacheList = ref<Array<HyperLinkCache>>([])
 const updatting = ref(false)
 onMounted(async () => {
     userInfo.value = await getUserInfo()
     userInfo.value.loading = false
-    hyperLinkCacheList.value = await gethyperLinkCacheList()
-    hyperLinkCacheList.value.forEach((item) => {
-        item.uploading = false
-    })
 })
 
 async function saveConfigPage1() {
@@ -46,14 +40,12 @@ async function saveConfigPage1() {
     updatting.value = false
 }
 
-function handleFileRead(type: 'avatar' | 'banner' | 'icon' | 'font', file: File, index?: number) {
+function handleFileRead(type: 'avatar' | 'banner' | 'font', file: File) {
     const reader = new FileReader()
     reader.onload = (e) => {
         if (!e.target?.result) return
         if ((type === 'avatar' || type === 'banner') && userInfo.value) {
             userInfo.value[type] = e.target.result as string
-        } else if (type === 'icon' && index !== undefined) {
-            hyperLinkCacheList.value[index].icon = e.target.result as string
         } else if (type === 'font' && userInfo.value) {
             // 直接保存Blob对象
             userInfo.value.name_font = file
@@ -64,14 +56,11 @@ function handleFileRead(type: 'avatar' | 'banner' | 'icon' | 'font', file: File,
 }
 function onFileChooseHandler(
     e: FileUploadSelectEvent,
-    type: 'avatar' | 'banner' | 'icon' | 'font',
-    index?: number
+    type: 'avatar' | 'banner' | 'font',
 ) {
     if (!e.files[0]) return
     if ((type === 'avatar' || type === 'banner') && userInfo.value) {
         handleFileRead(type, e.files[0])
-    } else if (type === 'icon' && index !== undefined) {
-        handleFileRead(type, e.files[0], index)
     } else if (type === 'font' && userInfo.value) {
         handleFileRead(type, e.files[0])
     }
@@ -88,7 +77,6 @@ function onFileChooseHandler(
                     mode="basic"
                     accept="image/*"
                     chooseLabel="选择新头像"
-                    :maxFileSize="1000000"
                     @select="(e) => onFileChooseHandler(e, 'avatar')"
                 />
             </div>
@@ -104,7 +92,6 @@ function onFileChooseHandler(
                     mode="basic"
                     accept="image/*"
                     chooseLabel="选择新横幅"
-                    :maxFileSize="1000000"
                     @select="(e) => onFileChooseHandler(e, 'banner')"
                 />
             </div>
@@ -121,7 +108,6 @@ function onFileChooseHandler(
             <FileUpload
                 mode="basic"
                 chooseLabel="选择字体"
-                :maxFileSize="1000000"
                 @select="(e) => onFileChooseHandler(e, 'font')"
                 class="h-10"
             />
