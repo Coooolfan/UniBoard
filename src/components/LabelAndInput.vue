@@ -6,7 +6,7 @@
                 v-if="!loading"
                 :id="id"
                 :value="modelValue"
-                @input="$emit('update:modelValue', $event.target)"
+                @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
                 class="h-10 w-full"
                 :placeholder="placeholder"
             />
