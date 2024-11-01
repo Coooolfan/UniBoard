@@ -6,20 +6,28 @@ import LandingPageLink from '@/components/HyperLinkCard.vue'
 import { getHyperLinks } from '@/api/hyperLink'
 import type { HyperLink } from '@/api/hyperLink'
 import { loginByPassword, loginByTOTP, verifyTokenLocal } from '@/api/auth'
+import { getSysConfig, type sysConfig } from '@/api/sysConfig'
 import InputOtp from 'primevue/inputotp'
 import router from '@/router'
 const userInfo = ref<UserInfo | null>(null)
 const links = ref<Array<HyperLink>>([])
+const sysConfig = ref<sysConfig>()
 const fontFamily = ref('arial')
 
 onMounted(async () => {
-    userInfo.value = await getUserInfo()
-    links.value = await getHyperLinks()
-    document.title = userInfo.value.name
-    const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement
-    favicon.href = userInfo.value.avatar
-    loading.value = false
-    loadFont()
+    getUserInfo().then((res) => {
+        userInfo.value = res
+        document.title = userInfo.value.name
+        const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement
+        favicon.href = userInfo.value.avatar
+        loadFont()
+    })
+    getHyperLinks().then((res) => {
+        links.value = res
+    })
+    getSysConfig().then((res) => {
+        sysConfig.value = res
+    })
 })
 
 async function loadFont() {
@@ -221,7 +229,10 @@ async function login() {
             </template>
         </div>
     </div>
-    <footer class="bg-[#f2f2f2] items-center text-center pt-8 pb-2">
+    <footer
+        v-show="sysConfig?.show_copyright"
+        class="bg-[#f2f2f2] items-center text-center pt-8 pb-2"
+    >
         <a href="https://github.com/Coooolfan/" class="italic" target="_blank">@Coooolfan</a>
         Source Code
         <a href="https://github.com/Coooolfan/UniBoard" class="italic" target="_blank">UniBoard</a>
