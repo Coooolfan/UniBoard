@@ -47,11 +47,15 @@ const titleStringMobile = computed(() => {
     return descIsEmpty.value ? '' : '附言:'
 })
 
+const downloadUrl = computed(() => {
+    return `/file/${shareCode}/${fileRecord.value.file_name}?pw=${passwordInput.value}`
+})
+
 async function downloadHandler() {
     // 构建一个下载请求
     let a = document.createElement('a')
     a.style.display = 'none'
-    a.href = `/file/${shareCode}/${fileRecord.value.file_name}?pw=${passwordInput.value}`
+    a.href = downloadUrl.value
     a.download = fileRecord.value.file_name
     console.log(a.href)
     a.click()
@@ -90,14 +94,19 @@ async function downloadHandler() {
                     />
                     <Button
                         severity="contrast"
-                        label="下载"
                         @click="downloadHandler"
                         :class="{
                             'w-20': fileRecord.permission.toString() === '3',
                             'w-full': fileRecord.permission.toString() !== '3'
                         }"
                         :disabled="fileRecord.file_name === '文件不存在'"
-                    ></Button>
+                    >
+                        <!-- 使用单独的a标签以允许在浏览器右键复制下载链接 -->
+                        <a v-if="fileRecord.file_name === '文件不存在'" class="pointer-events-none"
+                            >文件不存在</a
+                        >
+                        <a v-else :href="downloadUrl">下载</a>
+                    </Button>
                 </div>
             </div>
             <div class="p-2 h-96 hidden md:block -translate-y-8">
