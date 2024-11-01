@@ -1,12 +1,12 @@
 <template>
     <div class="flex items-center space-x-2 mt-4 w-full justify-start">
-        <label :for="id" class="flex-shrink-0 w-20 text-right">{{ label }}</label>
+        <span :for="id" class="flex-shrink-0 w-20 text-right">{{ label }}</span>
         <div class="flex-grow">
             <InputText
                 v-if="!loading"
                 :id="id"
                 :value="modelValue"
-                @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+                @input="onInput"
                 class="h-10 w-full"
                 :placeholder="placeholder"
             />
@@ -33,5 +33,10 @@ const {
     loading: boolean
 }>()
 
-defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue'])
+
+function onInput(event: Event) {
+    const target = event.target as HTMLInputElement
+    emit('update:modelValue', target.value)
+}
 </script>
