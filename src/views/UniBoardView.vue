@@ -22,7 +22,7 @@ const componentMap: Record<string, Component> = {
     Note: defineAsyncComponent(() => import('@/components/NoteCard.vue')),
     Link: defineAsyncComponent(() => import('@/components/ShortUrlCard.vue')),
     File: defineAsyncComponent(() => import('@/components/FileCard.vue')),
-    Config: defineAsyncComponent(() => import('@/components/ConfigCard.vue'))
+    Config: defineAsyncComponent(() => import('@/components/ConfigCard/ConfigCard.vue'))
 }
 
 const componentNameMap: Record<string, string> = {
