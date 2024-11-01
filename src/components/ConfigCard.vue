@@ -18,10 +18,11 @@ import {
     saveAndUpdateHyperLink,
     type HyperLinkCache
 } from '@/api/hyperLink'
-import HyperLinkCard from './HyperLinkCard.vue'
-import LabelAndInput from './LabelAndInput.vue'
+import HyperLinkCard from '@/components/HyperLinkCard.vue'
+import LabelAndInput from '@/components/LabelAndInput.vue'
 import ColorPicker from 'primevue/colorpicker'
 import { useRouter } from 'vue-router'
+import Panel from 'primevue/panel'
 const toast = useToast()
 const router = useRouter()
 const dialogRef: any = inject('dialogRef')
@@ -217,7 +218,7 @@ async function refreshFromServer(index: number) {
 }
 </script>
 <template>
-    <Fieldset legend="着陆页首屏设置" class="w-[80vw]">
+    <Panel header="着陆页首屏设置" toggleable class="w-[80vw]">
         <div class="flex items-center space-x-2 mt-4">
             <label for="avatar" class="flex-shrink-0 w-20 text-right">头像</label>
             <div class="flex-grow">
@@ -271,151 +272,171 @@ async function refreshFromServer(index: number) {
             id="profile"
             label="个人简介"
             v-model="userInfo.profile"
-            :loading="userInfo.loading" />
+            :loading="userInfo.loading"
+        />
 
         <LabelAndInput
             id="title"
             label="个人标语"
             v-model="userInfo.slogan"
-            :loading="userInfo.loading" />
+            :loading="userInfo.loading"
+        />
 
         <LabelAndInput
             id="contacts.github"
             label="github"
             v-model="userInfo.contacts.github"
-            :loading="userInfo.loading" />
+            :loading="userInfo.loading"
+        />
         <LabelAndInput
             id="contacts.telegram"
             label="telegram"
             v-model="userInfo.contacts.telegram"
-            :loading="userInfo.loading" />
+            :loading="userInfo.loading"
+        />
         <LabelAndInput
             id="contacts.qq"
             label="QQ"
             v-model="userInfo.contacts.qq"
-            :loading="userInfo.loading" />
+            :loading="userInfo.loading"
+        />
         <LabelAndInput
             id="contacts.email"
             label="email"
             v-model="userInfo.contacts.email"
             :loading="userInfo.loading"
-            placeholder="mailto://name@email.com" />
+            placeholder="mailto://name@email.com"
+        />
         <LabelAndInput
             id="contacts.weibo"
             label="weibo"
             v-model="userInfo.contacts.weibo"
-            :loading="userInfo.loading" />
+            :loading="userInfo.loading"
+        />
         <LabelAndInput
             id="contacts.zhihu"
             label="zhihu"
             v-model="userInfo.contacts.zhihu"
-            :loading="userInfo.loading" />
+            :loading="userInfo.loading"
+        />
         <LabelAndInput
             id="contacts.twitter"
             label="twitter"
             v-model="userInfo.contacts.twitter"
-            :loading="userInfo.loading" />
+            :loading="userInfo.loading"
+        />
         <LabelAndInput
             id="contacts.facebook"
             label="facebook"
             v-model="userInfo.contacts.facebook"
-            :loading="userInfo.loading" />
+            :loading="userInfo.loading"
+        />
         <LabelAndInput
             id="contacts.instagram"
             label="instagram"
             v-model="userInfo.contacts.instagram"
-            :loading="userInfo.loading" />
+            :loading="userInfo.loading"
+        />
         <LabelAndInput
             id="contacts.linkedin"
             label="linkedin"
             v-model="userInfo.contacts.linkedin"
-            :loading="userInfo.loading" />
-        <div class="mt-8 float-right">
-            <Button @click="saveConfigPage1" class="ml-8" :loading="updatting" label="保存" /></div
-    ></Fieldset>
-    <Fieldset legend="着陆页第二屏设置">
-        <div>
-            <div
-                v-for="(item, index) of hyperLinkCacheList"
-                :key="index"
-                class="m-4 flex justify-around pb-4 items-center border-b-[1px]"
-            >
-                <div class="w-1/3">
-                    <LabelAndInput
-                        id="title"
-                        label="标题"
-                        v-model="item.title"
-                        :loading="item.uploading"
-                        :disabled="item.uploading"
-                    />
-                    <LabelAndInput
-                        id="desc"
-                        label="描述"
-                        v-model="item.desc"
-                        :loading="item.uploading"
-                        :disabled="item.uploading"
-                    />
-                    <LabelAndInput
-                        id="url"
-                        label="目标链接"
-                        v-model="item.url"
-                        :loading="item.uploading"
-                        :disabled="item.uploading"
-                    />
-                    <div class="flex items-center space-x-2 mt-4">
-                        <label for="name" class="flex-shrink-0 w-20 text-right">主题色</label>
-                        <div class="flex-grow flex items-center">
-                            <ColorPicker
-                                v-if="hyperLinkCacheList"
-                                id="color"
-                                v-model="item.color"
-                                v-tooltip.right="'建议使用淡色系'"
-                                type="text"
-                                :disabled="item.uploading"
-                            />
-                            <Skeleton v-else height="2.5rem" />
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-2 mt-4 justify-end">
-                        <FileUpload
-                            mode="basic"
-                            accept="image/*"
-                            chooseLabel="选择新ICON"
-                            :maxFileSize="1000000"
-                            :auto="true"
-                            class="h-10"
-                            :disabled="item.uploading"
-                            @select="(e) => onFileChooseHandler(e, 'icon', index)"
-                        />
-                        <Button
-                            icon="pi pi-refresh"
-                            aria-label="Save"
-                            v-tooltip.bottom="'从URL自动获取'"
-                            @click="refreshFromServer(index)"
-                        />
-                        <Button
+            :loading="userInfo.loading"
+        />
+        <template #footer>
+            <div class="flex justify-end">
+                <Button
+                    @click="saveConfigPage1"
+                    :loading="updatting"
+                    label="保存"
+                /></div
+        ></template>
+    </Panel>
+    <br />
+    <Panel header="着陆页第二屏设置" toggleable class="padding-4 w-[80vw]">
+        <div
+            v-for="(item, index) of hyperLinkCacheList"
+            :key="index"
+            class="ml-4 mr-4 flex justify-around pb-4 items-center border-b-[1px]"
+        >
+            <div class="w-1/3">
+                <LabelAndInput
+                    id="title"
+                    label="标题"
+                    v-model="item.title"
+                    :loading="item.uploading"
+                    :disabled="item.uploading"
+                />
+                <LabelAndInput
+                    id="desc"
+                    label="描述"
+                    v-model="item.desc"
+                    :loading="item.uploading"
+                    :disabled="item.uploading"
+                />
+                <LabelAndInput
+                    id="url"
+                    label="目标链接"
+                    v-model="item.url"
+                    :loading="item.uploading"
+                    :disabled="item.uploading"
+                />
+                <div class="flex items-center space-x-2 mt-4">
+                    <label for="name" class="flex-shrink-0 w-20 text-right">主题色</label>
+                    <div class="flex-grow flex items-center">
+                        <ColorPicker
                             v-if="hyperLinkCacheList"
-                            severity="danger"
-                            class="ml-4 float-end h-10 transition-all"
-                            label="删除"
-                            @click="removeHyperLink(index)"
-                            :loading="item.uploading"
-                        />
-                        <Button
-                            v-if="hyperLinkCacheList"
-                            class="ml-4 float-end h-10 transition-all"
-                            label="保存"
+                            id="color"
+                            v-model="item.color"
+                            v-tooltip.right="'建议使用淡色系'"
+                            type="text"
                             :disabled="item.uploading"
-                            @click="saveHyperLinkConfig(index)"
-                            :loading="item.uploading"
                         />
+                        <Skeleton v-else height="2.5rem" />
                     </div>
                 </div>
-                <HyperLinkCard :linkData="item" class="scale-90 w-full"></HyperLinkCard>
+                <div class="flex items-center space-x-2 mt-4 justify-end">
+                    <FileUpload
+                        mode="basic"
+                        accept="image/*"
+                        chooseLabel="选择新ICON"
+                        :maxFileSize="1000000"
+                        :auto="true"
+                        class="h-10"
+                        :disabled="item.uploading"
+                        @select="(e) => onFileChooseHandler(e, 'icon', index)"
+                    />
+                    <Button
+                        icon="pi pi-refresh"
+                        aria-label="Save"
+                        v-tooltip.bottom="'从URL自动获取'"
+                        @click="refreshFromServer(index)"
+                    />
+                    <Button
+                        v-if="hyperLinkCacheList"
+                        severity="danger"
+                        class="ml-4 float-end h-10 transition-all"
+                        label="删除"
+                        @click="removeHyperLink(index)"
+                        :loading="item.uploading"
+                    />
+                    <Button
+                        v-if="hyperLinkCacheList"
+                        class="ml-4 float-end h-10 transition-all"
+                        label="保存"
+                        :disabled="item.uploading"
+                        @click="saveHyperLinkConfig(index)"
+                        :loading="item.uploading"
+                    />
+                </div>
             </div>
-            <Button label="新增超链接" class="float-end" @click="appendNewHyperLinkCache" />
+            <HyperLinkCard :linkData="item" class="scale-90 w-full"></HyperLinkCard>
         </div>
-    </Fieldset>
+        <template #footer>
+            <div class="flex justify-end">
+                <Button label="新增超链接" @click="appendNewHyperLinkCache" /></div
+        ></template>
+    </Panel>
     <div class="flex mt-4 justify-end gap-4">
         <Button @click="logout" label="退出登录" severity="danger" /><Button
             @click="closeDialog"
