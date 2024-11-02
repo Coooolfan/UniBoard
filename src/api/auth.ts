@@ -85,7 +85,7 @@ axiosInstance.interceptors.response.use(
             }
             return retryOriginalRequest // 将token过期期间请求的接口包装成promise返回，等待刷新token后重新请求
         } else {
-            return Promise.reject(new Error(error.message || 'Error'))
+            return Promise.reject(error)
         }
     }
 )
@@ -171,6 +171,25 @@ function verifyTokenLocal(): boolean {
     }
 }
 
+async function changePassword(oldPassword: string, newPassword: string): Promise<string> {
+    try {
+        await axiosInstance.post('token/change/', {
+            old: oldPassword,
+            new: newPassword
+        })
+        return 'success'
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            const rawErrorDetail: Array<string> | string = error.response.data.detail
+            if (typeof rawErrorDetail === 'string') {
+                return rawErrorDetail
+            }
+            return rawErrorDetail.join('\n')
+        }
+        return '非预期错误'
+    }
+}
+
 export {
     axiosInstance,
     loginByPassword,
@@ -181,5 +200,6 @@ export {
     getRefreshToken,
     removeToken,
     loginByTOTP,
-    verifyTokenLocal
+    verifyTokenLocal,
+    changePassword
 }

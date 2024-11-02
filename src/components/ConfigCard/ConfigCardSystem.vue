@@ -1,15 +1,22 @@
 <script lang="ts" setup>
 import { defaultSysConfig, getSysConfig, patchSysConfig, type sysConfig } from '@/api/sysConfig'
 import Button from 'primevue/button'
+import Card from 'primevue/card'
 import LabelAndInput from '@/components/LabelAndInput.vue'
 import LabelAndCheckbox from '@/components/LabelAndCheckbox.vue'
 import { onMounted, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
+import { changePassword } from '@/api/auth'
 const toast = useToast()
 const sysConfig = ref<sysConfig>(structuredClone(defaultSysConfig))
 onMounted(async () => {
     sysConfig.value = await getSysConfig()
 })
+
+const oldPassword = ref('')
+const newPassword = ref('')
+const confirmPassword = ref('')
+const passwordloading = ref(false)
 
 async function updateConfig() {
     sysConfig.value.loading = true
@@ -31,6 +38,37 @@ async function updateConfig() {
     }
     sysConfig.value.loading = false
 }
+
+async function updatePassword() {
+    passwordloading.value = true
+    if (newPassword.value !== confirmPassword.value) {
+        toast.add({
+            severity: 'error',
+            summary: '更新失败',
+            detail: '两次输入的密码不一致',
+            life: 3000
+        })
+        passwordloading.value = false
+        return
+    }
+    const resp = await changePassword(oldPassword.value, newPassword.value)
+    if (resp === 'success') {
+        toast.add({
+            severity: 'success',
+            summary: '更新成功',
+            detail: '退出登录后生效',
+            life: 3000
+        })
+    } else {
+        toast.add({
+            severity: 'error',
+            summary: '更新失败',
+            detail: resp,
+            life: 20000
+        })
+    }
+    passwordloading.value = false
+}
 </script>
 <template>
     <LabelAndInput
@@ -47,7 +85,35 @@ async function updateConfig() {
         v-model="sysConfig.show_copyright"
         :loading="sysConfig.loading"
     />
-    <div class="flex justify-end mt-4">
+    <div class="flex justify-end mt-4 mb-4">
         <Button @click="updateConfig" :loading="sysConfig.loading" label="保存" />
     </div>
+
+    <Card style="background-color: #f2f2f2" class="w-1/2">
+        <template #content>
+            <LabelAndInput
+                id="oldPassword"
+                label="旧密码"
+                v-model="oldPassword"
+                :loading="passwordloading"
+            />
+            <LabelAndInput
+                id="newPassword"
+                label="新密码"
+                v-model="newPassword"
+                :loading="passwordloading"
+            />
+            <LabelAndInput
+                id="confirmPassword"
+                label="确认密码"
+                v-model="confirmPassword"
+                :loading="passwordloading"
+            />
+        </template>
+        <template #footer>
+            <div class="flex justify-end mt-4">
+                <Button @click="updatePassword" :loading="passwordloading" label="更新" />
+            </div>
+        </template>
+    </Card>
 </template>
