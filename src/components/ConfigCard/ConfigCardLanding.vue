@@ -54,10 +54,7 @@ function handleFileRead(type: 'avatar' | 'banner' | 'font', file: File) {
     }
     reader.readAsDataURL(file)
 }
-function onFileChooseHandler(
-    e: FileUploadSelectEvent,
-    type: 'avatar' | 'banner' | 'font',
-) {
+function onFileChooseHandler(e: FileUploadSelectEvent, type: 'avatar' | 'banner' | 'font') {
     if (!e.files[0]) return
     if ((type === 'avatar' || type === 'banner') && userInfo.value) {
         handleFileRead(type, e.files[0])
@@ -126,68 +123,73 @@ function onFileChooseHandler(
         v-model="userInfo.slogan"
         :loading="userInfo.loading"
     />
-
-    <LabelAndInput
-        id="contacts.github"
-        label="github"
-        v-model="userInfo.contacts.github"
-        :loading="userInfo.loading"
-    />
-    <LabelAndInput
-        id="contacts.telegram"
-        label="telegram"
-        v-model="userInfo.contacts.telegram"
-        :loading="userInfo.loading"
-    />
-    <LabelAndInput
-        id="contacts.qq"
-        label="QQ"
-        v-model="userInfo.contacts.qq"
-        :loading="userInfo.loading"
-    />
-    <LabelAndInput
-        id="contacts.email"
-        label="email"
-        v-model="userInfo.contacts.email"
-        :loading="userInfo.loading"
-        placeholder="mailto://name@email.com"
-    />
-    <LabelAndInput
-        id="contacts.weibo"
-        label="weibo"
-        v-model="userInfo.contacts.weibo"
-        :loading="userInfo.loading"
-    />
-    <LabelAndInput
-        id="contacts.zhihu"
-        label="zhihu"
-        v-model="userInfo.contacts.zhihu"
-        :loading="userInfo.loading"
-    />
-    <LabelAndInput
-        id="contacts.twitter"
-        label="twitter"
-        v-model="userInfo.contacts.twitter"
-        :loading="userInfo.loading"
-    />
-    <LabelAndInput
-        id="contacts.facebook"
-        label="facebook"
-        v-model="userInfo.contacts.facebook"
-        :loading="userInfo.loading"
-    />
-    <LabelAndInput
-        id="contacts.instagram"
-        label="instagram"
-        v-model="userInfo.contacts.instagram"
-        :loading="userInfo.loading"
-    />
-    <LabelAndInput
-        id="contacts.linkedin"
-        label="linkedin"
-        v-model="userInfo.contacts.linkedin"
-        :loading="userInfo.loading"
-    />
+    <div class="flex justify-between">
+        <div class="w-1/2">
+            <LabelAndInput
+                id="contacts.github"
+                label="github"
+                v-model="userInfo.contacts.github"
+                :loading="userInfo.loading"
+            />
+            <LabelAndInput
+                id="contacts.telegram"
+                label="telegram"
+                v-model="userInfo.contacts.telegram"
+                :loading="userInfo.loading"
+            />
+            <LabelAndInput
+                id="contacts.qq"
+                label="QQ"
+                v-model="userInfo.contacts.qq"
+                :loading="userInfo.loading"
+            />
+            <LabelAndInput
+                id="contacts.email"
+                label="email"
+                v-model="userInfo.contacts.email"
+                :loading="userInfo.loading"
+                placeholder="mailto://name@email.com"
+            />
+            <LabelAndInput
+                id="contacts.weibo"
+                label="weibo"
+                v-model="userInfo.contacts.weibo"
+                :loading="userInfo.loading"
+            />
+        </div>
+        <div class="w-1/2">
+            <LabelAndInput
+                id="contacts.zhihu"
+                label="zhihu"
+                v-model="userInfo.contacts.zhihu"
+                :loading="userInfo.loading"
+            />
+            <LabelAndInput
+                id="contacts.twitter"
+                label="twitter"
+                v-model="userInfo.contacts.twitter"
+                :loading="userInfo.loading"
+            />
+            <LabelAndInput
+                id="contacts.facebook"
+                label="facebook"
+                v-model="userInfo.contacts.facebook"
+                :loading="userInfo.loading"
+            />
+            <LabelAndInput
+                id="contacts.instagram"
+                label="instagram"
+                v-model="userInfo.contacts.instagram"
+                :loading="userInfo.loading"
+            />
+            <LabelAndInput
+                id="contacts.linkedin"
+                label="linkedin"
+                v-model="userInfo.contacts.linkedin"
+                :loading="userInfo.loading"
+            />
+        </div>
+    </div>
 
     <div class="flex justify-end mt-4">
         <Button @click="saveConfigPage1" :loading="updatting" label="保存" />
