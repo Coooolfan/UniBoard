@@ -48,8 +48,8 @@
     ```shell
     mkdir uniboard
     cd uniboard
-    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.3/docker-compose.yml    
-    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.3/example.env
+    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.4/docker-compose.yml    
+    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.4/example.env
     ```
 
 2. 按照需要修改`.env`文件和`docker-compsoe.yml`
@@ -124,7 +124,7 @@ Uniboard程序本身不提供ssl相关功能，直接暴露8888端口不是一�
 1. 下载最新的`docker-compose.yml`文件
 
     ```shell
-    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.3/docker-compose.yml
+    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.4/docker-compose.yml
     ```
 
 2. 按照需要修改`docker-compose.yml`文件
@@ -164,3 +164,4 @@ Uniboard程序本身不提供ssl相关功能，直接暴露8888端口不是一�
     - `GET /file/<str:UUID>/`：使用此API直接下载文件，`UUID`为`4`中返回的UUID。此API不需要携带`jwt_token`，对所有文件有效。
     - `GET /file/<str:share_code>/?pw=<str:password>`：使用此API直接下载**非私有文件**，`share_code`为文件的`share_code`字段，`password`即为文件设置的密码，**密码参数可选**。
     - 部分客户端默认不支持使用content-disposition设定文件名，您可以在路径最后加上文件名来为这些客户端提供文件名。比如`localhost/file/UUID/文件名`或者`localhost/file/share_code/文件名`。其中`文件名`不参与任何服务端的逻辑，仅用于客户端显性显示文件名。对于密码保护的文件，需要在路径中加上`?pw=文件密码`。例如`localhost/file/i2S3/sky.png?pw=123456`，这样可以直接下载`share_code`为`i2S3`的文件并显性地向客户端文件名为`sky.png`，其中密码为`123456`。
+    - 从`v0.2.4`开始，API不再强制同源策略，现在你可以在任何地方使用API直接引用文件。
