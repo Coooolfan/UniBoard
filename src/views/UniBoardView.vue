@@ -4,7 +4,7 @@ import ClockCard from '@/components/ClockCard.vue'
 import { useDialog } from 'primevue/usedialog'
 import DynamicDialog from 'primevue/dynamicdialog'
 import Toast from 'primevue/toast'
-import { defineAsyncComponent, type Component } from 'vue'
+import { defineAsyncComponent, nextTick, onMounted, type Component } from 'vue'
 
 const router = useRouter()
 const dialog = useDialog()
@@ -15,7 +15,15 @@ function router2Landing() {
 
 // 异步导入组件
 // Vite 不支持动态导入，import() 必须传入静态字符串
-// TODO：当用户hover时，预加载组件
+
+onMounted(async () => {
+    await nextTick()
+    import('@/components/NoteCard.vue')
+    import('@/components/ShortUrlCard.vue')
+    import('@/components/FileCard.vue')
+    import('@/components/ConfigCard/ConfigCard.vue')
+})
+
 
 // 组件映射
 const componentMap: Record<string, Component> = {
