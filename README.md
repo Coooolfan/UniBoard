@@ -52,8 +52,8 @@
     ```shell
     mkdir uniboard
     cd uniboard
-    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.4/docker-compose.yml    
-    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.4/example.env
+    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.5/docker-compose.yml    
+    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.5/example.env
     ```
 
 2. 按照需要修改`.env`文件和`docker-compsoe.yml`
@@ -128,7 +128,7 @@ Uniboard程序本身不提供ssl相关功能，直接暴露8888端口不是一�
 1. 下载最新的`docker-compose.yml`文件
 
     ```shell
-    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.4/docker-compose.yml
+    wget https://github.com/Coooolfan/UniBoard/releases/download/v0.2.5/docker-compose.yml
     ```
 
 2. 按照需要修改`docker-compose.yml`文件
