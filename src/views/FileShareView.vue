@@ -35,9 +35,9 @@ function getFileRecordDetail() {
         })
 }
 function getUserInfoDetail() {
-    fetch(`/api/user-info/1/`)
+    fetch(`/api/user-info/`)
         .then((response) => response.json())
-        .then((data) => (userInfo.value = data))
+        .then((data) => (userInfo.value = data[0]))
 }
 
 const descIsEmpty = computed(() => fileRecord.value.desc === '')
