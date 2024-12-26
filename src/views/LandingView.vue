@@ -31,6 +31,7 @@ onMounted(async () => {
 })
 
 async function loadFont() {
+    if(!userInfo.value?.name_font) return
     const font = new FontFace('CustomFont', `url(${userInfo.value?.name_font})`)
     await font.load()
     document.fonts.add(font)
