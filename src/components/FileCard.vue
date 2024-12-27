@@ -175,7 +175,9 @@ function showEditDialog(index: number) {
 async function copyFileLink(index: number) {
     const shortUrl = host + '/f/' + fileRecords.value[index].share_code + '/'
     try {
-        await navigator.clipboard.writeText(shortUrl)
+        const clipboard = window.navigator.clipboard
+        if (!clipboard) throw new Error('剪切版读写仅在安全上下文（HTTPS）中可用')
+        await clipboard.writeText(shortUrl)
         toast.add({
             severity: 'success',
             summary: '复制成功',
@@ -186,8 +188,8 @@ async function copyFileLink(index: number) {
         toast.add({
             severity: 'error',
             summary: '复制失败',
-            detail: '请重试',
-            life: 3000
+            detail: error,
+            life: 10000
         })
     }
 }
@@ -208,7 +210,9 @@ async function copyDirctLink() {
     let DirectLinkToken = resp.token
     let DirectLink = host + '/file/' + DirectLinkToken + '/' + newFileRecord.value.file_name
     try {
-        await navigator.clipboard.writeText(DirectLink)
+        const clipboard = window.navigator.clipboard
+        if (!clipboard) throw new Error('剪切版读写仅在安全上下文（HTTPS）中可用')
+        await clipboard.writeText(DirectLink)
         toast.add({
             severity: 'success',
             summary: '复制成功',
@@ -219,8 +223,8 @@ async function copyDirctLink() {
         toast.add({
             severity: 'error',
             summary: '复制失败',
-            detail: '请重试',
-            life: 3000
+            detail: error,
+            life: 10000
         })
     }
 }

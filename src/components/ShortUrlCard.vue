@@ -71,7 +71,9 @@ async function addShortUrl() {
 async function copyShortUrl(content: string) {
     const shortUrl = host + '/s/' + content + '/'
     try {
-        await navigator.clipboard.writeText(shortUrl)
+        const clipboard = window.navigator.clipboard
+        if (!clipboard) throw new Error('剪切版读写仅在安全上下文（HTTPS）中可用')
+        await clipboard.writeText(shortUrl)
         toast.add({
             severity: 'success',
             summary: '复制成功',
@@ -82,8 +84,8 @@ async function copyShortUrl(content: string) {
         toast.add({
             severity: 'error',
             summary: '复制失败',
-            detail: '请重试',
-            life: 3000
+            detail: error,
+            life: 10000
         })
     }
 }
