@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, ref } from 'vue'
+import { useClipboard } from '@/composables/useClipboard'
 import Button from 'primevue/button'
 import DataTable, { type DataTablePageEvent } from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -172,26 +173,11 @@ function showEditDialog(index: number) {
     newFileRecord.value.password = fileRecords.value[index].password
     visible.value = true
 }
-async function copyFileLink(index: number) {
+const { copyToClipboard } = useClipboard()
+
+function copyFileLink(index: number) {
     const shortUrl = host + '/f/' + fileRecords.value[index].share_code + '/'
-    try {
-        const clipboard = window.navigator.clipboard
-        if (!clipboard) throw new Error('剪切版读写仅在安全上下文（HTTPS）中可用')
-        await clipboard.writeText(shortUrl)
-        toast.add({
-            severity: 'success',
-            summary: '复制成功',
-            detail: '文件分享链接已复制到剪贴板',
-            life: 3000
-        })
-    } catch (error) {
-        toast.add({
-            severity: 'error',
-            summary: '复制失败',
-            detail: error,
-            life: 10000
-        })
-    }
+    copyToClipboard(shortUrl, '文件分享链接已复制到剪贴板', '文件分享链接复制失败')
 }
 async function downloadHandler(index: number) {
     let resp = await getFileRecordToken(fileRecords.value[index].id)
@@ -209,24 +195,7 @@ async function copyDirctLink() {
     let resp = await getFileRecordToken(newFileRecord.value.id)
     let DirectLinkToken = resp.token
     let DirectLink = host + '/file/' + DirectLinkToken + '/' + newFileRecord.value.file_name
-    try {
-        const clipboard = window.navigator.clipboard
-        if (!clipboard) throw new Error('剪切版读写仅在安全上下文（HTTPS）中可用')
-        await clipboard.writeText(DirectLink)
-        toast.add({
-            severity: 'success',
-            summary: '复制成功',
-            detail: '文件下载直链已复制到剪贴板\n有效期 5 分钟',
-            life: 3000
-        })
-    } catch (error) {
-        toast.add({
-            severity: 'error',
-            summary: '复制失败',
-            detail: error,
-            life: 10000
-        })
-    }
+    copyToClipboard(DirectLink, '文件下载直链已复制到剪贴板\n有效期 5 分钟', '文件下载直链复制失败')
 }
 
 const submitText = computed(() => {

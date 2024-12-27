@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { inject, onMounted, ref } from 'vue'
+import { useClipboard } from '@/composables/useClipboard'
 import Button from 'primevue/button'
 import DataTable, { type DataTablePageEvent } from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -68,26 +69,11 @@ async function addShortUrl() {
     refreshPage()
 }
 
-async function copyShortUrl(content: string) {
+const { copyToClipboard } = useClipboard()
+
+function copyShortUrl(content: string) {
     const shortUrl = host + '/s/' + content + '/'
-    try {
-        const clipboard = window.navigator.clipboard
-        if (!clipboard) throw new Error('剪切版读写仅在安全上下文（HTTPS）中可用')
-        await clipboard.writeText(shortUrl)
-        toast.add({
-            severity: 'success',
-            summary: '复制成功',
-            detail: '短链已复制到剪贴板',
-            life: 3000
-        })
-    } catch (error) {
-        toast.add({
-            severity: 'error',
-            summary: '复制失败',
-            detail: error,
-            life: 10000
-        })
-    }
+    copyToClipboard(shortUrl, '短链已复制到剪贴板', '短链复制失败')
 }
 
 async function deleteHandler(index: number) {
