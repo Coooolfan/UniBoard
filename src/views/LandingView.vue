@@ -126,7 +126,7 @@ async function login() {
                 <picture>
                     <img
                         :src="userInfo?.avatar"
-                        class="rounded-full object-cover w-48 h-48 xl:w-60 xl:h-60 border-10 border-gray-200 shadow-md"
+                        class="rounded-full object-cover w-48 h-48 xl:w-60 xl:h-60 shadow-md"
                         alt="avater"
                     />
                 </picture>
@@ -153,7 +153,7 @@ async function login() {
                     </template>
                 </div>
             </div>
-            <div class="flex-grow z-10">
+            <div class="grow z-10">
                 <div class="relative h-auto mt-8 w-full lg:h-screen lg:mt-0">
                     <div
                         class="relative flex items-center justify-center h-full w-full pb-10 text-white text-5xl tracking-widest text-shadow-xl"
@@ -166,14 +166,14 @@ async function login() {
                                     type="text"
                                     v-bind="attrs"
                                     v-on="events"
-                                    class="animate-slide-up text-shadow shadow-black/50 ml-2.5 w-10 text-4xl border-0 appearance-none text-center transition-all duration-200 bg-transparent outline-none border-b-2 border-gray-300 focus:outline-none focus:border-b-gray-200"
+                                    class="animate-slide-up text-shadow shadow-black/50 ml-2.5 w-10 text-4xl border-0 appearance-none text-center transition-all duration-200 bg-transparent outline-hidden border-b-2 border-gray-300 focus:outline-hidden focus:border-b-gray-200"
                                 />
                                 <input
                                     v-else
                                     type="text"
                                     v-bind="attrs"
                                     v-on="events"
-                                    class="animate-slide-up text-shadow shadow-black/50 ml-2.5 w-10 text-4xl border-0 appearance-none text-center transition-all duration-200 bg-transparent outline-none border-b-2 border-gray-300 focus:outline-none focus:border-b-gray-200"
+                                    class="animate-slide-up text-shadow shadow-black/50 ml-2.5 w-10 text-4xl border-0 appearance-none text-center transition-all duration-200 bg-transparent outline-hidden border-b-2 border-gray-300 focus:outline-hidden focus:border-b-gray-200"
                                 />
                                 <i
                                     class="animate-slide-up pi pi-angle-double-right pl-4 text-white cursor-pointer"
@@ -191,12 +191,12 @@ async function login() {
                                 type="text"
                                 ref="usernameInput"
                                 v-model="username"
-                                class="text-shadow-m caret-black shadow-black/50 lg:ml-2.5 lg:w-36 text-xl border-0 appearance-none text-center bg-transparent outline-none border-b-2 border-black mt-10 lg:border-gray-100 lg:mt-0 focus:outline-none focus:border-b-green-800"
+                                class="text-shadow-m caret-black shadow-black/50 lg:ml-2.5 lg:w-36 text-xl border-0 appearance-none text-center bg-transparent outline-hidden border-b-2 border-black mt-10 lg:border-gray-100 lg:mt-0 focus:outline-hidden focus:border-b-green-800"
                             />
                             <input
                                 type="password"
                                 v-model="password"
-                                class="text-shadow-m caret-black shadow-black/50 lg:ml-2.5 lg:w-36 text-xl border-0 appearance-none text-center bg-transparent outline-none border-b-2 border-black mt-10 lg:border-gray-100 lg:mt-0 lg:mr-4 focus:outline-none focus:border-b-green-800"
+                                class="text-shadow-m caret-black shadow-black/50 lg:ml-2.5 lg:w-36 text-xl border-0 appearance-none text-center bg-transparent outline-hidden border-b-2 border-black mt-10 lg:border-gray-100 lg:mt-0 lg:mr-4 focus:outline-hidden focus:border-b-green-800"
                             />
                             <button
                                 :class="loading ? 'pi-spin pi-spinner' : 'pi-arrow-right'"
@@ -217,7 +217,7 @@ async function login() {
     </div>
     <div
         v-show="links.length > 0"
-        class="flex min-h-screen second-page items-center w-auto flex-col shadow-inner z-20 bg-gradient-to-b bg-[#f2f2f2]"
+        class="flex min-h-screen second-page items-center w-auto flex-col shadow-inner z-20 bg-linear-to-b bg-[#f2f2f2]"
     >
         <p class="text-4xl font-extrabold mt-[10vh]">选择一个页面以继续</p>
         <div class="border-[#A0A0A0] border border-t-0 border-l-0 border-r-0 mt-5 mb-5 w-1/2" />

@@ -182,8 +182,8 @@ async function refreshFromServer(index: number) {
                 :disabled="item.uploading"
             />
             <div class="flex items-center space-x-2 mt-4">
-                <label for="name" class="flex-shrink-0 w-20 text-right">主题色</label>
-                <div class="flex-grow flex items-center">
+                <label for="name" class="shrink-0 w-20 text-right">主题色</label>
+                <div class="grow flex items-center">
                     <ColorPicker
                         v-if="hyperLinkCacheList"
                         id="color"

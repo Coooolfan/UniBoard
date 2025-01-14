@@ -46,7 +46,7 @@ const bgGradientTo = computed(() => {
         <div class="relative z-20 pt-12 justify-end items-center">
             <img
                 :src="linkData.icon"
-                class="absolute left-10 top-10 z-20 h-24 w-24 drop-shadow transition-all duration-500 group-hover:-left-10 group-hover:-top-10 group-hover:h-28 group-hover:w-28"
+                class="absolute left-10 top-10 z-20 h-24 w-24 drop-shadow-sm transition-all duration-500 group-hover:-left-10 group-hover:-top-10 group-hover:h-28 group-hover:w-28"
                 :alt="linkData.title"
             />
             <div class="card-words relative z-30 mr-9 ml-9">

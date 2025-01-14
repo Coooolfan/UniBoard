@@ -65,8 +65,8 @@ function onFileChooseHandler(e: FileUploadSelectEvent, type: 'avatar' | 'banner'
 </script>
 <template>
     <div class="flex items-center space-x-2 mt-4">
-        <label for="avatar" class="flex-shrink-0 w-20 text-right">头像</label>
-        <div class="flex-grow">
+        <label for="avatar" class="shrink-0 w-20 text-right">头像</label>
+        <div class="grow">
             <Image v-if="userInfo" id="avatar" :src="userInfo.avatar" width="96px" />
             <Skeleton v-else height="96px"></Skeleton>
             <div class="float-start mt-2">
@@ -80,8 +80,8 @@ function onFileChooseHandler(e: FileUploadSelectEvent, type: 'avatar' | 'banner'
         </div>
     </div>
     <div class="flex items-center space-x-2 mt-4">
-        <label for="banner" class="flex-shrink-0 w-20 text-right">横幅</label>
-        <div class="flex-grow">
+        <label for="banner" class="shrink-0 w-20 text-right">横幅</label>
+        <div class="grow">
             <Image v-if="userInfo" id="banner" :src="userInfo.banner" width="200px" />
             <Skeleton v-else height="120px"></Skeleton>
             <div class="float-start mt-2">

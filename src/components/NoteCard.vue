@@ -159,7 +159,7 @@ async function newNote() {
         <div class="w-full">
             <div class="flex justify-between items-center">
                 <input
-                    class="font-bold outline-none text-xl border-b-[1px] ml-1 w-4/5 focus:border-black focus:outline-none"
+                    class="font-bold outline-hidden text-xl border-b-[1px] ml-1 w-4/5 focus:border-black focus:outline-hidden"
                     v-model="editNote.title"
                 />
                 <div>

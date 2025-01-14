@@ -1,9 +1,9 @@
 <template>
     <div class="flex items-center space-x-2 mt-4 w-full justify-start">
-        <span :for="id" class="flex-shrink-0 w-20 h-10 leading-10 text text-right">{{
+        <span :for="id" class="shrink-0 w-20 h-10 leading-10 text text-right">{{
             label
         }}</span>
-        <div class="flex-grow">
+        <div class="grow">
             <Checkbox
                 binary
                 v-if="!loading"

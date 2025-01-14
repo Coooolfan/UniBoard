@@ -329,7 +329,7 @@ const submitText = computed(() => {
             v-model="newFileRecord.desc"
         />
         <div class="flex flex-wrap gap-4 mt-4 justify-start h-10 items-center">
-            <label class="flex-shrink-0 w-20 text-right">文件权限</label>
+            <label class="shrink-0 w-20 text-right">文件权限</label>
             <div class="flex items-center">
                 <RadioButton
                     v-model="newFileRecord.permission"

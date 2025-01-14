@@ -24,7 +24,6 @@ onMounted(async () => {
     import('@/components/ConfigCard/ConfigCard.vue')
 })
 
-
 // 组件映射
 const componentMap: Record<string, Component> = {
     Note: defineAsyncComponent(() => import('@/components/NoteCard.vue')),
@@ -63,23 +62,23 @@ function IHandler(componentName: string) {
         <Toast />
         <div class="flex justify-between w-2/5 max-w-96 mt-10">
             <i
-                class="pi text-black grid place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-pencil"
+                class="pi text-black place-content-center before:grid before:place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-pencil"
                 @click="IHandler('Note')"
             ></i>
             <i
-                class="pi text-black grid place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-link"
+                class="pi text-black place-content-center before:grid before:place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-link"
                 @click="IHandler('Link')"
             ></i>
             <i
-                class="pi text-black grid place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-copy"
+                class="pi text-black place-content-center before:grid before:place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-copy"
                 @click="IHandler('File')"
             ></i>
             <i
-                class="pi text-black grid place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-cog"
+                class="pi text-black place-content-center before:grid before:place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-cog"
                 @click="IHandler('Config')"
             ></i>
             <i
-                class="pi text-black grid place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-sign-out"
+                class="pi text-black place-content-center before:grid before:place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-sign-out"
                 @click="router2Landing"
             ></i>
         </div>
