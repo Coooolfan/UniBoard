@@ -3,7 +3,6 @@ import { base64ToFile } from '@/assets/utils/Base64Utils'
 
 interface UserInfo {
     name: string
-    version: string
     profile: string
     avatar: string
     slogan: string
@@ -26,7 +25,6 @@ interface UserInfo {
 
 const defaultUserInfo: UserInfo = {
     name: '',
-    version: '',
     profile: '',
     avatar: '',
     slogan: '',

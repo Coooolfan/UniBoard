@@ -3,12 +3,14 @@ import { axiosInstance } from './auth'
 interface sysConfig {
     host: string
     show_copyright: boolean
+    show_profile_page: boolean
     loading: boolean
 }
 
 const defaultSysConfig: sysConfig = {
     host: '',
     show_copyright: true,
+    show_profile_page: true,
     loading: false
 }
 

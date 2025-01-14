@@ -78,13 +78,23 @@ async function updatePassword() {
         v-model="sysConfig.host"
         :loading="sysConfig.loading"
     />
-    <LabelAndCheckbox
-        title="是否展示着陆页最下方的版权信息"
-        id="showCopyright"
-        label="仓库地址"
-        v-model="sysConfig.show_copyright"
-        :loading="sysConfig.loading"
-    />
+    <div class="flex">
+        <LabelAndCheckbox
+            title="是否展示着陆页最下方的版权信息"
+            id="showCopyright"
+            label="仓库地址"
+            v-model="sysConfig.show_copyright"
+            :loading="sysConfig.loading"
+        />
+        <LabelAndCheckbox
+            title="是否展示着陆页信息，如果不展示则只显示登录表单"
+            id="showProfilePage"
+            label="展示主页"
+            v-model="sysConfig.show_profile_page"
+            :loading="sysConfig.loading"
+        />
+    </div>
+
     <div class="flex justify-end mt-4 mb-4">
         <Button @click="updateConfig" :loading="sysConfig.loading" label="保存" />
     </div>

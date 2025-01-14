@@ -1,8 +1,6 @@
 <template>
     <div class="flex items-center space-x-2 mt-4 w-full justify-start">
-        <span :for="id" class="shrink-0 w-20 h-10 leading-10 text text-right">{{
-            label
-        }}</span>
+        <span :for="id" class="shrink-0 w-20 h-10 leading-10 text text-right">{{ label }}</span>
         <div class="grow">
             <Checkbox
                 binary
@@ -12,7 +10,7 @@
                 @update:modelValue="onInput"
                 class="h-10 w-10"
             />
-            <Skeleton v-else height="2.5rem" width="2.5rem"></Skeleton>
+            <Skeleton v-else height="1.25rem" width="1.25rem"></Skeleton>
         </div>
     </div>
 </template>
