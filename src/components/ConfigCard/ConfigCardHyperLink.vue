@@ -157,9 +157,9 @@ async function refreshFromServer(index: number) {
     <div
         v-for="(item, index) of hyperLinkCacheList"
         :key="index"
-        class="ml-4 mr-4 flex justify-around pb-4 items-center border-b-[1px]"
+        class="flex flex-col justify-around pb-4 items-center max-w-screen border-b-[1px] lg:flex-row lg:ml-4 lg:mr-4"
     >
-        <div class="w-1/3">
+        <div class="lg:w-1/3">
             <LabelAndInput
                 id="title"
                 label="标题"
@@ -195,17 +195,18 @@ async function refreshFromServer(index: number) {
                     <Skeleton v-else height="2.5rem" />
                 </div>
             </div>
-            <div class="flex items-center space-x-2 mt-4 justify-end">
+            <div class="flex items-center mt-4 justify-end lg:space-x-2">
                 <FileUpload
                     mode="basic"
                     accept="image/*"
-                    chooseLabel="选择新ICON"
+                    chooseLabel="选择图标"
                     :auto="true"
                     class="h-10"
                     :disabled="item.uploading"
                     @select="(e) => onFileChooseHandler(e, index)"
                 />
                 <Button
+                    class="ml-1 lg:ml-4"
                     icon="pi pi-refresh"
                     aria-label="Save"
                     v-tooltip.bottom="'从URL自动获取'"
@@ -214,14 +215,14 @@ async function refreshFromServer(index: number) {
                 <Button
                     v-if="hyperLinkCacheList"
                     severity="danger"
-                    class="ml-4 float-end h-10 transition-all"
+                    class="ml-1 float-end h-10 transition-all lg:ml-4"
                     label="删除"
                     @click="removeHyperLink(index)"
                     :loading="item.uploading"
                 />
                 <Button
                     v-if="hyperLinkCacheList"
-                    class="ml-4 float-end h-10 transition-all"
+                    class="ml-1 float-end h-10 transition-all lg:ml-4"
                     label="保存"
                     :disabled="item.uploading"
                     @click="saveHyperLinkConfig(index)"
@@ -229,7 +230,7 @@ async function refreshFromServer(index: number) {
                 />
             </div>
         </div>
-        <HyperLinkCard :linkData="item" class="scale-90 w-full"></HyperLinkCard>
+        <HyperLinkCard :linkData="item" class="scale-90 w-full mt-4 lg:mt-0"></HyperLinkCard>
     </div>
 
     <div class="flex justify-end mt-4">

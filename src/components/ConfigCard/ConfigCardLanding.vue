@@ -94,14 +94,14 @@ function onFileChooseHandler(e: FileUploadSelectEvent, type: 'avatar' | 'banner'
             </div>
         </div>
     </div>
-    <div class="flex items-center">
+    <div class="flex items-start flex-col lg:flex-row">
         <LabelAndInput
             id="name"
             label="展示姓名"
             v-model="userInfo.name"
             :loading="userInfo.loading"
         />
-        <div class="w-2/4 ml-4 mt-4 flex">
+        <div class="w-full ml-4 mt-4">
             <FileUpload
                 mode="basic"
                 chooseLabel="选择字体"
@@ -123,7 +123,7 @@ function onFileChooseHandler(e: FileUploadSelectEvent, type: 'avatar' | 'banner'
         v-model="userInfo.slogan"
         :loading="userInfo.loading"
     />
-    <div class="grid grid-cols-2 mx-auto justify-center gap-x-10">
+    <div class="grid grid-cols-1 mx-auto justify-center lg:grid-cols-2 lg:gap-x-10">
         <LabelAndInput
             id="contacts.github"
             label="github"
