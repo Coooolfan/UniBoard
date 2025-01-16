@@ -29,7 +29,7 @@ const defaultUserInfo: UserInfo = {
     avatar: '',
     slogan: '',
     banner: '',
-    name_font: 'fonts/fonnts.com-Congenial_Bold.otf',
+    name_font: '',
     contacts: {
         telegram: '',
         qq: '',

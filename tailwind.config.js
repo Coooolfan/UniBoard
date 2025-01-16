@@ -3,6 +3,9 @@ export default {
     content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
     theme: {
         extend: {
+            backgroundImage: {
+                'profile-mask': "url('https://yangyi.fan/media/banners/file_1723560491401.avif')"
+            },
             dropShadow: {
                 '5xl': '13px 0px 50px'
             },
