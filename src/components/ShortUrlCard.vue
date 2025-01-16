@@ -127,9 +127,8 @@ function confirmDelete(event: any, index: number) {
         :totalRecords="shortUrlCount"
         :rows="size"
         :rowsPerPageOptions="[5, 10, 20, 50]"
-        tableStyle="min-width: 50rem"
         @page="refreshPage"
-        class="transition-all p-5"
+        class="transition-all max-w-screen lg:p-5"
     >
         <template #header>
             <div class="flex justify-between items-center">
@@ -147,6 +146,7 @@ function confirmDelete(event: any, index: number) {
                     />
                 </div>
             </div>
+            <div class="text-center italic lg:hidden m-2">左右滑动表头查看更多</div>
         </template>
         <template #paginatorstart>
             <Button type="button" icon="pi pi-refresh" text @click="refreshPage()" />

@@ -214,9 +214,8 @@ const submitText = computed(() => {
         :totalRecords="fileRecordCount"
         :rows="size"
         :rowsPerPageOptions="[5, 10, 20, 50]"
-        tableStyle="min-width: 50rem"
         @page="refreshPage"
-        class="transition-all p-5"
+        class="transition-all max-w-screen lg:p-5"
     >
         <template #header>
             <div class="flex justify-between items-center">
@@ -231,6 +230,7 @@ const submitText = computed(() => {
                     @click="showNewDialog"
                 />
             </div>
+            <div class="text-center italic lg:hidden m-2">左右滑动表头查看更多</div>
         </template>
         <template #paginatorstart>
             <Button type="button" icon="pi pi-refresh" text @click="refreshPage()" />
@@ -328,7 +328,7 @@ const submitText = computed(() => {
             :loading="newFileRecord.loading"
             v-model="newFileRecord.desc"
         />
-        <div class="flex flex-wrap gap-4 mt-4 justify-start h-10 items-center">
+        <div class="flex flex-wrap gap-2 mt-4 justify-start h-10 items-center lg:gap-4">
             <label class="shrink-0 w-20 text-right">文件权限</label>
             <div class="flex items-center">
                 <RadioButton
@@ -337,7 +337,7 @@ const submitText = computed(() => {
                     name="private"
                     value="2"
                 />
-                <label for="private" class="ml-2">私有</label>
+                <label for="private" class="ml-1 lg:ml-2">私有</label>
             </div>
             <div class="flex items-center">
                 <RadioButton
@@ -346,7 +346,7 @@ const submitText = computed(() => {
                     name="public"
                     value="1"
                 />
-                <label for="public" class="ml-2">完全公开</label>
+                <label for="public" class=" ml-1 lg:ml-2">完全公开</label>
             </div>
             <div class="flex items-center">
                 <RadioButton
@@ -355,7 +355,7 @@ const submitText = computed(() => {
                     name="passwordProtected"
                     value="3"
                 />
-                <label for="passwordProtected" class="ml-2">密码保护</label>
+                <label for="passwordProtected" class="ml-1 lg:ml-2">密码保护</label>
             </div>
         </div>
         <LabelAndInput
