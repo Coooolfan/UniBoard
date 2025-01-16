@@ -5,19 +5,12 @@ import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import { defaultFileRecord } from '@/api/fileRecord'
 import { defaultUserInfo } from '@/api/userInfo'
-
-function cloneWithFallback<T>(obj: T): T {
-    if (typeof structuredClone === 'function') {
-        return structuredClone(obj);
-    } else {
-        return JSON.parse(JSON.stringify(obj));
-    }
-}
+import cloneWithFallback from '@/assets/utils/CloneWithCallback'
 
 const route = useRoute()
 const shareCode = route.params.fileShareCode
 const passwordInput = ref('')
-const fileRecord = ref(cloneWithFallback(defaultFileRecord));
+const fileRecord = ref(cloneWithFallback(defaultFileRecord))
 const userInfo = ref(cloneWithFallback(defaultUserInfo))
 onMounted(() => {
     getFileRecordDetail()
