@@ -46,7 +46,8 @@ function IHandler(componentName: string) {
             props: {
                 modal: true,
                 closable: false,
-                header: componentNameMap[componentName]
+                header: componentNameMap[componentName],
+                maximizable: true
             }
         })
     } else {
@@ -57,10 +58,10 @@ function IHandler(componentName: string) {
 
 <template>
     <div class="flex flex-col items-center min-h-screen bg-[#f2f2f2]">
-        <ClockCard class="mt-28" />
-        <DynamicDialog />
+        <ClockCard class="mt-36 lg:mt-28" />
+        <DynamicDialog max />
         <Toast />
-        <div class="flex justify-between w-2/5 max-w-96 mt-10">
+        <div class="flex justify-between mt-10 gap-4 lg:max-w-96 lg:w-2/5">
             <i
                 class="pi text-black place-content-center before:grid before:place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-pencil"
                 @click="IHandler('Note')"

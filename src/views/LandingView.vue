@@ -113,12 +113,12 @@ async function login() {
                     type="text"
                     ref="usernameInput"
                     v-model="username"
-                    class="text-shadow-m caret-white shadow-black/50 text-xl border-0 appearance-none text-center bg-transparent outline-hidden border-b-2 border-white mt-10 lg:mt-0 focus:outline-hidden focus:border-b-green-800"
+                    class="text-shadow-m text-white shadow-black/50 text-xl border-0 appearance-none text-center bg-transparent outline-hidden border-b-2 border-white mt-10 lg:mt-0 focus:outline-hidden focus:border-b-green-800"
                 />
                 <input
                     type="password"
                     v-model="password"
-                    class="text-shadow-m caret-white shadow-black/50 text-xl border-0 appearance-none text-center bg-transparent outline-hidden border-b-2 border-white mt-10 lg:mt-0 focus:outline-hidden focus:border-b-green-800"
+                    class="text-shadow-m text-white shadow-black/50 text-xl border-0 appearance-none text-center bg-transparent outline-hidden border-b-2 border-white mt-10 lg:mt-0 focus:outline-hidden focus:border-b-green-800"
                 />
                 <button
                     :class="loading ? 'pi-spin pi-spinner' : 'pi-arrow-right'"

@@ -48,7 +48,7 @@ onMounted(() => {
         after: () => {
             vditorLoading.value = false
         },
-        height: '68vh',
+        minHeight: 500,
         cdn: '',
         upload: {
             url: '/api/note-files/',
@@ -147,9 +147,8 @@ async function newNote() {
 </script>
 <template>
     <ConfirmPopup></ConfirmPopup>
-    <div class="w-[80vw] h-[74vh] flex items-start justify-start">
+    <div class="min-w-[80vw] min-h-[74vh] flex items-start justify-start">
         <div class="w-80 h-4/5 flex flex-col">
-            <Button :icon="'pi pi-plus'" text class="ml-auto mr-4" @click="newNote" />
             <Tree
                 :value="treeNode"
                 v-model:selectionKeys="selectedKey"
@@ -183,6 +182,7 @@ async function newNote() {
                         text
                         @click="confirmDelete($event, editNote.id)"
                     />
+                    <Button :icon="'pi pi-plus'" text class="ml-auto mr-4" @click="newNote" />
                 </div>
             </div>
             <div v-show="vditorLoading" class="flex flex-col justify-center items-center pt-8">
