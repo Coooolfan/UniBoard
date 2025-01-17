@@ -99,7 +99,7 @@ async function updatePassword() {
         <Button @click="updateConfig" :loading="sysConfig.loading" label="保存" />
     </div>
 
-    <Card style="background-color: #f2f2f2" class="lg:w-1/2">
+    <Card class="lg:w-1/2">
         <template #content>
             <LabelAndInput
                 id="oldPassword"

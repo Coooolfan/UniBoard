@@ -230,7 +230,7 @@ async function refreshFromServer(index: number) {
                 />
             </div>
         </div>
-        <HyperLinkCard :linkData="item" class="scale-90 w-full mt-4 lg:mt-0"></HyperLinkCard>
+        <HyperLinkCard :hyperLink="item" class="scale-90 w-full mt-4 lg:mt-0"></HyperLinkCard>
     </div>
 
     <div class="flex justify-end mt-4">

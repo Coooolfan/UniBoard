@@ -2,7 +2,7 @@
 import type { UserInfo } from '@/api/userInfo'
 import type { PropType } from 'vue'
 
-const { userInfo } = defineProps({
+defineProps({
     userInfo: {
         type: Object as PropType<UserInfo>,
         required: true
@@ -12,6 +12,7 @@ const { userInfo } = defineProps({
         required: true
     }
 })
+
 const emit = defineEmits(['switchSloganType'])
 function getSvgPath(name: string) {
     // 使用动态import语法导入SVG文件
@@ -33,14 +34,14 @@ function switchSloganType() {
             />
         </picture>
         <span
-            class="font-bold text-6xl mt-12 drop-shadow-xl z-50 cursor-pointer"
+            class="font-bold text-6xl mt-12 drop-shadow-xl z-50 cursor-pointer text-slate-800"
             @click="switchSloganType()"
             :style="{ fontFamily: fontFamily }"
         >
             {{ userInfo.name }}
         </span>
         <div class="border-[#A0A0A0] border border-t-0 border-l-0 border-r-0 mt-18 w-2/5" />
-        <span class="text-[#404040] mt-5 text-lg">
+        <span class="text-slate-600 mt-5 text-lg">
             {{ userInfo.profile }}
         </span>
         <div class="flex w-80 justify-around mt-24">

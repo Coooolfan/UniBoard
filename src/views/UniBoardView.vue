@@ -57,7 +57,7 @@ function IHandler(componentName: string) {
 </script>
 
 <template>
-    <div class="flex flex-col items-center min-h-screen bg-[#f2f2f2]">
+    <div class="flex flex-col items-center min-h-screen bg-[#f2f2f2] dark:bg-slate-950">
         <ClockCard class="mt-36 lg:mt-28" />
         <DynamicDialog max />
         <Toast />

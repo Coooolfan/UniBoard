@@ -133,20 +133,20 @@ async function login() {
         v-show="links.length > 0"
         class="flex min-h-screen second-page items-center w-auto flex-col shadow-inner z-20 bg-linear-to-b bg-[#f2f2f2]"
     >
-        <p class="text-4xl font-extrabold mt-[10vh]">选择一个页面以继续</p>
+        <p class="text-4xl font-extrabold mt-[10vh] text-slate-800">选择一个页面以继续</p>
         <div class="border-[#A0A0A0] border border-t-0 border-l-0 border-r-0 mt-5 mb-5 w-1/2" />
-        <p class="text-base mb-20 italic text-gray-800">此页面的中的内容并非全部公开项</p>
+        <p class="text-base mb-20 italic text-slate-600">此页面的中的内容并非全部公开项</p>
         <div
             class="grid grid-cols-1 xl:w-4/5 lg:grid-cols-2 xl:grid-cols-3 mx-auto gap-10 items-center justify-center"
         >
             <template v-for="link in links" :key="link.id">
-                <LandingPageLink :linkData="link" />
+                <LandingPageLink :hyperLink="link" />
             </template>
         </div>
     </div>
     <footer
         v-show="sysConfig?.show_copyright"
-        class="bg-[#f2f2f2] items-center text-center pt-8 pb-2"
+        class="bg-[#f2f2f2] items-center text-center pt-8 pb-2 text-slate-600"
     >
         <a href="https://github.com/Coooolfan/" class="italic" target="_blank">@Coooolfan</a>
         Powered by

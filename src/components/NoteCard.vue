@@ -47,7 +47,9 @@ onMounted(() => {
         },
         after: () => {
             vditorLoading.value = false
+            setTheme()
         },
+        theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'classic',
         minHeight: 500,
         cdn: '',
         upload: {
@@ -61,7 +63,15 @@ onMounted(() => {
             }
         }
     })
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        setTheme()
+    })
 })
+
+async function setTheme() {
+    const theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'classic'
+    vditor.value?.setTheme(theme, theme, theme)
+}
 
 async function refreshTree() {
     const noteList = (await getNoteList()).results
