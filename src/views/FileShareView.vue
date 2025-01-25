@@ -74,7 +74,7 @@ async function downloadHandler() {
         </picture>
         <div class="flex flex-col md:flex-row gap-14 items-center h-full -translate-y-6">
             <div
-                class="flex flex-col w-80 p-4 h-2/3 md:h-96 drop-shadow-xl backdrop-blur-3xl bg-white/80 shadow-black justify-between rounded-xl transition-all duration-500 hover:drop-shadow-2xl hover:backdrop-blur-0"
+                class="flex flex-col w-80 p-4 h-2/3 md:h-96 drop-shadow-xl backdrop-blur-3xl bg-white/80 dark:bg-black/80 shadow-black justify-between rounded-xl transition-all duration-500 hover:drop-shadow-2xl hover:backdrop-blur-0"
             >
                 <div class="flex flex-col items-center pt-4">
                     <i class="pi pi-file" style="font-size: 4rem" />
