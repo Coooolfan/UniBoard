@@ -11,7 +11,7 @@ const defaultSysConfig: sysConfig = {
     host: '',
     show_copyright: true,
     show_profile_page: true,
-    loading: false
+    loading: true
 }
 
 async function getSysConfig(): Promise<sysConfig> {

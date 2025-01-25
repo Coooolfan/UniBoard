@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import { defaultUserInfo, getUserInfo } from '@/api/userInfo'
 import type { UserInfo } from '@/api/userInfo'
-import { ref, onMounted, nextTick, useTemplateRef } from 'vue'
+import { ref, onMounted, nextTick, useTemplateRef, computed } from 'vue'
 import LandingPageLink from '@/components/HyperLinkCard.vue'
 import { getHyperLinks } from '@/api/hyperLink'
 import type { HyperLink } from '@/api/hyperLink'
 import { loginByPassword, verifyTokenLocal } from '@/api/auth'
-import { getSysConfig, type sysConfig } from '@/api/sysConfig'
+import { defaultSysConfig, getSysConfig, type sysConfig } from '@/api/sysConfig'
 import router from '@/router'
 import ProfileComponent from '@/components/LandingView/ProfileComponent.vue'
+import LoginOnlyView from '@/views/LoginOnlyView.vue'
 import cloneWithFallback from '@/assets/utils/CloneWithCallback'
 const userInfo = ref<UserInfo>(cloneWithFallback(defaultUserInfo))
 const links = ref<Array<HyperLink>>([])
-const sysConfig = ref<sysConfig>()
+const sysConfig = ref<sysConfig>(cloneWithFallback(defaultSysConfig))
 const fontFamily = ref('arial')
 const sloganType = ref<'slogan' | 'password'>('slogan')
 const username = ref('')
@@ -73,17 +74,24 @@ async function login() {
         sloganType.value = 'slogan'
     }
 }
+
+const configIsLoaded = computed(() => {
+    return !userInfo.value.loading && !sysConfig.value.loading
+})
 </script>
 <template>
-    <div class="min-h-screen first-page relative bg-[#f2f2f2] transition-all lg:bg-transparent">
+    <LoginOnlyView v-if="!sysConfig?.show_profile_page && configIsLoaded"></LoginOnlyView>
+    <div
+        class="min-h-screen relative bg-[#f2f2f2] transition-all lg:bg-transparent"
+        v-if="sysConfig?.show_profile_page && configIsLoaded"
+    >
         <img
             :src="userInfo.banner"
             class="absolute inset-0 object-cover w-full h-full filter brightness-90 -z-20 lg:block"
             alt="banner"
         />
-
         <div class="flex z-30 flex-col lg:flex-row lg:items-center lg:place-content-between">
-            <div class="w-auto lg:grid">
+            <div class="w-auto lg:animate-slide-right lg:grid">
                 <img
                     src="/src/assets/svg/profile_mask.svg"
                     alt="profile_mask"
@@ -107,7 +115,7 @@ async function login() {
             <form
                 v-show="sloganType === 'password'"
                 class="animate-slide-up flex flex-col items-center justify-center lg:grow-1 lg:text-center lg:flex-row lg:gap-8 lg:-translate-y-12"
-                @submit.native.prevent
+                @submit.prevent="login"
             >
                 <input
                     type="text"
@@ -123,15 +131,15 @@ async function login() {
                 <button
                     :class="loading ? 'pi-spin pi-spinner' : 'pi-arrow-right'"
                     class="pi text-shadow-m shadow-black text-white mt-8 mb-8"
-                    @click="login"
+                    type="submit"
                 />
             </form>
         </div>
     </div>
 
     <div
-        v-show="links.length > 0"
-        class="flex min-h-screen second-page items-center w-auto flex-col shadow-inner z-20 bg-linear-to-b bg-[#f2f2f2]"
+        v-if="links.length > 0 && sysConfig?.show_profile_page"
+        class="flex min-h-screen items-center w-auto flex-col shadow-inner z-20 bg-linear-to-b bg-[#f2f2f2]"
     >
         <p class="text-4xl font-extrabold mt-[10vh] text-slate-800">选择一个页面以继续</p>
         <div class="border-[#A0A0A0] border border-t-0 border-l-0 border-r-0 mt-5 mb-5 w-1/2" />
@@ -144,8 +152,9 @@ async function login() {
             </template>
         </div>
     </div>
+
     <footer
-        v-show="sysConfig?.show_copyright"
+        v-if="sysConfig.show_copyright && sysConfig.show_profile_page && !sysConfig.loading"
         class="bg-[#f2f2f2] items-center text-center pt-8 pb-2 text-slate-600"
     >
         <a href="https://github.com/Coooolfan/" class="italic" target="_blank">@Coooolfan</a>

@@ -42,7 +42,7 @@ const defaultUserInfo: UserInfo = {
         instagram: '',
         linkedin: ''
     },
-    loading: false
+    loading: true
 }
 
 async function getUserInfo(): Promise<UserInfo> {
