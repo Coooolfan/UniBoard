@@ -1,8 +1,8 @@
-version: '3'
+version: '3.8'
 
 services:
     frontend:
-        image: coolfan1024/uniboard:0.2.7
+        image: coolfan1024/uniboard:latest
         container_name: uniboard-frontend
         ports:
             - '8888:80'
@@ -14,7 +14,7 @@ services:
             - backend
 
     backend:
-        image: coolfan1024/uniboard-service:0.2.7
+        image: coolfan1024/uniboard-service:latest
         container_name: uniboard-backend
         volumes:
             - ./service/media:/app/media
