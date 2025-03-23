@@ -17,10 +17,8 @@ export default defineConfig({
     server: {
         proxy: {
             '/api/': baseURL,
-            '/media/': baseURL,
             '/s/': baseURL,
             '/file/': baseURL,
-            '/admin/': baseURL
         }
     }
 })
