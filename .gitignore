@@ -31,3 +31,5 @@ coverage
 .env
 
 .yarn/
+
+/src/__generated
