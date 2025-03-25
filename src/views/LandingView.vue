@@ -4,12 +4,10 @@ import LandingPageLink from '@/components/HyperLinkCard.vue'
 import router from '@/router'
 import ProfileComponent from '@/components/LandingView/ProfileComponent.vue'
 import LoginOnlyView from '@/views/LoginOnlyView.vue'
-import cloneWithFallback from '@/assets/utils/CloneWithCallback'
 import { api } from '@/ApiInstance'
 import type { ProfileDto } from '@/__generated/model/dto'
 import type { ApiErrors } from '@/__generated'
 import type { Dynamic_HyperLink } from '@/__generated/model/dynamic'
-// const sysConfig = ref<sysConfig>(cloneWithFallback(defaultSysConfig))
 const fontFamily = ref('arial')
 const sloganType = ref<'slogan' | 'password'>('slogan')
 const username = ref('')
@@ -23,6 +21,7 @@ onMounted(async () => {
         profile.value = res
         loadFont()
         document.title = `${profile.value.name} - ${profile.value.description}`
+        document.querySelector('link[rel="icon"]')?.setAttribute('href', profile.value.avatar.filepath)
     })
     api.hyperLinkController.getAllHyperLinks().then(res => {
         links.value = res
