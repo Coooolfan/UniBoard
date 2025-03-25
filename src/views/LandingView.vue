@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import { defaultUserInfo, getUserInfo } from '@/api/userInfo'
-import type { UserInfo } from '@/api/userInfo'
 import { ref, onMounted, nextTick, useTemplateRef, computed } from 'vue'
 import LandingPageLink from '@/components/HyperLinkCard.vue'
-import { getHyperLinks } from '@/api/hyperLink'
-import type { HyperLink } from '@/api/hyperLink'
-import { loginByPassword, verifyTokenLocal } from '@/api/auth'
-import { defaultSysConfig, getSysConfig, type sysConfig } from '@/api/sysConfig'
 import router from '@/router'
 import ProfileComponent from '@/components/LandingView/ProfileComponent.vue'
 import LoginOnlyView from '@/views/LoginOnlyView.vue'
@@ -14,8 +8,7 @@ import cloneWithFallback from '@/assets/utils/CloneWithCallback'
 import { api } from '@/ApiInstance'
 import type { ProfileDto } from '@/__generated/model/dto'
 import type { ApiErrors } from '@/__generated'
-const userInfo = ref<UserInfo>(cloneWithFallback(defaultUserInfo))
-const links = ref<Array<HyperLink>>([])
+import type { Dynamic_HyperLink } from '@/__generated/model/dynamic'
 // const sysConfig = ref<sysConfig>(cloneWithFallback(defaultSysConfig))
 const fontFamily = ref('arial')
 const sloganType = ref<'slogan' | 'password'>('slogan')
@@ -24,13 +17,21 @@ const password = ref('')
 const usernameInputRef = useTemplateRef('usernameInput')
 const loading = ref(false)
 const profile = ref<ProfileDto["ProfileController/PUBLIC_PROFILE"] | null>(null)
+const links = ref<ReadonlyArray<Dynamic_HyperLink> | null>(null)
 onMounted(async () => {
-    profile.value = await api.profileController.getProfile()
+    api.profileController.getProfile().then(res => {
+        profile.value = res
+        loadFont()
+        document.title = `${profile.value.name} - ${profile.value.description}`
+    })
+    api.hyperLinkController.getAllHyperLinks().then(res => {
+        links.value = res
+    })
 })
 
 async function loadFont() {
-    if (!userInfo.value?.name_font) return
-    const font = new FontFace('CustomFont', `url(${userInfo.value?.name_font})`)
+    if (!profile.value?.customFont) return
+    const font = new FontFace('CustomFont', `url(${profile.value?.customFont?.filepath})`)
     await font.load()
     document.fonts.add(font)
     fontFamily.value = 'CustomFont'
@@ -39,10 +40,6 @@ async function loadFont() {
 async function switchSloganType() {
     loading.value = false
     // 如果已经登录，直接跳转到首页
-    if (verifyTokenLocal()) {
-        router.push('/dashboard')
-        return
-    }
     if (sloganType.value === 'slogan') {
         sloganType.value = 'password'
         await nextTick()
@@ -110,7 +107,7 @@ const onlyShowLoginView = computed(() => {
         </div>
     </div>
 
-    <div v-if="links.length > 0"
+    <div v-if="links?.length"
         class="flex min-h-screen items-center w-auto flex-col shadow-inner z-20 bg-linear-to-b bg-[#f2f2f2]">
         <p class="text-4xl font-extrabold mt-[10vh] text-slate-800">选择一个页面以继续</p>
         <div class="border-[#A0A0A0] border border-t-0 border-l-0 border-r-0 mt-5 mb-5 w-1/2" />

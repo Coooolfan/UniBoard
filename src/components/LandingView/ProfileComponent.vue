@@ -5,11 +5,9 @@ import type { PropType } from 'vue'
 defineProps({
     profile: {
         type: Object as PropType<ProfileDto["ProfileController/PUBLIC_PROFILE"] | null>,
-        required: true
     },
     fontFamily: {
         type: String,
-        required: true
     }
 })
 

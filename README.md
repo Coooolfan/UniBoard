@@ -157,8 +157,4 @@ docker compose pull && docker compose up -d
 
 ## Development
 
-build docker image
-
-```shell
-docker build -t coolfan1024/uniboard:latest .
-```
+TODO

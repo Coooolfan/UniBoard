@@ -3,21 +3,13 @@ import { ref } from 'vue'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
-import { loginByPassword, verifyTokenLocal } from '@/api/auth'
 import router from '@/router'
 const username = ref('')
 const password = ref('')
 const loading = ref(false)
 async function login() {
     loading.value = true
-    if (verifyTokenLocal()) {
-        router.push('/dashboard')
-        return
-    }
-    if (await loginByPassword(username.value, password.value)) {
-        router.push('/dashboard')
-        return
-    }
+
     window.alert('登录失败\n请检查用户名和密码')
     loading.value = false
 }

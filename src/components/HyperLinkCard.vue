@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, type PropType } from 'vue'
-import type { HyperLink } from '@/api/hyperLink'
+import type { Dynamic_HyperLink } from '@/__generated/model/dynamic'
 const { hyperLink } = defineProps({
     hyperLink: {
-        type: Object as PropType<HyperLink>,
+        type: Object as PropType<Dynamic_HyperLink>,
         required: true
     }
 })
@@ -15,7 +15,7 @@ function reverseHoverring() {
 }
 
 const bgGradientFrom = computed(() => {
-    if (hyperLink.color.startsWith('#')) return hyperLink.color
+    if (hyperLink.color?.startsWith('#')) return hyperLink.color
     return `#${hyperLink.color}`
 })
 
@@ -46,7 +46,7 @@ const bgGradientTo = '#ffffff'
         ></div>
         <div class="relative z-20 pt-12 justify-end items-center">
             <img
-                :src="hyperLink.icon"
+                :src="hyperLink.icon?.filepath"
                 class="absolute left-10 top-10 z-20 h-24 w-24 drop-shadow-sm transition-all duration-500 group-hover:-left-10 group-hover:-top-10 group-hover:h-28 group-hover:w-28"
                 :alt="hyperLink.title"
             />
@@ -59,7 +59,7 @@ const bgGradientTo = '#ffffff'
                 <p
                     class="card-word text-sm shadow-white drop-shadow-2xl absolute whitespace-nowrap top-12 right-0 transition-all duration-700 group-hover:right-full group-hover:translate-x-full group-hover:top-14 dark:text-slate-600"
                 >
-                    {{ hyperLink.desc }}
+                    {{ hyperLink.description }}
                 </p>
             </div>
         </div>
