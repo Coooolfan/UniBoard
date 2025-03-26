@@ -3,7 +3,7 @@ import { ref, onMounted, nextTick, useTemplateRef, computed } from 'vue'
 import LandingPageLink from '@/components/HyperLinkCard.vue'
 import router from '@/router'
 import ProfileComponent from '@/components/LandingView/ProfileComponent.vue'
-import LoginOnlyView from '@/views/LoginOnlyView.vue'
+import LoginOnlyView from '@/views/landing/LoginOnlyView.vue'
 import { api } from '@/ApiInstance'
 import type { ProfileDto } from '@/__generated/model/dto'
 import type { ApiErrors } from '@/__generated'
@@ -72,7 +72,7 @@ async function login() {
 }
 
 const onlyShowLoginView = computed(() => {
-    return false
+    return true
 })
 </script>
 <template>
@@ -134,7 +134,7 @@ const onlyShowLoginView = computed(() => {
     </div>
 
     <div
-        v-if="links?.length"
+        v-if="links?.length && !onlyShowLoginView"
         class="flex min-h-screen items-center w-auto flex-col shadow-inner z-20 bg-linear-to-b bg-[#f2f2f2]"
     >
         <p class="text-4xl font-extrabold mt-[10vh] text-slate-800">选择一个页面以继续</p>

@@ -4,14 +4,30 @@ import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import router from '@/router'
+import { api } from '@/ApiInstance'
+import type { ApiErrors } from '@/__generated'
 const username = ref('')
 const password = ref('')
 const loading = ref(false)
 async function login() {
     loading.value = true
-
-    window.alert('登录失败\n请检查用户名和密码')
-    loading.value = false
+    try {
+        await api.tokenController.getToken({
+            login: {
+                loginName: username.value,
+                loginPassword: password.value
+            }
+        })
+        loading.value = false
+        // 登录成功后跳转到首页
+        router.push('/dashboard')
+    } catch (err) {
+        const error = (await err) as ApiErrors['tokenController']['getToken']
+        if (error.code === 'AUTHENTICATION_FAILED') {
+            window.alert('登录失败\n请检查用户名和密码')
+        }
+        loading.value = false
+    }
 }
 </script>
 <template>

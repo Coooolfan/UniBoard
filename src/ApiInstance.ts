@@ -1,25 +1,25 @@
-import { Api } from "./__generated";
+import { Api } from './__generated'
 
-const BASE_URL = "";
+const BASE_URL = ''
 
 // 导出全局变量`api`
-export const api = new Api(async({uri, method, headers, body}) => {
-    const tenant = (window as any).__tenant as string | undefined;
+export const api = new Api(async ({ uri, method, headers, body }) => {
+    const tenant = (window as any).__tenant as string | undefined
     const response = await fetch(`${BASE_URL}${uri}`, {
         method,
         body: body !== undefined ? JSON.stringify(body) : undefined,
         headers: {
             'content-type': 'application/json;charset=UTF-8',
             ...headers,
-            ...(tenant !== undefined && tenant !== "" ? {tenant} : {})
+            ...(tenant !== undefined && tenant !== '' ? { tenant } : {})
         }
-    });
-    if (response.status !== 200) {
-        throw response.json();
+    })
+    if (Math.floor(response.status / 100) !== 2) {
+        throw response.json()
     }
-    const text = await response.text();
+    const text = await response.text()
     if (text.length === 0) {
-        return null;
+        return null
     }
-    return JSON.parse(text);
-});
+    return JSON.parse(text)
+})

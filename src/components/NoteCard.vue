@@ -7,23 +7,20 @@ import Tree, { type TreeSelectionKeys } from 'primevue/tree'
 import 'vditor/dist/index.css'
 import ProgressSpinner from 'primevue/progressspinner'
 import type { TreeNode } from 'primevue/treenode'
-import {
-    defaultNote,
-    deleteNoteDetail,
-    getNoteDetail,
-    getNoteList,
-    patchNoteDetail,
-    postNoteDetail,
-    type Note
-} from '@/api/note'
 import { useConfirm } from 'primevue/useconfirm'
-import { getAccessToken } from '@/api/auth'
+import { api } from '@/ApiInstance'
+import type { NoteDto } from '@/__generated/model/dto'
+import { BeautyLocalTime } from '@/assets/utils/BeautyDate'
 const confirm = useConfirm()
-const editNote = ref<Note>(structuredClone(defaultNote))
+const editNote = ref<NoteDto['NoteController/DEFAULT_NOTE']>({
+    id: -1,
+    title: '',
+    content: ''
+})
+const editNoteLoading = ref(false)
 const vditor = ref<Vditor>()
 const vditorLoading = ref(true)
 const selectedKey = ref<TreeSelectionKeys>([])
-// const loadingLabel = computed(() => (editNote.value.loading ? 'Loading...' : 'Saved'))
 const treeNode = ref<TreeNode[]>([
     {
         key: '-1',
@@ -37,7 +34,7 @@ onMounted(() => {
         placeholder:
             'UniBoard 使用 Vditor 作为 MarkDown 编辑器。 \nVditor 是一款浏览器端的 Markdown 编辑器，支持所见即所得（富文本）、即时渲染（类似 Typora ）和分屏预览模式',
         input: (value: string) => {
-            uploadEvent()
+            uploadEvent(value)
         },
         counter: {
             enable: true
@@ -53,13 +50,24 @@ onMounted(() => {
         minHeight: 500,
         cdn: '',
         upload: {
-            url: '/api/note-files/',
-            setHeaders: () => {
-                const str = `Bearer ${getAccessToken()}`
-                console.log(str)
-                return {
-                    Authorization: str
+            url: '/file/note',
+            format: (files: File[], responseText: string) => {
+                let resp = JSON.parse(responseText) as {
+                    originalFilename: string
+                    url: string
+                }[]
+                let targetResp = {
+                    msg: '',
+                    code: 0,
+                    data: {
+                        errFiles: [],
+                        succMap: {} as Record<string, string>
+                    }
                 }
+                for (const notePicture of resp) {
+                    targetResp.data.succMap[notePicture.originalFilename] = notePicture.url
+                }
+                return JSON.stringify(targetResp)
             }
         }
     })
@@ -74,10 +82,10 @@ async function setTheme() {
 }
 
 async function refreshTree() {
-    const noteList = (await getNoteList()).results
+    const noteList = await api.noteController.getAllNotes()
     treeNode.value[0].children = noteList.map((note) => {
         return {
-            key: note.id.toString(),
+            key: note.id?.toString() ?? '',
             label: note.title
         }
     })
@@ -98,34 +106,69 @@ watch(selectedKey, async (newVal) => {
         }
     if (selectedId === -1) return
 
-    editNote.value.loading = true
-    editNote.value = await getNoteDetail(selectedId)
-    vditor.value?.setValue(editNote.value.value)
+    editNoteLoading.value = true
+    editNote.value = await api.noteController.getNoteById({
+        id: selectedId
+    })
+    vditor.value?.setValue(editNote.value?.content ?? '')
+    editNoteLoading.value = false
 })
-async function uploadEvent() {
-    let value = vditor.value?.getValue()
+async function uploadEvent(value?: string) {
+    if (value === undefined || value === null) {
+        value = vditor.value?.getValue() ?? ''
+    }
     // 空值不上传
-    if (value === undefined || value === `\n`) return
+    if (value === undefined || value.trim().length === 0) return
+
+    let noteTitle = editNote.value.title
+    if (noteTitle.trim().length === 0) {
+        noteTitle = '未命名 ' + BeautyLocalTime()
+    }
     // 新建
-    if (editNote.value.id === -1) {
-        editNote.value.loading = true
-        let resp = await postNoteDetail(editNote.value.title, value)
-        editNote.value.loading = false
-        editNote.value.id = resp.id
-        editNote.value.title = resp.title
+    if (editNote.value?.id === -1) {
+        editNoteLoading.value = true
+        const resp = await api.noteController.insertNote({
+            body: {
+                content: value,
+                title: noteTitle
+            }
+        })
+        editNoteLoading.value = false
+        editNote.value = {
+            ...editNote.value,
+            id: resp.id,
+            title: resp.title
+        }
         refreshTree()
-    } else {
+    } else if (editNote.value) {
         // 修改
-        editNote.value.loading = true
-        await patchNoteDetail(editNote.value.id, editNote.value.title, value)
-        editNote.value.loading = false
+        editNoteLoading.value = true
+        await api.noteController.updateNoteById({
+            id: editNote.value.id,
+            body: {
+                content: value,
+                title: noteTitle
+            }
+        })
+        editNote.value = {
+            ...editNote.value,
+            content: value,
+            title: noteTitle
+        }
+        editNoteLoading.value = false
         refreshTree()
     }
 }
 
 async function deleteHandler(index: number) {
-    await deleteNoteDetail(index)
-    editNote.value = structuredClone(defaultNote)
+    await api.noteController.deleteNoteById({
+        id: index
+    })
+    editNote.value = {
+        id: -1,
+        title: '',
+        content: ''
+    }
     vditor.value?.setValue('')
     refreshTree()
 }
@@ -150,8 +193,12 @@ function confirmDelete(event: any, index: number) {
     })
 }
 async function newNote() {
-    await uploadEvent()
-    editNote.value = structuredClone(defaultNote)
+    await uploadEvent('')
+    editNote.value = {
+        id: -1,
+        title: '',
+        content: ''
+    }
     vditor.value?.setValue('')
 }
 </script>
@@ -175,7 +222,7 @@ async function newNote() {
                     <Button
                         class="h-10 w-8"
                         :icon="
-                            editNote.loading
+                            editNoteLoading
                                 ? 'pi pi-spin pi-spinner'
                                 : editNote.id === -1
                                   ? 'pi pi-cloud-upload'

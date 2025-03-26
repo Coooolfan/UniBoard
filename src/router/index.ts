@@ -1,8 +1,8 @@
 // router
 // 仅声明Landing页面和UniBoard页面
 import { createRouter, createWebHistory } from 'vue-router'
-const Landing = () => import('@/views/LandingView.vue')
-const UniBoard = () => import('@/views/UniBoardView.vue')
+const Landing = () => import('@/views/landing/LandingView.vue')
+const UniBoard = () => import('@/views/DashBoardView.vue')
 const FileShare = () => import('@/views/FileShareView.vue')
 const routes = [
     {
