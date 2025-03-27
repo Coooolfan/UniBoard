@@ -5,17 +5,18 @@ import Button from 'primevue/button'
 import DataTable, { type DataTablePageEvent } from 'primevue/datatable'
 import Column from 'primevue/column'
 import Input from 'primevue/inputtext'
-import { deleteShortUrl, getShortUrlList, postShortUrl, type ShortUrl } from '@/api/shortUrl'
 import { useToast } from 'primevue/usetoast'
 import ConfirmPopup from 'primevue/confirmpopup'
 import { useConfirm } from 'primevue/useconfirm'
+import { api } from '@/ApiInstance'
+import type { Dynamic_ShortUrl } from '@/__generated/model/dynamic'
 const dialogRef: any = inject('dialogRef')
 const confirm = useConfirm()
 const closeDialog = () => {
     dialogRef.value.close()
 }
 const toast = useToast()
-const shortUrls = ref<Array<ShortUrl>>([])
+const shortUrls = ref<Array<Dynamic_ShortUrl>>([])
 const shortUrlCount = ref(0)
 const dataTableIsLoading = ref(false)
 const newLongUrl = ref('')
@@ -24,12 +25,12 @@ const page = ref(1)
 const size = ref(5)
 const host = window.location.origin
 onMounted(async () => {
-    let resp = await getShortUrlList()
-    shortUrls.value = resp.results
-    shortUrlCount.value = resp.count
-    shortUrls.value.forEach((shortUrl) => {
-        shortUrl.local_create = localTime(shortUrl.gmt_create)
+    let resp = await api.shortUrlController.getShortUrl({
+        pageIndex: page.value,
+        pageSize: size.value
     })
+    shortUrls.value = [...resp.rows]
+    shortUrlCount.value = resp.totalRowCount
 })
 async function refreshPage(originalEvent?: DataTablePageEvent) {
     if (originalEvent?.page !== undefined) {
@@ -39,16 +40,13 @@ async function refreshPage(originalEvent?: DataTablePageEvent) {
         size.value = originalEvent.rows
     }
     dataTableIsLoading.value = true
-    let resp = await getShortUrlList(page.value, size.value)
-    shortUrls.value = resp.results
-    shortUrlCount.value = resp.count
-    shortUrls.value.forEach((shortUrl) => {
-        shortUrl.local_create = localTime(shortUrl.gmt_create)
+    let resp = await api.shortUrlController.getShortUrl({
+        pageIndex: page.value,
+        pageSize: size.value
     })
+    shortUrls.value = [...resp.rows]
+    shortUrlCount.value = resp.totalRowCount
     dataTableIsLoading.value = false
-}
-function localTime(time: string) {
-    return new Date(time).toLocaleString()
 }
 async function addShortUrl() {
     newLongUrlLoading.value = true
@@ -62,9 +60,13 @@ async function addShortUrl() {
         newLongUrlLoading.value = false
         return
     }
-    let resp = await postShortUrl(newLongUrl.value)
-    let newShortUrl = resp.short_url
-    copyShortUrl(newShortUrl)
+    let resp = await api.shortUrlController.insertShortUrl({
+        body: {
+            longUrl: newLongUrl.value
+        }
+    })
+    let newShortUrl = resp.shortUrl
+    copyShortUrl(newShortUrl!)
     newLongUrlLoading.value = false
     refreshPage()
 }
@@ -77,24 +79,14 @@ function copyShortUrl(content: string) {
 }
 
 async function deleteHandler(index: number) {
-    let resp = await deleteShortUrl(shortUrls.value[index].id)
-    if (resp) {
-        toast.add({
-            severity: 'success',
-            summary: '删除成功',
-            detail: '短链已删除',
-            life: 3000
-        })
-        shortUrls.value.splice(index, 1)
-        shortUrlCount.value -= 1
-    } else {
-        toast.add({
-            severity: 'error',
-            summary: '删除失败',
-            detail: '请重试',
-            life: 3000
-        })
-    }
+    const shortUrlId = shortUrls.value[index].id
+    if (shortUrlId === undefined) return
+    await api.shortUrlController.deleteShortUrl({
+        id: shortUrlId
+    })
+
+    shortUrls.value.splice(index, 1)
+    shortUrlCount.value -= 1
 }
 function confirmDelete(event: any, index: number) {
     confirm.require({
@@ -152,18 +144,17 @@ function confirmDelete(event: any, index: number) {
             <Button type="button" icon="pi pi-refresh" text @click="refreshPage()" />
         </template>
         <Column field="id" header="ID"></Column>
-        <Column field="short_url" header="短链"></Column>
-        <Column field="long_url" header="原始链接">
+        <Column field="shortUrl" header="短链"></Column>
+        <Column field="longUrl" header="原始链接">
             <template #body="{ data }">
-                <a :href="data.long_url" :title="data.long_url">
-                    <div class="max-w-72 overflow-auto lg:max-w-none">
-                        {{ data.long_url }}
-                    </div></a
-                >
+                <a :href="data.longUrl" :title="data.longUrl">
+                    <div class="max-w-72 overflow-auto">
+                        {{ data.longUrl }}
+                    </div>
+                </a>
             </template>
         </Column>
-        <Column field="local_create" header="创建时间"></Column>
-        <Column field="count" header="统计"></Column>
+        <Column field="visitCount" header="统计"></Column>
         <Column>
             <template #body="{ data, index }">
                 <Button
@@ -171,7 +162,7 @@ function confirmDelete(event: any, index: number) {
                     :icon="'pi pi-copy'"
                     text
                     size="small"
-                    @click="copyShortUrl(data.short_url)"
+                    @click="copyShortUrl(data.shortUrl)"
                 />
                 <Button
                     type="button"

@@ -15,6 +15,7 @@ export function useClipboard() {
         life: 3000
       })
     } catch (error) {
+      console.log('The short url is', content)
       toast.add({
         severity: 'error',
         summary: '复制失败',
