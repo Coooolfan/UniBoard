@@ -18,7 +18,6 @@ export default defineConfig({
         proxy: {
             '/api/': baseURL,
             '/s/': baseURL,
-            '/f/': baseURL,
             '/file/': baseURL
         }
     }

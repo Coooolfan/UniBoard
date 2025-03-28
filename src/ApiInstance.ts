@@ -5,15 +5,23 @@ const BASE_URL = ''
 // 导出全局变量`api`
 export const api = new Api(async ({ uri, method, headers, body }) => {
     const tenant = (window as any).__tenant as string | undefined
+    const isFormData = body instanceof FormData
+    const fetchHeaders: HeadersInit = {
+        ...headers,
+        ...(tenant !== undefined && tenant !== '' ? { tenant } : {})
+    }
+    if (isFormData) {
+        fetchHeaders['Content-Type'] = 'multipart/form-data'
+    }
     const response = await fetch(`${BASE_URL}${uri}`, {
         method,
-        body: body !== undefined ? JSON.stringify(body) : undefined,
-        headers: {
-            'content-type': 'application/json;charset=UTF-8',
-            ...headers,
-            ...(tenant !== undefined && tenant !== '' ? { tenant } : {})
-        }
+        body: isFormData ? body : JSON.stringify(body),
+        headers: fetchHeaders
     })
+    if (response.status === 201) {
+        alert('登录已过期，请重新登录')
+        window.location.href = '/'
+    }
     if (Math.floor(response.status / 100) !== 2) {
         throw response.json()
     }

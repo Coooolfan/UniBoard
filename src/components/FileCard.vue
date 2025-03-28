@@ -10,25 +10,21 @@ import Dialog from 'primevue/dialog'
 import RadioButton from 'primevue/radiobutton'
 import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
 import { useConfirm } from 'primevue/useconfirm'
-import {
-    defaultFileRecord,
-    getFileRecordList,
-    postFileRecord,
-    permissionMap,
-    type FileRecord,
-    deleteFileRecord,
-    patchFileRecord,
-    getFileRecordToken
-} from '@/api/fileRecord'
 import LabelAndInput from './LabelAndInput.vue'
+import { api } from '@/ApiInstance'
+import type { Dynamic_FileRecord } from '@/__generated/model/dynamic'
 const dialogRef: any = inject('dialogRef')
 const confirm = useConfirm()
 const closeDialog = () => {
     dialogRef.value.close()
 }
 const toast = useToast()
-const fileRecords = ref<Array<FileRecord>>([])
+const fileRecords = ref<Array<Dynamic_FileRecord>>([])
 const fileRecordCount = ref(0)
+
+const selectedFile = ref<File | null>(null)
+const selectedFilename = ref('')
+const selectedFileLoading = ref(false)
 const dataTableIsLoading = ref(false)
 const newLongUrlLoading = ref(false)
 const visible = ref(false)
@@ -36,14 +32,23 @@ const page = ref(1)
 const size = ref(5)
 const dialogType = ref<'new' | 'edit'>('new')
 const host = window.location.origin
-const newFileRecord = ref<FileRecord>(structuredClone(defaultFileRecord))
+const newFileRecord = ref<Dynamic_FileRecord>({
+    file: {
+        filename: '',
+        filepath: ''
+    },
+    shareCode: '',
+    description: '',
+    visibility: 'PUBLIC',
+    password: ''
+})
 onMounted(async () => {
-    let resp = await getFileRecordList()
-    fileRecords.value = resp.results
-    fileRecordCount.value = resp.count
-    fileRecords.value.forEach((fileRecord) => {
-        fileRecord.local_create = localTime(fileRecord.create_time)
+    let resp = await api.fileRecordController.getAllFileRecords({
+        pageIndex: page.value,
+        pageSize: size.value
     })
+    fileRecords.value = [...resp.rows]
+    fileRecordCount.value = resp.totalRowCount
 })
 async function refreshPage(originalEvent?: DataTablePageEvent) {
     if (originalEvent?.page !== undefined) {
@@ -53,49 +58,71 @@ async function refreshPage(originalEvent?: DataTablePageEvent) {
         size.value = originalEvent.rows
     }
     dataTableIsLoading.value = true
-    let resp = await getFileRecordList(page.value, size.value)
-    fileRecords.value = resp.results
-    fileRecordCount.value = resp.count
-    fileRecords.value.forEach((fileRecord) => {
-        fileRecord.local_create = localTime(fileRecord.create_time)
+    let resp = await api.fileRecordController.getAllFileRecords({
+        pageIndex: page.value,
+        pageSize: size.value
     })
+    fileRecords.value = [...resp.rows]
+    fileRecordCount.value = resp.totalRowCount
     dataTableIsLoading.value = false
 }
-function localTime(time: string) {
-    return new Date(time).toLocaleString()
-}
+
 function onFileChooseHandler(e: FileUploadSelectEvent) {
-    newFileRecord.value.file = e.files[0]
-    newFileRecord.value.file_name = e.files[0].name
+    const file = e.files[0]
+    selectedFile.value = file
+    selectedFilename.value = file.name
 }
 
 async function submitFileRecordUpload() {
-    newFileRecord.value.loading = true
-    if (newFileRecord.value.file_name === '') {
+    // TODO 二进制数据还不能上传
+    selectedFileLoading.value = true
+    if (selectedFilename.value === '') {
         toast.add({
             severity: 'error',
             summary: '空文件名',
             detail: '文件名不能为空',
             life: 3000
         })
-        newFileRecord.value.loading = false
+        selectedFileLoading.value = false
         return
     }
-    if (newFileRecord.value.permission === '3' && newFileRecord.value.password === '') {
+    if (newFileRecord.value?.visibility === 'PASSWORD' && newFileRecord.value.password === '') {
         toast.add({
             severity: 'error',
             summary: '密码不能为空',
             detail: '文件密码不能为空',
             life: 3000
         })
-        newFileRecord.value.loading = false
+        selectedFileLoading.value = false
         return
     }
     let resp
     if (dialogType.value === 'edit') {
-        resp = await patchFileRecord(newFileRecord.value)
+        await api.fileRecordController.updateFileRecordById({
+            id: newFileRecord.value.id!,
+            body: {
+                file: {
+                    filename: selectedFilename.value
+                },
+                description: newFileRecord.value.description!,
+                visibility: newFileRecord.value.visibility!,
+                password: newFileRecord.value.password!
+            }
+        })
     } else {
-        resp = await postFileRecord(newFileRecord.value)
+        resp = await api.fileRecordController.uploadFile({
+            body: {
+                insert: {
+                    file: {
+                        filename: selectedFilename.value
+                    },
+                    description: newFileRecord.value.description!,
+                    visibility: newFileRecord.value.visibility!,
+                    password: newFileRecord.value.password!
+                },
+                file: selectedFile.value!
+            }
+        })
     }
     if (resp) {
         if (dialogType.value === 'new')
@@ -113,16 +140,18 @@ async function submitFileRecordUpload() {
                 life: 3000
             })
         visible.value = false
-        newFileRecord.value = structuredClone(defaultFileRecord)
+        newFileRecord.value = {}
         refreshPage()
     } else {
         toast.add({ severity: 'error', summary: '错误', detail: '文件上传失败', life: 3000 })
     }
-    newFileRecord.value.loading = false
+    selectedFileLoading.value = false
 }
 async function deleteHandler(index: number) {
-    let resp = await deleteFileRecord(fileRecords.value[index].id)
-    if (resp) {
+    try {
+        await api.fileRecordController.deleteFileRecordById({
+            id: fileRecords.value[index].id!
+        })
         toast.add({
             severity: 'success',
             summary: '删除成功',
@@ -131,7 +160,7 @@ async function deleteHandler(index: number) {
         })
         fileRecords.value.splice(index, 1)
         fileRecordCount.value -= 1
-    } else {
+    } catch (e) {
         toast.add({
             severity: 'error',
             summary: '删除失败',
@@ -161,46 +190,71 @@ function confirmDelete(event: any, index: number) {
 }
 function showNewDialog() {
     dialogType.value = 'new'
-    newFileRecord.value = structuredClone(defaultFileRecord)
+    newFileRecord.value = {
+        file: {
+            filename: '',
+            filepath: ''
+        },
+        shareCode: '',
+        description: '',
+        visibility: 'PUBLIC',
+        password: ''
+    }
     visible.value = true
 }
 function showEditDialog(index: number) {
     dialogType.value = 'edit'
-    newFileRecord.value.id = fileRecords.value[index].id
-    newFileRecord.value.desc = fileRecords.value[index].desc
-    newFileRecord.value.file_name = fileRecords.value[index].file_name
-    newFileRecord.value.permission = fileRecords.value[index].permission.toString()
-    newFileRecord.value.password = fileRecords.value[index].password
+    newFileRecord.value = {
+        id: fileRecords.value[index].id,
+        file: {
+            filename: fileRecords.value[index].file?.filename!,
+            filepath: fileRecords.value[index].file?.filepath!
+        },
+        shareCode: fileRecords.value[index].shareCode,
+        description: fileRecords.value[index].description,
+        visibility: fileRecords.value[index].visibility,
+        password: fileRecords.value[index].password
+    }
+    selectedFilename.value = fileRecords.value[index].file?.filename!
     visible.value = true
 }
 const { copyToClipboard } = useClipboard()
 
 function copyFileLink(index: number) {
-    const shortUrl = host + '/f/' + fileRecords.value[index].share_code + '/'
+    const shortUrl = host + '/f/' + fileRecords.value[index].shareCode + '/'
     copyToClipboard(shortUrl, '文件分享链接已复制到剪贴板', '文件分享链接复制失败')
 }
 async function downloadHandler(index: number) {
-    let resp = await getFileRecordToken(fileRecords.value[index].id)
-    let DirectLinkToken = resp.token
-    let DirectLink = host + '/file/' + DirectLinkToken + '/' + fileRecords.value[index].file_name
+    let resp = await api.fileRecordController.createDirectLink({
+        create: {
+            id: fileRecords.value[index].id!
+        }
+    })
+    let DirectLinkToken = resp.directUUID
+    let DirectLink =
+        host + '/file/' + DirectLinkToken + '/' + fileRecords.value[index].file?.filename
     let a = document.createElement('a')
     a.style.display = 'none'
     a.href = DirectLink
-    a.download = fileRecords.value[index].file_name
+    a.download = fileRecords.value[index].file?.filename!
     a.click()
     a.remove()
 }
 
 async function copyDirctLink() {
-    let resp = await getFileRecordToken(newFileRecord.value.id)
-    let DirectLinkToken = resp.token
-    let DirectLink = host + '/file/' + DirectLinkToken + '/' + newFileRecord.value.file_name
+    let resp = await api.fileRecordController.createDirectLink({
+        create: {
+            id: newFileRecord.value.id!
+        }
+    })
+    let DirectLinkToken = resp.directUUID
+    let DirectLink = host + '/file/' + DirectLinkToken + '/' + newFileRecord.value.file?.filename
     copyToClipboard(DirectLink, '文件下载直链已复制到剪贴板\n有效期 5 分钟', '文件下载直链复制失败')
 }
 
 const submitText = computed(() => {
     if (dialogType.value === 'edit') return '修改'
-    else return newFileRecord.value.loading ? newFileRecord.value.processing + '%' : '上传'
+    else return '上传'
 })
 </script>
 <template>
@@ -236,19 +290,19 @@ const submitText = computed(() => {
             <Button type="button" icon="pi pi-refresh" text @click="refreshPage()" />
         </template>
         <Column field="id" header="ID"></Column>
-        <Column field="file_name" header="文件名"></Column>
-        <Column field="desc" header="描述">
+        <Column field="file.filename" header="文件名"></Column>
+        <Column field="description" header="描述">
             <template #body="{ data }">
-                <div class="max-w-72 overflow-auto lg:max-w-none" :title="data.desc">
-                    {{ data.desc }}
+                <div class="max-w-72 overflow-auto lg:max-w-none" :title="data.description">
+                    {{ data.description }}
                 </div>
             </template>
         </Column>
         <Column header="权限">
             <template #body="{ data, index }">
-                <span>{{ permissionMap[data.permission as keyof typeof permissionMap] }}</span>
+                <span>{{ data.visibility }}</span>
                 <Button
-                    v-if="data.permission !== 2"
+                    v-if="data.visibility !== 'PRIVATE'"
                     type="button"
                     :icon="'pi pi-link'"
                     text
@@ -257,7 +311,6 @@ const submitText = computed(() => {
                 />
             </template>
         </Column>
-        <Column field="local_create" header="上传时间"></Column>
         <Column>
             <template #header>
                 <span
@@ -268,7 +321,7 @@ const submitText = computed(() => {
                 >
             </template>
             <template #body="{ data }">
-                <span>{{ data.count }}</span>
+                <span>{{ data.downloadCount }}</span>
             </template>
         </Column>
         <Column>
@@ -319,51 +372,51 @@ const submitText = computed(() => {
         <LabelAndInput
             id="file_name"
             label="文件名"
-            :loading="newFileRecord.loading"
-            v-model="newFileRecord.file_name"
+            :loading="selectedFileLoading"
+            v-model="selectedFilename"
         />
         <LabelAndInput
             id="file_desc"
             label="文件描述"
-            :loading="newFileRecord.loading"
-            v-model="newFileRecord.desc"
+            :loading="selectedFileLoading"
+            v-model="newFileRecord.description!"
         />
         <div class="flex flex-wrap gap-2 mt-4 justify-start h-10 items-center lg:gap-4">
             <label class="shrink-0 w-20 text-right">文件权限</label>
             <div class="flex items-center">
                 <RadioButton
-                    v-model="newFileRecord.permission"
+                    v-model="newFileRecord.visibility"
                     inputId="private"
                     name="private"
-                    value="2"
+                    value="PRIVATE"
                 />
                 <label for="private" class="ml-1 lg:ml-2">私有</label>
             </div>
             <div class="flex items-center">
                 <RadioButton
-                    v-model="newFileRecord.permission"
+                    v-model="newFileRecord.visibility"
                     inputId="public"
                     name="public"
-                    value="1"
+                    value="PUBLIC"
                 />
-                <label for="public" class=" ml-1 lg:ml-2">完全公开</label>
+                <label for="public" class="ml-1 lg:ml-2">完全公开</label>
             </div>
             <div class="flex items-center">
                 <RadioButton
-                    v-model="newFileRecord.permission"
+                    v-model="newFileRecord.visibility"
                     inputId="passwordProtected"
                     name="passwordProtected"
-                    value="3"
+                    value="PASSWORD"
                 />
                 <label for="passwordProtected" class="ml-1 lg:ml-2">密码保护</label>
             </div>
         </div>
         <LabelAndInput
-            v-if="newFileRecord.permission === '3'"
+            v-if="newFileRecord.visibility === 'PASSWORD'"
             id="file_desc"
             label="文件密码"
-            :loading="newFileRecord.loading"
-            v-model="newFileRecord.password"
+            :loading="selectedFileLoading"
+            v-model="newFileRecord.password!"
         />
         <template #footer>
             <Button
@@ -378,7 +431,7 @@ const submitText = computed(() => {
                 :label="submitText"
                 severity="prime"
                 @click="submitFileRecordUpload"
-                :loading="newFileRecord.loading"
+                :loading="selectedFileLoading"
             />
         </template>
     </Dialog>
