@@ -10,8 +10,8 @@ export const api = new Api(async ({ uri, method, headers, body }) => {
         ...headers,
         ...(tenant !== undefined && tenant !== '' ? { tenant } : {})
     }
-    if (isFormData) {
-        fetchHeaders['Content-Type'] = 'multipart/form-data'
+    if (!isFormData) {
+        fetchHeaders['content-type'] = 'application/json;charset=UTF-8'
     }
     const response = await fetch(`${BASE_URL}${uri}`, {
         method,
