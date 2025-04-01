@@ -11,6 +11,7 @@ export const api = new Api(async ({ uri, method, headers, body }) => {
         ...(tenant !== undefined && tenant !== '' ? { tenant } : {})
     }
     if (!isFormData) {
+        // 仅在非FormData时设置content-type，携带二进制文件时，浏览器会自动设置content-type
         fetchHeaders['content-type'] = 'application/json;charset=UTF-8'
     }
     const response = await fetch(`${BASE_URL}${uri}`, {
@@ -18,9 +19,14 @@ export const api = new Api(async ({ uri, method, headers, body }) => {
         body: isFormData ? body : JSON.stringify(body),
         headers: fetchHeaders
     })
-    if (response.status === 201) {
-        alert('登录已过期，请重新登录')
+    if (response.status === 401) {
+        window.alert('登录已过期，请重新登录')
         window.location.href = '/'
+        throw new Error('登录已过期，请重新登录')
+    }
+    if (response.status === 500) {
+        window.alert('Internal Server Error!\nuri: ' + uri + '\nThe detail is in the console.')
+        throw new Error('服务端内部错误！')
     }
     if (Math.floor(response.status / 100) !== 2) {
         throw response.json()

@@ -10,10 +10,11 @@ import type { ProfileDto } from '@/__generated/model/dto'
 const route = useRoute()
 let shareCode = route.params.fileShareCode
 const passwordInput = ref('')
+const isFileExist = ref(true)
 const fileRecord = ref<Dynamic_FileRecord | null>(null)
 const userInfo = ref<ProfileDto['ProfileController/PUBLIC_PROFILE'] | null>(null)
 onMounted(async () => {
-    getFileRecordDetail()   
+    getFileRecordDetail()
     getUserInfoDetail()
 })
 async function getFileRecordDetail() {
@@ -22,10 +23,14 @@ async function getFileRecordDetail() {
     if (typeof shareCode !== 'string') {
         shareCode = shareCode.join('')
     }
-    const resp = await api.fileRecordController.getFileRecordById({
-        shareCode: shareCode
-    })
-    fileRecord.value = resp
+    try {
+        const resp = await api.fileRecordController.getFileRecordById({
+            shareCode: shareCode
+        })
+        fileRecord.value = resp
+    } catch (error: any) {
+        isFileExist.value = false
+    }
 }
 async function getUserInfoDetail() {
     const resp = await api.profileController.getProfile()
@@ -35,14 +40,14 @@ async function getUserInfoDetail() {
 const descIsEmpty = computed(() => fileRecord.value?.description === '')
 
 const titleString = computed(() => {
-    if (fileRecord.value?.file?.filename === '文件不存在') {
+    if (!isFileExist.value) {
         return 'Oh! 这个链接似乎没有对应的文件'
     }
     return userInfo.value?.name + ' 向您发送了一份文件' + (descIsEmpty.value ? '' : '并附言') + '：'
 })
 
 const titleStringMobile = computed(() => {
-    if (fileRecord.value?.file?.filename === '文件不存在') {
+    if (!isFileExist.value) {
         return 'Oh! 这个链接似乎没有对应的文件'
     }
     return descIsEmpty.value ? '' : '附言:'
@@ -71,7 +76,7 @@ const bannerUrl = computed(() => {
         <picture>
             <img
                 :src="bannerUrl"
-                class="absolute inset-0 object-cover w-full h-full filter -z-20"
+                class="absolute inset-0 object-cover w-full h-full filter -z-20 dark:brightness-70"
                 alt="background-image"
             />
         </picture>
@@ -84,10 +89,14 @@ const bannerUrl = computed(() => {
                     <p class="mt-4 font-bold tracking-wide">{{ fileRecord?.file?.filename }}</p>
                 </div>
                 <div class="pt-4 h-96 block md:hidden">
-                    <p class="text-xl">
+                    <p
+                        class="text-xl dark:text-white text-black text-shadow-white dark:text-shadow-gray"
+                    >
                         {{ titleStringMobile }}
                     </p>
-                    <p class="">{{ fileRecord?.description }}</p>
+                    <p class="dark:text-gray-200 text-gray-700">
+                        {{ fileRecord?.description }}
+                    </p>
                 </div>
                 <div class="flex gap-3">
                     <InputText
@@ -104,21 +113,23 @@ const bannerUrl = computed(() => {
                             'w-20': fileRecord?.visibility === 'PASSWORD',
                             'w-full': fileRecord?.visibility !== 'PASSWORD'
                         }"
-                        :disabled="fileRecord?.file?.filename === '文件不存在'"
+                        :disabled="!isFileExist"
                     >
                         <!-- 使用单独的a标签以允许在浏览器右键复制下载链接 -->
-                        <a v-if="fileRecord?.file?.filename === '文件不存在'" class="pointer-events-none"
-                            >文件不存在</a
-                        >
+                        <a v-if="!isFileExist" class="pointer-events-none">文件不存在</a>
                         <a v-else :href="downloadUrl">下载</a>
                     </Button>
                 </div>
             </div>
             <div class="p-2 h-96 hidden md:block -translate-y-8">
-                <p class="text-4xl font-bold tracking-wider">
+                <p
+                    class="text-4xl font-bold tracking-wider dark:text-white text-black text-shadow-white dark:text-shadow-gray"
+                >
                     {{ titleString }}
                 </p>
-                <p class="mt-8">{{ fileRecord?.description }}</p>
+                <p class="mt-8 dark:text-gray-200 text-gray-700">
+                    {{ fileRecord?.description }}
+                </p>
             </div>
         </div>
     </div>

@@ -74,7 +74,6 @@ function onFileChooseHandler(e: FileUploadSelectEvent) {
 }
 
 async function submitFileRecordUpload() {
-    // TODO 二进制数据还不能上传
     selectedFileLoading.value = true
     if (selectedFilename.value === '') {
         toast.add({
@@ -96,56 +95,75 @@ async function submitFileRecordUpload() {
         selectedFileLoading.value = false
         return
     }
-    let resp
-    if (dialogType.value === 'edit') {
-        await api.fileRecordController.updateFileRecordById({
-            id: newFileRecord.value.id!,
-            body: {
-                file: {
-                    filename: selectedFilename.value
-                },
-                description: newFileRecord.value.description!,
-                visibility: newFileRecord.value.visibility!,
-                password: newFileRecord.value.password!
-            }
-        })
-    } else {
-        resp = await api.fileRecordController.uploadFile({
-            body: {
-                insert: {
+
+    try {
+        let resp
+        if (dialogType.value === 'edit') {
+            resp = await api.fileRecordController.updateFileRecordById({
+                id: newFileRecord.value.id!,
+                body: {
                     file: {
                         filename: selectedFilename.value
                     },
                     description: newFileRecord.value.description!,
                     visibility: newFileRecord.value.visibility!,
                     password: newFileRecord.value.password!
-                },
-                file: selectedFile.value!
-            }
+                }
+            })
+        } else {
+            resp = await api.fileRecordController.uploadFile({
+                body: {
+                    insert: {
+                        file: {
+                            filename: selectedFilename.value
+                        },
+                        description: newFileRecord.value.description!,
+                        visibility: newFileRecord.value.visibility!,
+                        password: newFileRecord.value.password!
+                    },
+                    file: selectedFile.value!
+                }
+            })
+        }
+
+        if (resp) {
+            if (dialogType.value === 'new')
+                toast.add({
+                    severity: 'success',
+                    summary: '上传成功',
+                    detail: '文件上传成功',
+                    life: 3000
+                })
+            else
+                toast.add({
+                    severity: 'success',
+                    summary: '修改成功',
+                    detail: '文件信息修改成功',
+                    life: 3000
+                })
+            visible.value = false
+            newFileRecord.value = {}
+            refreshPage()
+        }
+    } catch (error: any) {
+        let errorMessage = '操作失败，请重试'
+
+        if (error?.family === 'FILE_RECORD' && error?.code === 'EMPTY_PASSWORD') {
+            errorMessage = '文件密码不能为空'
+        } else if (error?.message) {
+            errorMessage = error.message
+        }
+
+        toast.add({
+            severity: 'error',
+            summary: '错误',
+            detail: errorMessage,
+            life: 3000
         })
+        console.error(error)
+    } finally {
+        selectedFileLoading.value = false
     }
-    if (resp) {
-        if (dialogType.value === 'new')
-            toast.add({
-                severity: 'success',
-                summary: '上传成功',
-                detail: '文件上传成功',
-                life: 3000
-            })
-        else
-            toast.add({
-                severity: 'success',
-                summary: '修改成功',
-                detail: '文件信息修改成功',
-                life: 3000
-            })
-        visible.value = false
-        newFileRecord.value = {}
-        refreshPage()
-    } else {
-        toast.add({ severity: 'error', summary: '错误', detail: '文件上传失败', life: 3000 })
-    }
-    selectedFileLoading.value = false
 }
 async function deleteHandler(index: number) {
     try {
@@ -160,13 +178,20 @@ async function deleteHandler(index: number) {
         })
         fileRecords.value.splice(index, 1)
         fileRecordCount.value -= 1
-    } catch (e) {
+    } catch (error: any) {
+        let errorMessage = '删除失败，请重试'
+
+        if (error?.message) {
+            errorMessage = error.message
+        }
+
         toast.add({
             severity: 'error',
             summary: '删除失败',
-            detail: '请重试',
+            detail: errorMessage,
             life: 3000
         })
+        console.error(error)
     }
 }
 function confirmDelete(event: any, index: number) {

@@ -39,6 +39,12 @@ export default {
                 },
                 '.text-shadow-2xl': {
                     textShadow: '5px 5px 5px rgba(0, 0, 0, 0.5)'
+                },
+                '.text-shadow-white': {
+                    textShadow: '1px 1px 2px rgba(255, 255, 255, 0.3)'
+                },
+                '.text-shadow-gray': {
+                    textShadow: '1px 1px 2px rgba(100, 100, 100, 0.3)'
                 }
             }
             addUtilities(newUtilities)
