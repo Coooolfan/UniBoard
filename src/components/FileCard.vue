@@ -13,6 +13,7 @@ import { useConfirm } from 'primevue/useconfirm'
 import LabelAndInput from './LabelAndInput.vue'
 import { api } from '@/ApiInstance'
 import type { Dynamic_FileRecord } from '@/__generated/model/dynamic'
+import { FileRecordVisibility_CONSTANTS } from '@/__generated/model/enums'
 const dialogRef: any = inject('dialogRef')
 const confirm = useConfirm()
 const closeDialog = () => {
@@ -73,8 +74,17 @@ function onFileChooseHandler(e: FileUploadSelectEvent) {
     selectedFilename.value = file.name
 }
 
-async function submitFileRecordUpload() {
-    selectedFileLoading.value = true
+// Validate file input fields
+function validateFileInput(): boolean {
+    if (selectedFile.value === null) {
+        toast.add({
+            severity: 'error',
+            summary: '空文件',
+            detail: '请选择一个文件',
+            life: 3000
+        })
+        return false
+    }
     if (selectedFilename.value === '') {
         toast.add({
             severity: 'error',
@@ -82,9 +92,9 @@ async function submitFileRecordUpload() {
             detail: '文件名不能为空',
             life: 3000
         })
-        selectedFileLoading.value = false
-        return
+        return false
     }
+
     if (newFileRecord.value?.visibility === 'PASSWORD' && newFileRecord.value.password === '') {
         toast.add({
             severity: 'error',
@@ -92,6 +102,78 @@ async function submitFileRecordUpload() {
             detail: '文件密码不能为空',
             life: 3000
         })
+        return false
+    }
+
+    return true
+}
+
+// Create payload for edit operation
+function getEditPayload() {
+    return {
+        id: newFileRecord.value.id!,
+        body: {
+            file: {
+                filename: selectedFilename.value
+            },
+            description: newFileRecord.value.description!,
+            visibility: newFileRecord.value.visibility!,
+            password: newFileRecord.value.password!
+        }
+    } as const
+}
+
+// Create payload for new file upload
+function getUploadPayload() {
+    return {
+        body: {
+            insert: {
+                file: {
+                    filename: selectedFilename.value
+                },
+                description: newFileRecord.value.description!,
+                visibility: newFileRecord.value.visibility!,
+                password: newFileRecord.value.password!
+            },
+            file: selectedFile.value!
+        }
+    } as const
+}
+
+// Handle API error
+function handleApiError(error: any) {
+    let errorMessage = '操作失败，请重试'
+
+    if (error?.family === 'FILE_RECORD' && error?.code === 'EMPTY_PASSWORD') {
+        errorMessage = '文件密码不能为空'
+    } else if (error?.message) {
+        errorMessage = error.message
+    }
+
+    toast.add({
+        severity: 'error',
+        summary: '错误',
+        detail: errorMessage,
+        life: 3000
+    })
+    console.error(error)
+}
+
+// Show success message
+function showSuccessMessage() {
+    const isNewFile = dialogType.value === 'new'
+    toast.add({
+        severity: 'success',
+        summary: isNewFile ? '上传成功' : '修改成功',
+        detail: isNewFile ? '文件上传成功' : '文件信息修改成功',
+        life: 3000
+    })
+}
+
+async function submitFileRecordUpload() {
+    selectedFileLoading.value = true
+
+    if (!validateFileInput()) {
         selectedFileLoading.value = false
         return
     }
@@ -99,68 +181,19 @@ async function submitFileRecordUpload() {
     try {
         let resp
         if (dialogType.value === 'edit') {
-            resp = await api.fileRecordController.updateFileRecordById({
-                id: newFileRecord.value.id!,
-                body: {
-                    file: {
-                        filename: selectedFilename.value
-                    },
-                    description: newFileRecord.value.description!,
-                    visibility: newFileRecord.value.visibility!,
-                    password: newFileRecord.value.password!
-                }
-            })
+            resp = await api.fileRecordController.updateFileRecordById(getEditPayload())
         } else {
-            resp = await api.fileRecordController.uploadFile({
-                body: {
-                    insert: {
-                        file: {
-                            filename: selectedFilename.value
-                        },
-                        description: newFileRecord.value.description!,
-                        visibility: newFileRecord.value.visibility!,
-                        password: newFileRecord.value.password!
-                    },
-                    file: selectedFile.value!
-                }
-            })
+            resp = await api.fileRecordController.uploadFile(getUploadPayload())
         }
 
         if (resp) {
-            if (dialogType.value === 'new')
-                toast.add({
-                    severity: 'success',
-                    summary: '上传成功',
-                    detail: '文件上传成功',
-                    life: 3000
-                })
-            else
-                toast.add({
-                    severity: 'success',
-                    summary: '修改成功',
-                    detail: '文件信息修改成功',
-                    life: 3000
-                })
+            showSuccessMessage()
             visible.value = false
             newFileRecord.value = {}
             refreshPage()
         }
     } catch (error: any) {
-        let errorMessage = '操作失败，请重试'
-
-        if (error?.family === 'FILE_RECORD' && error?.code === 'EMPTY_PASSWORD') {
-            errorMessage = '文件密码不能为空'
-        } else if (error?.message) {
-            errorMessage = error.message
-        }
-
-        toast.add({
-            severity: 'error',
-            summary: '错误',
-            detail: errorMessage,
-            life: 3000
-        })
-        console.error(error)
+        handleApiError(error)
     } finally {
         selectedFileLoading.value = false
     }
@@ -215,6 +248,8 @@ function confirmDelete(event: any, index: number) {
 }
 function showNewDialog() {
     dialogType.value = 'new'
+    selectedFile.value = null
+    selectedFilename.value = ''
     newFileRecord.value = {
         file: {
             filename: '',
@@ -222,7 +257,7 @@ function showNewDialog() {
         },
         shareCode: '',
         description: '',
-        visibility: 'PUBLIC',
+        visibility: 'PRIVATE',
         password: ''
     }
     visible.value = true
@@ -438,7 +473,7 @@ const submitText = computed(() => {
         </div>
         <LabelAndInput
             v-if="newFileRecord.visibility === 'PASSWORD'"
-            id="file_desc"
+            id="file_password"
             label="文件密码"
             :loading="selectedFileLoading"
             v-model="newFileRecord.password!"
