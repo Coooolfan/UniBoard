@@ -34,10 +34,7 @@ const size = ref(5)
 const dialogType = ref<'new' | 'edit'>('new')
 const host = window.location.origin
 const newFileRecord = ref<Dynamic_FileRecord>({
-    file: {
-        filename: '',
-        filepath: ''
-    },
+    file: { filename: '', filepath: '' },
     shareCode: '',
     description: '',
     visibility: 'PUBLIC',
@@ -77,21 +74,11 @@ function onFileChooseHandler(e: FileUploadSelectEvent) {
 // Validate file input fields
 function validateFileInput(): boolean {
     if (selectedFile.value === null) {
-        toast.add({
-            severity: 'error',
-            summary: '空文件',
-            detail: '请选择一个文件',
-            life: 3000
-        })
+        toast.add({ severity: 'error', summary: '空文件', detail: '请选择一个文件', life: 3000 })
         return false
     }
     if (selectedFilename.value === '') {
-        toast.add({
-            severity: 'error',
-            summary: '空文件名',
-            detail: '文件名不能为空',
-            life: 3000
-        })
+        toast.add({ severity: 'error', summary: '空文件名', detail: '文件名不能为空', life: 3000 })
         return false
     }
 
@@ -113,9 +100,7 @@ function getEditPayload() {
     return {
         id: newFileRecord.value.id!,
         body: {
-            file: {
-                filename: selectedFilename.value
-            },
+            file: { filename: selectedFilename.value },
             description: newFileRecord.value.description!,
             visibility: newFileRecord.value.visibility!,
             password: newFileRecord.value.password!
@@ -128,9 +113,7 @@ function getUploadPayload() {
     return {
         body: {
             insert: {
-                file: {
-                    filename: selectedFilename.value
-                },
+                file: { filename: selectedFilename.value },
                 description: newFileRecord.value.description!,
                 visibility: newFileRecord.value.visibility!,
                 password: newFileRecord.value.password!
@@ -150,12 +133,7 @@ function handleApiError(error: any) {
         errorMessage = error.message
     }
 
-    toast.add({
-        severity: 'error',
-        summary: '错误',
-        detail: errorMessage,
-        life: 3000
-    })
+    toast.add({ severity: 'error', summary: '错误', detail: errorMessage, life: 3000 })
     console.error(error)
 }
 
@@ -200,15 +178,8 @@ async function submitFileRecordUpload() {
 }
 async function deleteHandler(index: number) {
     try {
-        await api.fileRecordController.deleteFileRecordById({
-            id: fileRecords.value[index].id!
-        })
-        toast.add({
-            severity: 'success',
-            summary: '删除成功',
-            detail: '文件已删除',
-            life: 3000
-        })
+        await api.fileRecordController.deleteFileRecordById({ id: fileRecords.value[index].id! })
+        toast.add({ severity: 'success', summary: '删除成功', detail: '文件已删除', life: 3000 })
         fileRecords.value.splice(index, 1)
         fileRecordCount.value -= 1
     } catch (error: any) {
@@ -218,12 +189,7 @@ async function deleteHandler(index: number) {
             errorMessage = error.message
         }
 
-        toast.add({
-            severity: 'error',
-            summary: '删除失败',
-            detail: errorMessage,
-            life: 3000
-        })
+        toast.add({ severity: 'error', summary: '删除失败', detail: errorMessage, life: 3000 })
         console.error(error)
     }
 }
@@ -232,15 +198,8 @@ function confirmDelete(event: any, index: number) {
         target: event.currentTarget,
         message: '删除此文件吗？',
         icon: 'pi pi-info-circle',
-        rejectProps: {
-            label: '取消',
-            severity: 'secondary',
-            outlined: true
-        },
-        acceptProps: {
-            label: '删除',
-            severity: 'danger'
-        },
+        rejectProps: { label: '取消', severity: 'secondary', outlined: true },
+        acceptProps: { label: '删除', severity: 'danger' },
         accept: () => {
             deleteHandler(index)
         }
@@ -251,10 +210,7 @@ function showNewDialog() {
     selectedFile.value = null
     selectedFilename.value = ''
     newFileRecord.value = {
-        file: {
-            filename: '',
-            filepath: ''
-        },
+        file: { filename: '', filepath: '' },
         shareCode: '',
         description: '',
         visibility: 'PRIVATE',
@@ -286,9 +242,7 @@ function copyFileLink(index: number) {
 }
 async function downloadHandler(index: number) {
     let resp = await api.fileRecordController.createDirectLink({
-        create: {
-            id: fileRecords.value[index].id!
-        }
+        create: { id: fileRecords.value[index].id! }
     })
     let DirectLinkToken = resp.directUUID
     let DirectLink =
@@ -303,9 +257,7 @@ async function downloadHandler(index: number) {
 
 async function copyDirctLink() {
     let resp = await api.fileRecordController.createDirectLink({
-        create: {
-            id: newFileRecord.value.id!
-        }
+        create: { id: newFileRecord.value.id! }
     })
     let DirectLinkToken = resp.directUUID
     let DirectLink = host + '/file/' + DirectLinkToken + '/' + newFileRecord.value.file?.filename
@@ -329,10 +281,10 @@ const submitText = computed(() => {
         :rows="size"
         :rowsPerPageOptions="[5, 10, 20, 50]"
         @page="refreshPage"
-        class="transition-all max-w-screen lg:p-5"
+        class="max-w-screen transition-all lg:p-5"
     >
         <template #header>
-            <div class="flex justify-between items-center">
+            <div class="flex items-center justify-between">
                 <div class="flex items-center">
                     <p>共 {{ fileRecordCount }} 条记录</p>
                 </div>
@@ -344,7 +296,7 @@ const submitText = computed(() => {
                     @click="showNewDialog"
                 />
             </div>
-            <div class="text-center italic lg:hidden m-2">左右滑动表头查看更多</div>
+            <div class="m-2 text-center italic lg:hidden">左右滑动表头查看更多</div>
         </template>
         <template #paginatorstart>
             <Button type="button" icon="pi pi-refresh" text @click="refreshPage()" />
@@ -411,7 +363,7 @@ const submitText = computed(() => {
             </template>
         </Column>
     </DataTable>
-    <Button @click="closeDialog" label="关闭" class="m-4 float-end" />
+    <Button @click="closeDialog" label="关闭" class="float-end m-4" />
 
     <Dialog v-model:visible="visible" modal :closeOnEscape="false" :style="{ width: '40rem' }">
         <template #header>
@@ -441,8 +393,8 @@ const submitText = computed(() => {
             :loading="selectedFileLoading"
             v-model="newFileRecord.description!"
         />
-        <div class="flex flex-wrap gap-2 mt-4 justify-start h-10 items-center lg:gap-4">
-            <label class="shrink-0 w-20 text-right">文件权限</label>
+        <div class="mt-4 flex h-10 flex-wrap items-center justify-start gap-2 lg:gap-4">
+            <label class="w-20 shrink-0 text-right">文件权限</label>
             <div class="flex items-center">
                 <RadioButton
                     v-model="newFileRecord.visibility"
