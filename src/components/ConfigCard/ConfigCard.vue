@@ -34,8 +34,8 @@ const closeDialog = () => {
         </TabList>
         <TabPanels>
             <TabPanel value="0"> <ConfigCardLanding /> </TabPanel>
-            <!-- <TabPanel value="1"> <ConfigCardHyperLink /> </TabPanel>
-            <TabPanel value="2"> <ConfigCardSystem /> </TabPanel> -->
+            <!-- <TabPanel value="1"> <ConfigCardHyperLink /> </TabPanel>-->
+            <TabPanel value="2"> <ConfigCardSystem /> </TabPanel> 
         </TabPanels>
     </Tabs>
 

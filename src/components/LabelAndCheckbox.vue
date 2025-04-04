@@ -36,7 +36,6 @@ const {
 const emit = defineEmits(['update:modelValue'])
 
 function onInput(value: boolean) {
-    console.log(value)
     emit('update:modelValue', value)
 }
 </script>
