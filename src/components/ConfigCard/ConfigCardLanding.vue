@@ -1,73 +1,137 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import Button from 'primevue/button'
-import type { UserInfo } from '@/api/userInfo'
-import { getUserInfo, patchUserInfo, defaultUserInfo } from '@/api/userInfo'
-import Image from 'primevue/image'
 import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
 import Skeleton from 'primevue/skeleton'
 import { useToast } from 'primevue/usetoast'
 import LabelAndInput from '@/components/LabelAndInput.vue'
+import { api } from '@/ApiInstance'
+import type { ProfileDto } from '@/__generated/model/dto'
+declare const URL: {
+    createObjectURL(file: File): string
+}
 const toast = useToast()
-const userInfo = ref<UserInfo>(structuredClone(defaultUserInfo))
+const userInfo = ref<ProfileDto['ProfileController/PUBLIC_PROFILE']>({
+    id: 0,
+    name: '',
+    description: '',
+    slogan: '',
+    contacts: {
+        github: '',
+        telegram: '',
+        qq: '',
+        email: '',
+        weibo: '',
+        zhihu: '',
+        twitter: '',
+        facebook: '',
+        instagram: '',
+        linkedin: ''
+    },
+    customFont: {
+        filepath: '',
+        filename: ''
+    },
+    avatar: {
+        filepath: '',
+        filename: ''
+    },
+    banner: {
+        filepath: '',
+        filename: ''
+    }
+})
+const selectedAvatarFile = ref<File | null>(null)
+const selectedBannerFile = ref<File | null>(null)
+const selectedFontFile = ref<File | null>(null)
+const loading = ref(false)
 const updatting = ref(false)
-onMounted(async () => {
-    userInfo.value = await getUserInfo()
-    userInfo.value.loading = false
+
+const avatarUrl = computed(() => {
+    if (!userInfo.value) return ''
+    return selectedAvatarFile.value
+        ? URL.createObjectURL(selectedAvatarFile.value)
+        : userInfo.value.avatar.filepath
 })
 
-async function saveConfigPage1() {
-    if (!userInfo.value) {
-        return
-    }
+const bannerUrl = computed(() => {
+    if (!userInfo.value) return ''
+    return selectedBannerFile.value
+        ? URL.createObjectURL(selectedBannerFile.value)
+        : userInfo.value.banner.filepath
+})
+
+onMounted(async () => {
+    await refreshProfile()
+})
+
+async function refreshProfile() {
+    loading.value = true
+    userInfo.value = await api.profileController.getProfile()
+    loading.value = false
+}
+
+async function updateProfileHandle() {
     updatting.value = true
-    let res = await patchUserInfo(userInfo.value)
-    if (res) {
+    try {
+        await api.profileController.updateProfile({
+            body: {
+                update: userInfo.value,
+                ...(selectedAvatarFile.value && { avatar: selectedAvatarFile.value }),
+                ...(selectedBannerFile.value && { banner: selectedBannerFile.value }),
+                ...(selectedFontFile.value && { font: selectedFontFile.value })
+            }
+        })
         toast.add({
             severity: 'success',
             summary: '保存成功',
             detail: '系统信息更新成功',
             life: 3000
         })
-    } else {
+    } catch (error) {
         toast.add({
             severity: 'error',
             summary: '保存失败',
             detail: '系统信息更新失败',
             life: 3000
         })
+    } finally {
+        updatting.value = false
     }
-    updatting.value = false
+    refreshProfile()
 }
 
-function handleFileRead(type: 'avatar' | 'banner' | 'font', file: File) {
+function onFileChooseHandler(e: FileUploadSelectEvent, type: 'avatar' | 'banner' | 'font') {
+    if (!e.files[0] || !userInfo.value) return
+
+    const file = e.files[0]
     const reader = new FileReader()
-    reader.onload = (e) => {
-        if (!e.target?.result) return
-        if ((type === 'avatar' || type === 'banner') && userInfo.value) {
-            userInfo.value[type] = e.target.result as string
-        } else if (type === 'font' && userInfo.value) {
-            // 直接保存Blob对象
-            userInfo.value.name_font = file
-            return
+    reader.onload = () => {
+        switch (type) {
+            case 'avatar':
+                selectedAvatarFile.value = file
+                break
+            case 'banner':
+                selectedBannerFile.value = file
+                break
+            case 'font':
+                selectedFontFile.value = file
+                break
         }
     }
     reader.readAsDataURL(file)
 }
-function onFileChooseHandler(e: FileUploadSelectEvent, type: 'avatar' | 'banner' | 'font') {
-    if (!e.files[0]) return
-    if ((type === 'avatar' || type === 'banner') && userInfo.value) {
-        handleFileRead(type, e.files[0])
-    } else if (type === 'font' && userInfo.value) {
-        handleFileRead(type, e.files[0])
-    }
-}
 </script>
 <template>
-    <div class="flex items-center space-x-2 mt-4">
-        <label for="avatar" class="shrink-0 w-20 text-right">头像</label>
+    <div class="mt-4 flex items-center space-x-2">
+        <label for="avatar" class="w-20 shrink-0 text-right">头像</label>
         <div class="grow">
-            <Image v-if="userInfo" id="avatar" :src="userInfo.avatar" width="96px" />
+            <img
+                v-if="userInfo"
+                :src="avatarUrl"
+                class="h-32 w-32 rounded-full object-cover shadow-md"
+                alt="avater"
+            />
             <Skeleton v-else height="96px"></Skeleton>
             <div class="float-start mt-2">
                 <FileUpload
@@ -79,10 +143,10 @@ function onFileChooseHandler(e: FileUploadSelectEvent, type: 'avatar' | 'banner'
             </div>
         </div>
     </div>
-    <div class="flex items-center space-x-2 mt-4">
-        <label for="banner" class="shrink-0 w-20 text-right">横幅</label>
+    <div class="mt-4 flex items-center space-x-2">
+        <label for="banner" class="w-20 shrink-0 text-right">横幅</label>
         <div class="grow">
-            <Image v-if="userInfo" id="banner" :src="userInfo.banner" width="200px" />
+            <img v-if="userInfo" id="banner" :src="bannerUrl" class="w-72" />
             <Skeleton v-else height="120px"></Skeleton>
             <div class="float-start mt-2">
                 <FileUpload
@@ -94,17 +158,12 @@ function onFileChooseHandler(e: FileUploadSelectEvent, type: 'avatar' | 'banner'
             </div>
         </div>
     </div>
-    <div class="flex items-start flex-col lg:flex-row">
-        <LabelAndInput
-            id="name"
-            label="展示姓名"
-            v-model="userInfo.name"
-            :loading="userInfo.loading"
-        />
-        <div class="w-full ml-4 mt-4">
+    <div class="flex flex-col items-start lg:flex-row">
+        <LabelAndInput id="name" label="展示姓名" v-model="userInfo.name" :loading="loading" />
+        <div class="mt-4 ml-4 w-full">
             <FileUpload
                 mode="basic"
-                chooseLabel="选择字体"
+                chooseLabel="选择新字体"
                 @select="(e) => onFileChooseHandler(e, 'font')"
                 class="h-10"
             />
@@ -113,81 +172,76 @@ function onFileChooseHandler(e: FileUploadSelectEvent, type: 'avatar' | 'banner'
     <LabelAndInput
         id="profile"
         label="个人简介"
-        v-model="userInfo.profile"
-        :loading="userInfo.loading"
+        v-model="userInfo.description"
+        :loading="loading"
     />
 
-    <LabelAndInput
-        id="title"
-        label="个人标语"
-        v-model="userInfo.slogan"
-        :loading="userInfo.loading"
-    />
-    <div class="grid grid-cols-1 mx-auto justify-center lg:grid-cols-2 lg:gap-x-10">
+    <LabelAndInput id="title" label="个人标语" v-model="userInfo.slogan" :loading="loading" />
+    <div class="mx-auto grid grid-cols-1 justify-center lg:grid-cols-2 lg:gap-x-10">
         <LabelAndInput
             id="contacts.github"
             label="github"
             v-model="userInfo.contacts.github"
-            :loading="userInfo.loading"
+            :loading="loading"
         />
         <LabelAndInput
             id="contacts.telegram"
             label="telegram"
             v-model="userInfo.contacts.telegram"
-            :loading="userInfo.loading"
+            :loading="loading"
         />
         <LabelAndInput
             id="contacts.qq"
             label="QQ"
             v-model="userInfo.contacts.qq"
-            :loading="userInfo.loading"
+            :loading="loading"
         />
         <LabelAndInput
             id="contacts.email"
             label="email"
             v-model="userInfo.contacts.email"
-            :loading="userInfo.loading"
+            :loading="loading"
             placeholder="mailto://name@email.com"
         />
         <LabelAndInput
             id="contacts.weibo"
             label="weibo"
             v-model="userInfo.contacts.weibo"
-            :loading="userInfo.loading"
+            :loading="loading"
         />
         <LabelAndInput
             id="contacts.zhihu"
             label="zhihu"
             v-model="userInfo.contacts.zhihu"
-            :loading="userInfo.loading"
+            :loading="loading"
         />
         <LabelAndInput
             id="contacts.twitter"
             label="twitter"
             v-model="userInfo.contacts.twitter"
-            :loading="userInfo.loading"
+            :loading="loading"
         />
         <LabelAndInput
             id="contacts.facebook"
             label="facebook"
             v-model="userInfo.contacts.facebook"
-            :loading="userInfo.loading"
+            :loading="loading"
         />
         <LabelAndInput
             id="contacts.instagram"
             label="instagram"
             v-model="userInfo.contacts.instagram"
-            :loading="userInfo.loading"
+            :loading="loading"
         />
         <LabelAndInput
             id="contacts.linkedin"
             label="linkedin"
             v-model="userInfo.contacts.linkedin"
-            :loading="userInfo.loading"
+            :loading="loading"
         />
     </div>
 
-    <div class="flex justify-end mt-4">
-        <Button @click="saveConfigPage1" :loading="updatting" label="保存" />
+    <div class="mt-4 flex justify-end">
+        <Button @click="updateProfileHandle" :loading="updatting" label="保存" />
     </div>
 </template>
