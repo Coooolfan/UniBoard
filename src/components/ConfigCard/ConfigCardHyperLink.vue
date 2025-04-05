@@ -1,185 +1,188 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import Button from 'primevue/button'
 import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
-import Skeleton from 'primevue/skeleton'
 import Dialog from 'primevue/dialog'
 import { useToast } from 'primevue/usetoast'
-
+import { useConfirm } from 'primevue/useconfirm'
 import HyperLinkCard from '@/components/HyperLinkCard.vue'
 import LabelAndInput from '@/components/LabelAndInput.vue'
 import ColorPicker from 'primevue/colorpicker'
 import { api } from '@/ApiInstance'
 import type { HyperLinkDto } from '@/__generated/model/dto'
-
+import ConfirmPopup from 'primevue/confirmpopup'
 const toast = useToast()
+const confirm = useConfirm()
 const hyperLinkList = ref<ReadonlyArray<HyperLinkDto['HyperLinkController/DEFAULT_HYPER_LINK']>>([])
 const dialogVisible = ref(false)
-const editIndex = ref<number | null>(null)
-const isNewLink = ref(false)
-
-// 用于传递给HyperLinkCard组件的数据
-const previewHyperLink = ref<Partial<HyperLinkDto['HyperLinkController/DEFAULT_HYPER_LINK']>>({
+const uploading = ref(false)
+const dialogType = ref<'new' | 'edit'>('new')
+const currentHyperLink = ref<HyperLinkDto['HyperLinkController/DEFAULT_HYPER_LINK']>({
+    id: 0,
     title: '',
     description: '',
     url: '',
-    color: '#f2f2f2'
+    color: '#f2f2f2',
+    icon: {
+        filename: '',
+        filepath: ''
+    }
 })
-
-
+// string 表示从服务器获取的图片路径，File 表示从本地上传的图片
+const selectedHyperLinkIcon = ref<string | File | null>(null)
 onMounted(async () => {
     await refreshHyperLinks()
 })
 
-// 刷新超链接列表
 async function refreshHyperLinks() {
     hyperLinkList.value = [...(await api.hyperLinkController.getAllHyperLinks())]
 }
 
-// 删除指定索引的超链接
-async function removeHyperLink(index: number) {
-    if (!hyperLinkList.value[index].id) return
-
-    try {
-        await api.hyperLinkController.deleteHyperLinkById({
-            id: hyperLinkList.value[index].id
-        })
-
-        toast.add({
-            severity: 'success',
-            summary: '删除成功',
-            detail: '超链接信息删除成功',
-            life: 3000
-        })
-
-        await refreshHyperLinks()
-    } catch (err) {
-        toast.add({
-            severity: 'error',
-            summary: '删除失败',
-            detail: '超链接信息删除失败',
-            life: 3000
-        })
-    }
-}
-
-// 保存或更新超链接信息
-async function saveAndUpdateHyperLink(hyperLink) {
-    try {
-        if (hyperLink.id) {
-            // 更新现有超链接
-            // await api.hyperLinkController.updateHyperLinkById({
-            //     id: hyperLink.id,
-            //     body: {
-            //         title: hyperLink.title,
-            //         description: hyperLink.description,
-            //         url: hyperLink.url
-            //         // 省略icon字段，避免类型问题
-            //     }
-            // })
-        } else {
-            // 新增超链接，需要提供文件
-            if (!hyperLink.icon) {
-                throw new Error('请选择一个图标')
-            }
-
-            // 根据API类型定义构造参数
-            // await api.hyperLinkController.insertHyperlink({
-            //     body: {
-            //         insert: {
-            //             title: hyperLink.title,
-            //             description: hyperLink.description,
-            //             url: hyperLink.url
-            //             // 省略icon字段，避免类型问题
-            //         },
-            //         file: hyperLink.icon
-            //     }
-            // })
+function openNewHyperLinkDialog() {
+    dialogType.value = 'new'
+    dialogVisible.value = true
+    currentHyperLink.value = {
+        id: 0,
+        title: '',
+        description: '',
+        url: '',
+        color: '#f2f2f2',
+        icon: {
+            filename: '',
+            filepath: ''
         }
-        hyperLink.saved = true
-        return true
-    } catch (error) {
-        console.error('Failed to save hyperlink:', error)
-        hyperLink.saved = false
-        return false
     }
+    selectedHyperLinkIcon.value = null
 }
 
-// 处理文件读取，创建预览
-function handleFileRead(file: File) {
-    // 直接存储File对象用于上传
-    currentHyperLink.value.icon = file
+function openEditHyperLinkDialog(index: number) {
+    dialogType.value = 'edit'
+    dialogVisible.value = true
+    currentHyperLink.value = hyperLinkList.value[index]
+    selectedHyperLinkIcon.value = currentHyperLink.value.icon.filepath
+}
 
-    // 创建预览图像
+const selectedHyperLinkIconUrl = computed(() => {
+    if (!dialogVisible.value || !selectedHyperLinkIcon.value) return ''
+    return typeof selectedHyperLinkIcon.value === 'string'
+        ? selectedHyperLinkIcon.value
+        : URL.createObjectURL(selectedHyperLinkIcon.value)
+})
+
+const previewHyperLink = computed(() => {
+    return {
+        ...currentHyperLink.value,
+        icon: {
+            ...currentHyperLink.value.icon,
+            filepath: selectedHyperLinkIconUrl.value
+        }
+    }
+})
+
+async function removeHyperLink(event: MouseEvent, id: number) {
+    if (!event.currentTarget) return
+    confirm.require({
+        target: event.currentTarget as HTMLElement,
+        message: '删除此超链接吗？\n操作不可逆！',
+        icon: 'pi pi-info-circle',
+        rejectProps: {
+            label: '取消',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptProps: {
+            label: '删除',
+            severity: 'danger'
+        },
+        accept: async () => {
+            await api.hyperLinkController.deleteHyperLinkById({ id })
+            await refreshHyperLinks()
+        }
+    })
+}
+
+function onFileChooseHandler(e: FileUploadSelectEvent) {
+    if (!e.files[0]) return
+
+    const file = e.files[0]
     const reader = new FileReader()
-    reader.onload = (e) => {
-        if (!e.target?.result) return
-        // 存储预览用的数据URL
-        currentHyperLink.value.iconPreview = e.target.result as string
-        // 更新预览数据
-        updatePreviewData()
+    reader.onload = () => {
+        selectedHyperLinkIcon.value = file
     }
     reader.readAsDataURL(file)
 }
+async function saveHyperLink() {
+    if (dialogType.value === 'edit') {
+        await api.hyperLinkController.updateHyperLinkById({
+            id: currentHyperLink.value.id,
+            body: {
+                update: currentHyperLink.value,
+                ...(typeof selectedHyperLinkIcon.value === 'object' && {
+                    file: selectedHyperLinkIcon.value!
+                })
+            }
+        })
+        toast.add({
+            severity: 'success',
+            summary: '编辑成功',
+            detail: '超链接已更新',
+            life: 3000
+        })
+    } else {
+        if (!(typeof selectedHyperLinkIcon.value === 'object' && selectedHyperLinkIcon.value)) {
+            toast.add({
+                severity: 'error',
+                summary: '创建失败',
+                detail: '请选择一个图标',
+                life: 3000
+            })
+            return
+        }
 
-// 处理文件选择事件
-function onFileChooseHandler(e: FileUploadSelectEvent) {
-    if (!e.files[0]) return
-    handleFileRead(e.files[0])
-}
-
-// 打开新增超链接对话框
-function openNewHyperLinkDialog() {
-    isNewLink.value = true
-    editIndex.value = null
-    currentHyperLink.value = { ...defaultHyperLinkCache }
-    updatePreviewData()
-    dialogVisible.value = true
-}
-
-// 打开编辑超链接对话框
-function openEditDialog(index: number) {
-    isNewLink.value = false
-    editIndex.value = index
-    const item = hyperLinkList.value[index]
-
-    // 从API返回的数据创建UI兼容对象
-    currentHyperLink.value = {
-        id: item.id,
-        title: item.title || '',
-        description: item.description || '',
-        url: item.url || '',
-        color: item.color || '#ffffff',
-        iconPreview: item.icon?.filepath, // 使用现有图标的URL作为预览
-        uploading: false,
-        saved: false
+        await api.hyperLinkController.insertHyperlink({
+            body: {
+                insert: currentHyperLink.value,
+                file: selectedHyperLinkIcon.value
+            }
+        })
+        toast.add({
+            severity: 'success',
+            summary: '创建成功',
+            detail: '超链接已添加',
+            life: 3000
+        })
     }
-
-    // 更新预览数据
-    updatePreviewData()
-    dialogVisible.value = true
+    await refreshHyperLinks()
+    dialogVisible.value = false
 }
 </script>
 <template>
+    <ConfirmPopup></ConfirmPopup>
     <div class="flex flex-col">
         <div class="mb-4 flex justify-end">
             <Button label="新增超链接" icon="pi pi-plus" @click="openNewHyperLinkDialog" />
         </div>
 
         <div class="m-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <div v-for="(item, index) of hyperLinkList" :key="index" class="flex flex-col">
-                <HyperLinkCard :hyperLink="item"></HyperLinkCard>
-                <div class="m-2 flex justify-end space-x-2">
-                    <Button
-                        icon="pi pi-pencil"
-                        class="p-button-rounded p-button-text"
-                        @click="openEditDialog(index)"
-                    />
-                    <Button
-                        icon="pi pi-trash"
-                        class="p-button-rounded p-button-text p-button-danger"
-                        @click="removeHyperLink(index)"
-                    />
+            <div
+                v-for="(item, index) of hyperLinkList"
+                :key="index"
+                class="flex flex-col items-center"
+            >
+                <div class="flex flex-col items-end">
+                    <HyperLinkCard :hyperLink="item" :allow-redirect="false"></HyperLinkCard>
+                    <div class="mt-2 flex justify-end space-x-2">
+                        <Button
+                            icon="pi pi-pencil"
+                            class="p-button-rounded p-button-text"
+                            @click="openEditHyperLinkDialog(index)"
+                        />
+                        <Button
+                            icon="pi pi-trash"
+                            class="p-button-rounded p-button-text p-button-danger"
+                            @click="removeHyperLink($event, item.id)"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
@@ -188,10 +191,10 @@ function openEditDialog(index: number) {
     <Dialog
         v-model:visible="dialogVisible"
         modal
-        :header="isNewLink ? '新增超链接' : '编辑超链接'"
+        :header="dialogType === 'new' ? '新增超链接' : '编辑超链接'"
         :style="{ width: '50rem' }"
-        :closable="!currentHyperLink.uploading"
-        :closeOnEscape="!currentHyperLink.uploading"
+        :closable="!uploading"
+        :closeOnEscape="!uploading"
     >
         <div class="flex flex-col lg:flex-row">
             <div class="pr-4 lg:w-1/2">
@@ -199,25 +202,22 @@ function openEditDialog(index: number) {
                     id="title"
                     label="标题"
                     v-model="currentHyperLink.title"
-                    :loading="currentHyperLink.uploading"
-                    :disabled="currentHyperLink.uploading"
-                    @update:modelValue="updatePreviewData"
+                    :loading="uploading"
+                    :disabled="uploading"
                 />
                 <LabelAndInput
                     id="description"
                     label="描述"
                     v-model="currentHyperLink.description"
-                    :loading="currentHyperLink.uploading"
-                    :disabled="currentHyperLink.uploading"
-                    @update:modelValue="updatePreviewData"
+                    :loading="uploading"
+                    :disabled="uploading"
                 />
                 <LabelAndInput
                     id="url"
                     label="目标链接"
                     v-model="currentHyperLink.url"
-                    :loading="currentHyperLink.uploading"
-                    :disabled="currentHyperLink.uploading"
-                    @update:modelValue="updatePreviewData"
+                    :loading="uploading"
+                    :disabled="uploading"
                 />
                 <div class="mt-4 flex place-content-between items-center space-x-4">
                     <div class="flex grow items-center gap-2">
@@ -227,8 +227,7 @@ function openEditDialog(index: number) {
                             v-model="currentHyperLink.color"
                             v-tooltip.right="'建议使用淡色系'"
                             type="text"
-                            :disabled="currentHyperLink.uploading"
-                            @update:modelValue="updatePreviewData"
+                            :disabled="uploading"
                         />
                     </div>
                     <div class="flex grow items-center gap-2">
@@ -239,29 +238,31 @@ function openEditDialog(index: number) {
                             chooseLabel="选择图标"
                             :auto="true"
                             class="h-10"
-                            :disabled="currentHyperLink.uploading"
+                            :disabled="uploading"
                             @select="onFileChooseHandler"
                         />
                     </div>
                 </div>
             </div>
             <div class="mt-4 lg:mt-0 lg:w-1/2">
-                <HyperLinkCard class="translate-4 scale-75" :hyperLink="previewHyperLink" />
+                <HyperLinkCard
+                    class="translate-4 scale-75"
+                    :hyperLink="previewHyperLink"
+                    :allow-redirect="false"
+                />
             </div>
         </div>
         <template #footer>
             <Button
                 label="取消"
-                icon="pi pi-times"
                 @click="dialogVisible = false"
-                class="p-button-text"
-                :disabled="currentHyperLink.uploading"
+                severity="secondary"
+                :disabled="uploading"
             />
             <Button
-                label="保存"
-                icon="pi pi-check"
-                @click="saveHyperLinkConfig"
-                :loading="currentHyperLink.uploading"
+                :label="dialogType === 'new' ? '创建' : '保存'"
+                @click="saveHyperLink"
+                :loading="uploading"
             />
         </template>
     </Dialog>
