@@ -4,14 +4,13 @@ import { useRoute } from 'vue-router'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import { api } from '@/ApiInstance'
-import type { Dynamic_FileRecord } from '@/__generated/model/dynamic'
-import type { ProfileDto } from '@/__generated/model/dto'
+import type { FileRecordDto, ProfileDto } from '@/__generated/model/dto'
 
 const route = useRoute()
 let shareCode = route.params.fileShareCode
 const passwordInput = ref('')
 const isFileExist = ref(true)
-const fileRecord = ref<Dynamic_FileRecord | null>(null)
+const fileRecord = ref<FileRecordDto['FileRecordController/PUBLIC_FILERECORD'] | null>(null)
 const userInfo = ref<ProfileDto['ProfileController/PUBLIC_PROFILE'] | null>(null)
 onMounted(async () => {
     getFileRecordDetail()
@@ -24,7 +23,7 @@ async function getFileRecordDetail() {
         shareCode = shareCode.join('')
     }
     try {
-        const resp = await api.fileRecordController.getFileRecordById({
+        const resp = await api.fileRecordController.getFileRecordByShareCode({
             shareCode: shareCode
         })
         fileRecord.value = resp
@@ -76,25 +75,25 @@ const bannerUrl = computed(() => {
         <picture>
             <img
                 :src="bannerUrl"
-                class="absolute inset-0 object-cover w-full h-full filter -z-20 dark:brightness-70"
+                class="absolute inset-0 -z-20 h-full w-full object-cover filter dark:brightness-70"
                 alt="background-image"
             />
         </picture>
-        <div class="flex flex-col md:flex-row gap-14 items-center h-full -translate-y-6">
+        <div class="flex h-full -translate-y-6 flex-col items-center gap-14 md:flex-row">
             <div
-                class="flex flex-col w-80 p-4 h-2/3 md:h-96 drop-shadow-xl backdrop-blur-3xl bg-white/80 dark:bg-black/80 shadow-black justify-between rounded-xl transition-all duration-500 hover:drop-shadow-2xl hover:backdrop-blur-0"
+                class="hover:backdrop-blur-0 flex h-2/3 w-80 flex-col justify-between rounded-xl bg-white/80 p-4 shadow-black drop-shadow-xl backdrop-blur-3xl transition-all duration-500 hover:drop-shadow-2xl md:h-96 dark:bg-black/80"
             >
                 <div class="flex flex-col items-center pt-4">
                     <i class="pi pi-file" style="font-size: 4rem" />
                     <p class="mt-4 font-bold tracking-wide">{{ fileRecord?.file?.filename }}</p>
                 </div>
-                <div class="pt-4 h-96 block md:hidden">
+                <div class="block h-96 pt-4 md:hidden">
                     <p
-                        class="text-xl dark:text-white text-black text-shadow-white dark:text-shadow-gray"
+                        class="dark:text-shadow-gray text-xl text-black text-shadow-white dark:text-white"
                     >
                         {{ titleStringMobile }}
                     </p>
-                    <p class="dark:text-gray-200 text-gray-700">
+                    <p class="text-gray-700 dark:text-gray-200">
                         {{ fileRecord?.description }}
                     </p>
                 </div>
@@ -121,13 +120,13 @@ const bannerUrl = computed(() => {
                     </Button>
                 </div>
             </div>
-            <div class="p-2 h-96 hidden md:block -translate-y-8">
+            <div class="hidden h-96 -translate-y-8 p-2 md:block">
                 <p
-                    class="text-4xl font-bold tracking-wider dark:text-white text-black text-shadow-white dark:text-shadow-gray"
+                    class="dark:text-shadow-gray text-4xl font-bold tracking-wider text-black text-shadow-white dark:text-white"
                 >
                     {{ titleString }}
                 </p>
-                <p class="mt-8 dark:text-gray-200 text-gray-700">
+                <p class="mt-8 text-gray-700 dark:text-gray-200">
                     {{ fileRecord?.description }}
                 </p>
             </div>

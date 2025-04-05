@@ -12,17 +12,26 @@ import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
 import { useConfirm } from 'primevue/useconfirm'
 import LabelAndInput from './LabelAndInput.vue'
 import { api } from '@/ApiInstance'
-import type { Dynamic_FileRecord } from '@/__generated/model/dynamic'
 import { FileRecordVisibility_CONSTANTS } from '@/__generated/model/enums'
+import type { FileRecordDto } from '@/__generated/model/dto'
+import cloneWithFallback from '@/assets/utils/CloneWithCallback'
 const dialogRef: any = inject('dialogRef')
 const confirm = useConfirm()
 const closeDialog = () => {
     dialogRef.value.close()
 }
 const toast = useToast()
-const fileRecords = ref<Array<Dynamic_FileRecord>>([])
+const defaultFileRecord = ref<FileRecordDto['FileRecordController/DEFAULT_FILERECORD']>({
+    id: 0,
+    file: { filename: '', filepath: '' },
+    shareCode: '',
+    description: '',
+    visibility: 'PUBLIC',
+    password: '',
+    downloadCount: 0
+})
+const fileRecords = ref<Array<FileRecordDto['FileRecordController/DEFAULT_FILERECORD']>>([])
 const fileRecordCount = ref(0)
-
 const selectedFile = ref<File | null>(null)
 const selectedFilename = ref('')
 const selectedFileLoading = ref(false)
@@ -33,13 +42,10 @@ const page = ref(1)
 const size = ref(5)
 const dialogType = ref<'new' | 'edit'>('new')
 const host = window.location.origin
-const newFileRecord = ref<Dynamic_FileRecord>({
-    file: { filename: '', filepath: '' },
-    shareCode: '',
-    description: '',
-    visibility: 'PUBLIC',
-    password: ''
-})
+const newFileRecord = ref<FileRecordDto['FileRecordController/DEFAULT_FILERECORD']>(
+    defaultFileRecord.value
+)
+
 onMounted(async () => {
     let resp = await api.fileRecordController.getAllFileRecords({
         pageIndex: page.value,
@@ -167,7 +173,7 @@ async function submitFileRecordUpload() {
         if (resp) {
             showSuccessMessage()
             visible.value = false
-            newFileRecord.value = {}
+            newFileRecord.value = cloneWithFallback(defaultFileRecord.value)
             refreshPage()
         }
     } catch (error: any) {
@@ -209,13 +215,7 @@ function showNewDialog() {
     dialogType.value = 'new'
     selectedFile.value = null
     selectedFilename.value = ''
-    newFileRecord.value = {
-        file: { filename: '', filepath: '' },
-        shareCode: '',
-        description: '',
-        visibility: 'PRIVATE',
-        password: ''
-    }
+    newFileRecord.value = cloneWithFallback(defaultFileRecord.value)
     visible.value = true
 }
 function showEditDialog(index: number) {
@@ -229,7 +229,8 @@ function showEditDialog(index: number) {
         shareCode: fileRecords.value[index].shareCode,
         description: fileRecords.value[index].description,
         visibility: fileRecords.value[index].visibility,
-        password: fileRecords.value[index].password
+        password: fileRecords.value[index].password,
+        downloadCount: fileRecords.value[index].downloadCount
     }
     selectedFilename.value = fileRecords.value[index].file?.filename!
     visible.value = true

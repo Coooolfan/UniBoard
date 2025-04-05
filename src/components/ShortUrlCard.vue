@@ -9,14 +9,14 @@ import { useToast } from 'primevue/usetoast'
 import ConfirmPopup from 'primevue/confirmpopup'
 import { useConfirm } from 'primevue/useconfirm'
 import { api } from '@/ApiInstance'
-import type { Dynamic_ShortUrl } from '@/__generated/model/dynamic'
+import type { ShortUrlDto } from '@/__generated/model/dto'
 const dialogRef: any = inject('dialogRef')
 const confirm = useConfirm()
 const closeDialog = () => {
     dialogRef.value.close()
 }
 const toast = useToast()
-const shortUrls = ref<Array<Dynamic_ShortUrl>>([])
+const shortUrls = ref<Array<ShortUrlDto['ShortUrlController/DEFAULT_SHORT_URL']>>([])
 const shortUrlCount = ref(0)
 const dataTableIsLoading = ref(false)
 const newLongUrl = ref('')

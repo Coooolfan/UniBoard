@@ -8,7 +8,6 @@ import { useToast } from 'primevue/usetoast'
 import { api } from '@/ApiInstance'
 import type { SystemConfigDto } from '@/__generated/model/dto'
 import type { ApiErrors } from '@/__generated/ApiErrors'
-import { c } from 'node_modules/vite/dist/node/moduleRunnerTransport.d-CXw_Ws6P'
 const toast = useToast()
 const systemConfigLoading = ref(false)
 const sysConfig = ref<SystemConfigDto['SystemConfigController/DEFAULT_SYSTEM_CONFIG']>({
@@ -62,16 +61,16 @@ async function updateConfig() {
 
 async function updatePassword() {
     passwordloading.value = true
-    // if (loginName.value.trim() === '') {
-    //     toast.add({
-    //         severity: 'error',
-    //         summary: '更新失败',
-    //         detail: '登录名不能为空',
-    //         life: 3000
-    //     })
-    //     passwordloading.value = false
-    //     return
-    // }
+    if (loginName.value.trim() === '') {
+        toast.add({
+            severity: 'error',
+            summary: '更新失败',
+            detail: '登录名不能为空',
+            life: 3000
+        })
+        passwordloading.value = false
+        return
+    }
     if (newPassword.value !== confirmPassword.value) {
         toast.add({
             severity: 'error',

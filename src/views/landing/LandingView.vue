@@ -5,9 +5,8 @@ import router from '@/router'
 import ProfileComponent from '@/components/LandingView/ProfileComponent.vue'
 import LoginOnlyView from '@/views/landing/LoginOnlyView.vue'
 import { api } from '@/ApiInstance'
-import type { ProfileDto, SystemConfigDto } from '@/__generated/model/dto'
+import type { HyperLinkDto, ProfileDto, SystemConfigDto } from '@/__generated/model/dto'
 import type { ApiErrors } from '@/__generated'
-import type { Dynamic_HyperLink } from '@/__generated/model/dynamic'
 const fontFamily = ref('arial')
 const sloganType = ref<'slogan' | 'password'>('slogan')
 const username = ref('')
@@ -15,7 +14,7 @@ const password = ref('')
 const usernameInputRef = useTemplateRef('usernameInput')
 const loading = ref(false)
 const profile = ref<ProfileDto['ProfileController/PUBLIC_PROFILE'] | null>(null)
-const links = ref<ReadonlyArray<Dynamic_HyperLink> | null>(null)
+const links = ref<ReadonlyArray<HyperLinkDto['HyperLinkController/DEFAULT_HYPER_LINK']>>([])
 const systemConfig = ref<SystemConfigDto['SystemConfigController/DEFAULT_SYSTEM_CONFIG']>({
     id: 0,
     host: '',
