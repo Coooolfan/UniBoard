@@ -19,7 +19,7 @@ export const api = new Api(async ({ uri, method, headers, body }) => {
         body: isFormData ? body : JSON.stringify(body),
         headers: fetchHeaders
     })
-    if (response.status === 401) {
+    if (response.status === 401 && !uri.includes('/api/token')) {
         window.alert('登录已过期，请重新登录')
         window.location.href = '/'
         throw new Error('登录已过期，请重新登录')

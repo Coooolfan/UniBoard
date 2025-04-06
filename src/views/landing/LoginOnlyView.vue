@@ -1,14 +1,20 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import router from '@/router'
 import { api } from '@/ApiInstance'
 import type { ApiErrors } from '@/__generated'
+import { isLoggedIn } from '@/utils/IsLogin'
 const username = ref('')
 const password = ref('')
 const loading = ref(false)
+onMounted(() => {
+    if (isLoggedIn()) {
+        router.push('/dashboard')
+    }
+})
 async function login() {
     loading.value = true
     try {
@@ -32,11 +38,11 @@ async function login() {
 </script>
 <template>
     <div
-        class="h-dvh bg-[#f2f2f2] dark:bg-[#1e2939] transition-all flex flex-col justify-center items-center"
+        class="flex h-dvh flex-col items-center justify-center bg-[#f2f2f2] transition-all dark:bg-[#1e2939]"
     >
-        <h3 class="font-bold text-2xl">UniBoard</h3>
+        <h3 class="text-2xl font-bold">UniBoard</h3>
         <form
-            class="animate-slide-up mt-4 flex flex-col gap-4 w-1/2 max-w-60"
+            class="animate-slide-up mt-4 flex w-1/2 max-w-60 flex-col gap-4"
             @submit.prevent="login"
         >
             <InputText type="text" name="username" placeholder="用户名" v-model="username" fluid />

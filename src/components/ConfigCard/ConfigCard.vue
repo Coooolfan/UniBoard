@@ -9,7 +9,7 @@ import TabPanel from 'primevue/tabpanel'
 import { useRouter } from 'vue-router'
 import Divider from 'primevue/divider'
 
-import ConfigCardLanding from '@/components/ConfigCard/ConfigCardLanding.vue'
+import ConfigCardLanding from '@/components/ConfigCard/ConfigCardProfile.vue'
 import ConfigCardHyperLink from '@/components/ConfigCard/ConfigCardHyperLink.vue'
 import ConfigCardSystem from '@/components/ConfigCard/ConfigCardSystem.vue'
 import { api } from '@/ApiInstance'

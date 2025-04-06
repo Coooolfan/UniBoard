@@ -8,6 +8,7 @@ import { api } from '@/ApiInstance'
 import { unwrapApiError } from '@/utils/errorHandling'
 import type { HyperLinkDto, ProfileDto, SystemConfigDto } from '@/__generated/model/dto'
 import type { ApiErrors } from '@/__generated'
+import { isLoggedIn } from '@/utils/IsLogin'
 const fontFamily = ref('arial')
 const sloganType = ref<'slogan' | 'password'>('slogan')
 const username = ref('')
@@ -59,6 +60,10 @@ async function loadFont() {
 }
 
 async function switchSloganType() {
+    if (isLoggedIn()) {
+        router.push('/dashboard')
+        return
+    }
     loading.value = false
     // 如果已经登录，直接跳转到首页
     if (sloganType.value === 'slogan') {
