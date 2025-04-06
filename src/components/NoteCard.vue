@@ -10,7 +10,7 @@ import type { TreeNode } from 'primevue/treenode'
 import { useConfirm } from 'primevue/useconfirm'
 import { api } from '@/ApiInstance'
 import type { NoteDto } from '@/__generated/model/dto'
-import { BeautyLocalTime } from '@/assets/utils/BeautyDate'
+import { BeautyLocalTime } from '@/utils/BeautyDate'
 const confirm = useConfirm()
 const editNote = ref<NoteDto['NoteController/DEFAULT_NOTE']>({
     id: -1,
@@ -204,8 +204,8 @@ async function newNote() {
 </script>
 <template>
     <ConfirmPopup></ConfirmPopup>
-    <div class="min-w-[80vw] min-h-[74vh] flex items-start justify-start">
-        <div class="w-80 h-4/5 flex flex-col">
+    <div class="flex min-h-[74vh] min-w-[80vw] items-start justify-start">
+        <div class="flex h-4/5 w-80 flex-col">
             <Tree
                 :value="treeNode"
                 v-model:selectionKeys="selectedKey"
@@ -213,9 +213,9 @@ async function newNote() {
             ></Tree>
         </div>
         <div class="w-full">
-            <div class="flex justify-between items-center">
+            <div class="flex items-center justify-between">
                 <input
-                    class="font-bold outline-hidden text-xl border-b-[1px] ml-1 w-4/5 focus:border-black focus:outline-hidden"
+                    class="ml-1 w-4/5 border-b-[1px] text-xl font-bold outline-hidden focus:border-black focus:outline-hidden"
                     v-model="editNote.title"
                 />
                 <div>
@@ -239,10 +239,10 @@ async function newNote() {
                         text
                         @click="confirmDelete($event, editNote.id)"
                     />
-                    <Button :icon="'pi pi-plus'" text class="ml-auto mr-4" @click="newNote" />
+                    <Button :icon="'pi pi-plus'" text class="mr-4 ml-auto" @click="newNote" />
                 </div>
             </div>
-            <div v-show="vditorLoading" class="flex flex-col justify-center items-center pt-8">
+            <div v-show="vditorLoading" class="flex flex-col items-center justify-center pt-8">
                 <ProgressSpinner />
                 <p class="mt-8">等待编辑器组件加载……</p>
             </div>

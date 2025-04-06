@@ -6,6 +6,7 @@ import LabelAndCheckbox from '@/components/LabelAndCheckbox.vue'
 import { onMounted, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { api } from '@/ApiInstance'
+import { unwrapApiError } from '@/utils/errorHandling'
 import type { SystemConfigDto } from '@/__generated/model/dto'
 import type { ApiErrors } from '@/__generated/ApiErrors'
 const toast = useToast()
@@ -97,13 +98,7 @@ async function updatePassword() {
             life: 3000
         })
     } catch (error: any) {
-        let err: ApiErrors['profileController']['updatePassword']
-        if (error instanceof Promise) {
-            err = (await error) as ApiErrors['profileController']['updatePassword']
-        } else {
-            err = error as ApiErrors['profileController']['updatePassword']
-        }
-        console.log(err)
+        const err = await unwrapApiError<ApiErrors['profileController']['updatePassword']>(error)
         let detail = ''
         switch (err.code) {
             case 'EMPTY_LOGIN_NAME':

@@ -1,4 +1,4 @@
-function BeautyLocalTime(): string {
+export function BeautyLocalTime(): string {
     const date = new Date()
     const options: Intl.DateTimeFormatOptions = {
         weekday: 'long',
@@ -13,5 +13,3 @@ function BeautyLocalTime(): string {
 
     return date.toLocaleString(undefined, options)
 }
-
-export { BeautyLocalTime }

@@ -12,9 +12,8 @@ import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
 import { useConfirm } from 'primevue/useconfirm'
 import LabelAndInput from './LabelAndInput.vue'
 import { api } from '@/ApiInstance'
-import { FileRecordVisibility_CONSTANTS } from '@/__generated/model/enums'
 import type { FileRecordDto } from '@/__generated/model/dto'
-import cloneWithFallback from '@/assets/utils/CloneWithCallback'
+import { cloneWithFallback } from '@/utils/CloneWithCallback'
 const dialogRef: any = inject('dialogRef')
 const confirm = useConfirm()
 const closeDialog = () => {

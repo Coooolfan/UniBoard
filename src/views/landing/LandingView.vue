@@ -5,6 +5,7 @@ import router from '@/router'
 import ProfileComponent from '@/components/LandingView/ProfileComponent.vue'
 import LoginOnlyView from '@/views/landing/LoginOnlyView.vue'
 import { api } from '@/ApiInstance'
+import { unwrapApiError } from '@/utils/errorHandling'
 import type { HyperLinkDto, ProfileDto, SystemConfigDto } from '@/__generated/model/dto'
 import type { ApiErrors } from '@/__generated'
 const fontFamily = ref('arial')
@@ -25,17 +26,28 @@ onMounted(async () => {
     api.systemConfigController.getSystemConfig().then((res) => {
         systemConfig.value = res
     })
-    api.profileController.getProfile().then((res) => {
-        profile.value = res
-        loadFont()
-        document.title = `${profile.value.name} - ${profile.value.description}`
-        document
-            .querySelector('link[rel="icon"]')
-            ?.setAttribute('href', profile.value.avatar.filepath)
-    })
-    api.hyperLinkController.getAllHyperLinks().then((res) => {
-        links.value = res
-    })
+    api.profileController
+        .getProfile()
+        .then((res) => {
+            profile.value = res
+            loadFont()
+            document.title = `${profile.value.name} - ${profile.value.description}`
+            document
+                .querySelector('link[rel="icon"]')
+                ?.setAttribute('href', profile.value.avatar.filepath)
+        })
+        .catch(async (error) => {
+            const err = await unwrapApiError<ApiErrors['profileController']['getProfile']>(error)
+            if (err.code === 'SYSTEM_UNINITIALIZED') router.push('/setup')
+        })
+    api.hyperLinkController
+        .getAllHyperLinks()
+        .then((res) => {
+            links.value = res
+        })
+        .catch((err) => {
+            console.error(err)
+        })
 })
 
 async function loadFont() {
@@ -70,9 +82,9 @@ async function login() {
         loading.value = false
         // 登录成功后跳转到首页
         router.push('/dashboard')
-    } catch (err) {
-        const error = (await err) as ApiErrors['tokenController']['getToken']
-        if (error.code === 'AUTHENTICATION_FAILED') {
+    } catch (error) {
+        const err = await unwrapApiError<ApiErrors['tokenController']['getToken']>(error)
+        if (err.code === 'AUTHENTICATION_FAILED') {
             sloganType.value = 'slogan'
         }
         loading.value = false
