@@ -237,7 +237,7 @@ function showEditDialog(index: number) {
 const { copyToClipboard } = useClipboard()
 
 function copyFileLink(index: number) {
-    const shortUrl = host + '/f/' + fileRecords.value[index].shareCode + '/'
+    const shortUrl = host + '/f/' + fileRecords.value[index].shareCode
     copyToClipboard(shortUrl, '文件分享链接已复制到剪贴板', '文件分享链接复制失败')
 }
 async function downloadHandler(index: number) {

@@ -74,7 +74,7 @@ async function addShortUrl() {
 const { copyToClipboard } = useClipboard()
 
 function copyShortUrl(content: string) {
-    const shortUrl = host + '/s/' + content + '/'
+    const shortUrl = host + '/s/' + content
     copyToClipboard(shortUrl, '短链已复制到剪贴板', '短链复制失败')
 }
 

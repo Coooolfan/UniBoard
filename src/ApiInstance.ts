@@ -1,4 +1,5 @@
 import { Api } from './__generated'
+import router from './router'
 
 const BASE_URL = ''
 
@@ -19,18 +20,27 @@ export const api = new Api(async ({ uri, method, headers, body }) => {
         body: isFormData ? body : JSON.stringify(body),
         headers: fetchHeaders
     })
-    if (response.status === 401 && !uri.includes('/api/token')) {
+
+    // 401处理：排除获取token的接口(POST)和GET请求，避免循环
+    if (response.status === 401 && !uri.includes('/api/token') && !method.includes('Get')) {
+        // 清除 token
+        document.cookie =
+            'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=' +
+            window.location.hostname
+
         window.alert('登录已过期，请重新登录')
         window.location.href = '/'
-        throw new Error('登录已过期，请重新登录')
     }
+
     if (response.status === 500) {
         window.alert('Internal Server Error!\nuri: ' + uri + '\nThe detail is in the console.')
         throw new Error('服务端内部错误！')
     }
+
     if (Math.floor(response.status / 100) !== 2) {
         throw response.json()
     }
+
     const text = await response.text()
     if (text.length === 0) {
         return null

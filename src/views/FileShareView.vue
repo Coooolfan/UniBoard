@@ -4,13 +4,14 @@ import { useRoute } from 'vue-router'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import { api } from '@/ApiInstance'
-import type { FileRecordDto, ProfileDto } from '@/__generated/model/dto'
+import type { ProfileDto } from '@/__generated/model/dto'
+import type { FileRecordPublic } from '@/__generated/model/static'
 
 const route = useRoute()
 let shareCode = route.params.fileShareCode
 const passwordInput = ref('')
 const isFileExist = ref(true)
-const fileRecord = ref<FileRecordDto['FileRecordController/PUBLIC_FILERECORD'] | null>(null)
+const fileRecord = ref<FileRecordPublic | null>(null)
 const userInfo = ref<ProfileDto['ProfileController/PUBLIC_PROFILE'] | null>(null)
 onMounted(async () => {
     getFileRecordDetail()
