@@ -101,7 +101,7 @@ function onFileChooseHandler(e: FileUploadSelectEvent, type: 'avatar' | 'banner'
     reader.readAsDataURL(file)
 }
 
-function setupSystem() {
+async function setupSystem() {
     // 检查密码是否匹配
     if (loginPassword.value !== confirmPassword.value) {
         toast.add({
@@ -113,18 +113,31 @@ function setupSystem() {
         return
     }
     submitting.value = true
-    api.profileController.createProfile({
+    api.profileController
+        .createProfile({
             body: {
                 create: {
                     ...userInfo.value,
                     loginName: loginUsername.value,
                     loginPassword: loginPassword.value
                 },
-                ...(selectedAvatarFile.value && { avatar: selectedAvatarFile.value }),
-                ...(selectedBannerFile.value && { banner: selectedBannerFile.value }),
+                // TODO 待验证
+                avatar:
+                    selectedAvatarFile.value ||
+                    new File(
+                        [await (await fetch('/src/assets/default-avatar.svg')).blob()],
+                        'default-avatar.svg'
+                    ),
+                banner:
+                    selectedBannerFile.value ||
+                    new File(
+                        [await (await fetch('/src/assets/default-banner.svg')).blob()],
+                        'default-banner.svg'
+                    ),
                 ...(selectedFontFile.value && { font: selectedFontFile.value })
             }
-        }).then(() => {
+        })
+        .then(() => {
             toast.add({
                 severity: 'success',
                 summary: '系统初始化成功',
@@ -134,13 +147,13 @@ function setupSystem() {
             setTimeout(() => {
                 router.push('/')
             }, 2000)
-        }).catch(async (error) => {
+        })
+        .catch(async (error) => {
             let err = (await error) as ApiErrors['profileController']['createProfile']
             let message = '请检查输入信息并重试'
-            if (err.code ==='SYSTEM_ALREADY_INITIALIZED') {
+            if (err.code === 'SYSTEM_ALREADY_INITIALIZED') {
                 message = '系统已存在管理员账户，请直接登录'
-            }
-            else if (err.code === 'EMPTY_LOGIN_NAME') {
+            } else if (err.code === 'EMPTY_LOGIN_NAME') {
                 message = '用户名不能为空'
             }
             toast.add({
@@ -149,10 +162,10 @@ function setupSystem() {
                 detail: message,
                 life: 3000
             })
-        }).finally(() => {
+        })
+        .finally(() => {
             submitting.value = false
         })
-
 }
 
 function stepChangeHandler(step: number) {
@@ -169,7 +182,7 @@ function stepChangeHandler(step: number) {
             })
             return
         }
-        
+
         // 检查两次密码是否匹配
         if (loginPassword.value !== confirmPassword.value) {
             toast.add({
@@ -180,7 +193,7 @@ function stepChangeHandler(step: number) {
             })
             return
         }
-        
+
         activeStep.value = '2'
     }
 }
