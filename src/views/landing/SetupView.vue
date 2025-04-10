@@ -15,10 +15,9 @@ import { api } from '@/ApiInstance'
 import router from '@/router'
 import type { ProfileDto } from '@/__generated/model/dto'
 import type { ApiErrors } from '@/__generated'
-
-declare const URL: {
-    createObjectURL(file: File): string
-}
+import { generateFaceSVG } from '@/utils/uglyAvatar/face_generator'
+import { generateBannerSVG } from '@/utils/greyBanner'
+import { svgToFile } from '@/utils/svgToFile'
 
 const toast = useToast()
 const loading = ref(false)
@@ -26,7 +25,7 @@ const submitting = ref(false)
 const activeStep = ref('1')
 const contactsPanelCollapsed = ref(true)
 
-// System profile information
+// 系统个人信息
 const userInfo = ref<ProfileDto['ProfileController/PUBLIC_PROFILE']>({
     id: 0,
     name: '',
@@ -69,15 +68,11 @@ const loginPassword = ref('')
 const confirmPassword = ref('')
 
 const avatarUrl = computed(() => {
-    return selectedAvatarFile.value
-        ? URL.createObjectURL(selectedAvatarFile.value)
-        : '/src/assets/default-avatar.svg'
+    return selectedAvatarFile.value ? URL.createObjectURL(selectedAvatarFile.value) : ''
 })
 
 const bannerUrl = computed(() => {
-    return selectedBannerFile.value
-        ? URL.createObjectURL(selectedBannerFile.value)
-        : '/src/assets/default-banner.svg'
+    return selectedBannerFile.value ? URL.createObjectURL(selectedBannerFile.value) : ''
 })
 
 function onFileChooseHandler(e: FileUploadSelectEvent, type: 'avatar' | 'banner' | 'font') {
@@ -112,6 +107,14 @@ async function setupSystem() {
         })
         return
     }
+    if (!selectedAvatarFile.value || !selectedBannerFile.value) {
+        toast.add({
+            severity: 'error',
+            summary: '请选择头像和横幅',
+            life: 3000
+        })
+        return
+    }
     submitting.value = true
     api.profileController
         .createProfile({
@@ -121,19 +124,8 @@ async function setupSystem() {
                     loginName: loginUsername.value,
                     loginPassword: loginPassword.value
                 },
-                // TODO 待验证
-                avatar:
-                    selectedAvatarFile.value ||
-                    new File(
-                        [await (await fetch('/src/assets/default-avatar.svg')).blob()],
-                        'default-avatar.svg'
-                    ),
-                banner:
-                    selectedBannerFile.value ||
-                    new File(
-                        [await (await fetch('/src/assets/default-banner.svg')).blob()],
-                        'default-banner.svg'
-                    ),
+                avatar: selectedAvatarFile.value,
+                banner: selectedBannerFile.value,
                 ...(selectedFontFile.value && { font: selectedFontFile.value })
             }
         })
@@ -144,6 +136,7 @@ async function setupSystem() {
                 detail: '正在前往登录页面',
                 life: 3000
             })
+            api.tokenController.deleteToken()
             setTimeout(() => {
                 router.push('/')
             }, 2000)
@@ -155,6 +148,8 @@ async function setupSystem() {
                 message = '系统已存在管理员账户，请直接登录'
             } else if (err.code === 'EMPTY_LOGIN_NAME') {
                 message = '用户名不能为空'
+            } else if (err.code === 'EMPTY_NAME') {
+                message = '展示姓名不能为空'
             }
             toast.add({
                 severity: 'error',
@@ -195,7 +190,19 @@ function stepChangeHandler(step: number) {
         }
 
         activeStep.value = '2'
+        generateAvatar()
+        generateBanner()
     }
+}
+
+function generateAvatar() {
+    const face = generateFaceSVG()
+    selectedAvatarFile.value = svgToFile(face, 'generated-avatar.svg')
+}
+
+function generateBanner() {
+    const banner = generateBannerSVG()
+    selectedBannerFile.value = svgToFile(banner, 'generated-banner.svg')
 }
 </script>
 
@@ -275,7 +282,8 @@ function stepChangeHandler(step: number) {
                                             class="h-32 w-32 rounded-full object-cover shadow-md"
                                             alt="avater"
                                         />
-                                        <div class="float-start mt-2">
+                                        <div class="float-start mt-2 flex items-center gap-2">
+                                            <Button icon="pi pi-refresh" @click="generateAvatar" />
                                             <FileUpload
                                                 mode="basic"
                                                 accept="image/*"
@@ -291,7 +299,8 @@ function stepChangeHandler(step: number) {
                                     >
                                     <div class="grow">
                                         <img id="banner" :src="bannerUrl" class="w-72" />
-                                        <div class="float-start mt-2">
+                                        <div class="float-start mt-2 flex items-center gap-2">
+                                            <Button icon="pi pi-refresh" @click="generateBanner" />
                                             <FileUpload
                                                 mode="basic"
                                                 accept="image/*"
