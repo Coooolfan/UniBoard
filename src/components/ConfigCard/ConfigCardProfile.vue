@@ -7,6 +7,7 @@ import { useToast } from 'primevue/usetoast'
 import LabelAndInput from '@/components/LabelAndInput.vue'
 import { api } from '@/ApiInstance'
 import type { ProfileDto } from '@/__generated/model/dto'
+import type { ApiErrors } from '@/__generated'
 declare const URL: {
     createObjectURL(file: File): string
 }
@@ -71,10 +72,10 @@ async function refreshProfile() {
     loading.value = false
 }
 
-async function updateProfileHandle() {
+function updateProfileHandle() {
     updatting.value = true
-    try {
-        await api.profileController.updateProfile({
+    return api.profileController
+        .updateProfile({
             body: {
                 update: userInfo.value,
                 ...(selectedAvatarFile.value && { avatar: selectedAvatarFile.value }),
@@ -82,23 +83,33 @@ async function updateProfileHandle() {
                 ...(selectedFontFile.value && { font: selectedFontFile.value })
             }
         })
-        toast.add({
-            severity: 'success',
-            summary: '保存成功',
-            detail: '系统信息更新成功',
-            life: 3000
+        .then(() => {
+            toast.add({
+                severity: 'success',
+                summary: '保存成功',
+                detail: '系统信息更新成功',
+                life: 3000
+            })
         })
-    } catch (error) {
-        toast.add({
-            severity: 'error',
-            summary: '保存失败',
-            detail: '系统信息更新失败',
-            life: 3000
+        .catch(async (error) => {
+            let err = (await error) as ApiErrors['profileController']['updateProfile']
+            let message = '请检查输入信息并重试'
+            if (err.code === 'SYSTEM_UNINITIALIZED') {
+                message = '系统未初始化，请先初始化'
+            } else if (err.code === 'EMPTY_NAME') {
+                message = '展示姓名不能为空'
+            }
+            toast.add({
+                severity: 'error',
+                summary: '保存失败',
+                detail: message,
+                life: 3000
+            })
         })
-    } finally {
-        updatting.value = false
-    }
-    refreshProfile()
+        .finally(() => {
+            updatting.value = false
+            return refreshProfile()
+        })
 }
 
 function onFileChooseHandler(e: FileUploadSelectEvent, type: 'avatar' | 'banner' | 'font') {
