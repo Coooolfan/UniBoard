@@ -235,6 +235,7 @@ function generateBanner() {
                                         label="用户名"
                                         v-model="loginUsername"
                                         :loading="loading"
+                                        placeholder="区分大小写！"
                                     />
                                     <LabelAndInput
                                         id="password"

@@ -85,7 +85,7 @@ async function updatePassword() {
     try {
         await api.profileController.updatePassword({
             update: {
-                loginName: loginName.value,
+                newLoginName: loginName.value,
                 oldPassword: oldPassword.value,
                 newPassword: newPassword.value
             }
@@ -157,16 +157,17 @@ async function updatePassword() {
     <Card class="lg:w-1/2">
         <template #content>
             <LabelAndInput
-                id="loginName"
-                label="登录名"
-                v-model="loginName"
-                :loading="passwordloading"
-            />
-            <LabelAndInput
                 id="oldPassword"
                 label="旧密码"
                 v-model="oldPassword"
                 :loading="passwordloading"
+            />
+            <LabelAndInput
+                id="loginName"
+                label="新登录名"
+                v-model="loginName"
+                :loading="passwordloading"
+                placeholder="区分大小写！"
             />
             <LabelAndInput
                 id="newPassword"
