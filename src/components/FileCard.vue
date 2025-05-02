@@ -14,21 +14,23 @@ import LabelAndInput from './LabelAndInput.vue'
 import { api } from '@/ApiInstance'
 import type { FileRecordDto } from '@/__generated/model/dto'
 import { cloneWithFallback } from '@/utils/CloneWithCallback'
+
+const { copyToClipboard } = useClipboard()
 const dialogRef: any = inject('dialogRef')
 const confirm = useConfirm()
 const closeDialog = () => {
     dialogRef.value.close()
 }
 const toast = useToast()
-const defaultFileRecord = ref<FileRecordDto['FileRecordController/DEFAULT_FILERECORD']>({
+const defaultFileRecord: FileRecordDto['FileRecordController/DEFAULT_FILERECORD'] = {
     id: 0,
     file: { filename: '', filepath: '' },
     shareCode: '',
     description: '',
-    visibility: 'PUBLIC',
+    visibility: 'PRIVATE',
     password: '',
     downloadCount: 0
-})
+}
 const fileRecords = ref<Array<FileRecordDto['FileRecordController/DEFAULT_FILERECORD']>>([])
 const fileRecordCount = ref(0)
 const selectedFile = ref<File | null>(null)
@@ -41,9 +43,8 @@ const page = ref(1)
 const size = ref(5)
 const dialogType = ref<'new' | 'edit'>('new')
 const host = window.location.origin
-const newFileRecord = ref<FileRecordDto['FileRecordController/DEFAULT_FILERECORD']>(
-    defaultFileRecord.value
-)
+const newFileRecord =
+    ref<FileRecordDto['FileRecordController/DEFAULT_FILERECORD']>(defaultFileRecord)
 
 onMounted(async () => {
     let resp = await api.fileRecordController.getAllFileRecords({
@@ -78,11 +79,16 @@ function onFileChooseHandler(e: FileUploadSelectEvent) {
 
 // Validate file input fields
 function validateFileInput(): boolean {
-    if (selectedFile.value === null) {
-        toast.add({ severity: 'error', summary: '空文件', detail: '请选择一个文件', life: 3000 })
+    if (dialogType.value === 'new' && selectedFile.value === null) {
+        toast.add({
+            severity: 'error',
+            summary: '未选择文件',
+            detail: '请选择一个文件',
+            life: 3000
+        })
         return false
     }
-    if (selectedFilename.value === '') {
+    if (dialogType.value === 'new' && selectedFilename.value === '') {
         toast.add({ severity: 'error', summary: '空文件名', detail: '文件名不能为空', life: 3000 })
         return false
     }
@@ -172,7 +178,7 @@ async function submitFileRecordUpload() {
         if (resp) {
             showSuccessMessage()
             visible.value = false
-            newFileRecord.value = cloneWithFallback(defaultFileRecord.value)
+            newFileRecord.value = cloneWithFallback(defaultFileRecord)
             refreshPage()
         }
     } catch (error: any) {
@@ -214,7 +220,7 @@ function showNewDialog() {
     dialogType.value = 'new'
     selectedFile.value = null
     selectedFilename.value = ''
-    newFileRecord.value = cloneWithFallback(defaultFileRecord.value)
+    newFileRecord.value = cloneWithFallback(defaultFileRecord)
     visible.value = true
 }
 function showEditDialog(index: number) {
@@ -234,7 +240,6 @@ function showEditDialog(index: number) {
     selectedFilename.value = fileRecords.value[index].file?.filename!
     visible.value = true
 }
-const { copyToClipboard } = useClipboard()
 
 function copyFileLink(index: number) {
     const shortUrl = host + '/f/' + fileRecords.value[index].shareCode
@@ -268,6 +273,19 @@ const submitText = computed(() => {
     if (dialogType.value === 'edit') return '修改'
     else return '上传'
 })
+
+const translateVisibility = (visibility: string): string => {
+    switch (visibility) {
+        case 'PRIVATE':
+            return '私有'
+        case 'PUBLIC':
+            return '完全公开'
+        case 'PASSWORD':
+            return '密码保护'
+        default:
+            return visibility // Fallback in case of unexpected values
+    }
+}
 </script>
 <template>
     <ConfirmPopup></ConfirmPopup>
@@ -312,7 +330,7 @@ const submitText = computed(() => {
         </Column>
         <Column header="权限">
             <template #body="{ data, index }">
-                <span>{{ data.visibility }}</span>
+                <span>{{ translateVisibility(data.visibility) }}</span>
                 <Button
                     v-if="data.visibility !== 'PRIVATE'"
                     type="button"

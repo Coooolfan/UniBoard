@@ -120,10 +120,10 @@ function confirmDelete(event: any, index: number) {
         :rows="size"
         :rowsPerPageOptions="[5, 10, 20, 50]"
         @page="refreshPage"
-        class="transition-all max-w-screen lg:p-5"
+        class="max-w-screen transition-all lg:p-5"
     >
         <template #header>
-            <div class="flex justify-between items-center">
+            <div class="flex items-center justify-between">
                 <div class="flex items-center">
                     <p>共 {{ shortUrlCount }} 条记录</p>
                 </div>
@@ -138,7 +138,7 @@ function confirmDelete(event: any, index: number) {
                     />
                 </div>
             </div>
-            <div class="text-center italic lg:hidden m-2">左右滑动表头查看更多</div>
+            <div class="m-2 text-center italic lg:hidden">左右滑动表头查看更多</div>
         </template>
         <template #paginatorstart>
             <Button type="button" icon="pi pi-refresh" text @click="refreshPage()" />
@@ -154,7 +154,19 @@ function confirmDelete(event: any, index: number) {
                 </a>
             </template>
         </Column>
-        <Column field="visitCount" header="统计"></Column>
+        <Column>
+            <template #header>
+                <span
+                    title="数据统计延后约1秒"
+                    class="p-datatable-column-title"
+                    data-pc-section="columntitle"
+                    >统计</span
+                >
+            </template>
+            <template #body="{ data }">
+                <span>{{ data.visitCount }}</span>
+            </template>
+        </Column>
         <Column>
             <template #body="{ data, index }">
                 <Button
@@ -175,5 +187,5 @@ function confirmDelete(event: any, index: number) {
             </template>
         </Column>
     </DataTable>
-    <Button @click="closeDialog" label="关闭" class="m-4 float-end" />
+    <Button @click="closeDialog" label="关闭" class="float-end m-4" />
 </template>
