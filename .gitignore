@@ -31,5 +31,7 @@ coverage
 .env
 
 .yarn/
+/database/
+/service/
 
 /src/__generated
