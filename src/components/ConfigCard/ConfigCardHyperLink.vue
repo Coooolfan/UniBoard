@@ -112,6 +112,7 @@ function onFileChooseHandler(e: FileUploadSelectEvent) {
     reader.readAsDataURL(file)
 }
 async function saveHyperLink() {
+    uploading.value = true
     if (dialogType.value === 'edit') {
         await api.hyperLinkController.updateHyperLinkById({
             id: currentHyperLink.value.id,
@@ -136,9 +137,9 @@ async function saveHyperLink() {
                 detail: '请选择一个图标',
                 life: 3000
             })
+            uploading.value = false
             return
         }
-
         await api.hyperLinkController.insertHyperlink({
             body: {
                 insert: currentHyperLink.value,
@@ -152,8 +153,9 @@ async function saveHyperLink() {
             life: 3000
         })
     }
-    await refreshHyperLinks()
+    uploading.value = false
     dialogVisible.value = false
+    refreshHyperLinks()
 }
 </script>
 <template>
