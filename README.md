@@ -2,7 +2,7 @@
 
 个人主页 + 导航页 + 笔记 + 短链接 + 文件分享
 
-此仓库仅为前端页面代码，使用 Vue3 + TS + Primevue + Tailwind CSS 构建。[后端仓库地址点此访问。](https://github.com/Coooolfan/UniBoard-Service)
+此仓库仅为前端页面代码，使用 Vue + TS + Primevue + Tailwind CSS 构建。[后端仓库地址点此访问。](https://github.com/Coooolfan/UniBoard-Service)
 
 ## 功能介绍
 
@@ -29,19 +29,34 @@
 
 ### 着陆页
 
-![着陆页首屏](img/LandingPage1.png)
-![着陆页第二屏](img/LandingPage2.png)
-![着陆页登录组件](img/login.jpg)
+![着陆页首屏](img/LandingPage1.webp)
+![着陆页第二屏](img/LandingPage2.webp)
+![着陆页登录组件](img/login.webp)
 
 ### 主页
 
-![主页仪表盘](img/HomePage0.png)
+![主页仪表盘](img/HomePage0.webp)
 空荡荡的仪表盘是为了之后放探针服务的全屏展示的~
-![主页功能模块](img/HomePage.jpg)
+
+<table>
+    <tr>
+        <td><img src="img/dashboard/note.webp" alt="笔记组件"></td>
+        <td><img src="img/dashboard/short-url.webp" alt="短链接组件"></td>
+    </tr>
+    <tr>
+        <td><img src="img/dashboard/file-record.webp" alt="文件记录组件"></td>
+        <td><img src="img/dashboard/landing-setting.webp" alt="设置-着陆页"></td>
+    </tr>
+    <tr>
+        <td><img src="img/dashboard/hyper-link.webp" alt="设置-外链页"></td>
+        <td><img src="img/dashboard/system-setting.webp" alt="设置-系统设置页"></td>
+    </tr>
+</table>
+
 
 ### 文件分享页
 
-![文件分享页面](img/FileSharePage.png)
+![文件分享页面](img/FileSharePage.webp)
 
 ## 画大饼中……
 
