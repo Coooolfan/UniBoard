@@ -20,7 +20,7 @@ services:
             - db
 
     db:
-        image: postgres:16.3-bookworm
+        image: postgres:17.4-bookworm
         container_name: uniboard-db
         env_file:
             - .env
