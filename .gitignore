@@ -33,5 +33,3 @@ coverage
 .yarn/
 /database/
 /service/
-
-/src/__generated
