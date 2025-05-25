@@ -190,7 +190,7 @@ async function submitFileRecordUpload() {
 async function deleteHandler(index: number) {
     try {
         await api.fileRecordController.deleteFileRecordById({ id: fileRecords.value[index].id! })
-        toast.add({ severity: 'success', summary: '删除成功', detail: '文件已删除', life: 3000 })
+        toast.add({ severity: 'success', summary: '删除成功', detail: '相关内容已不可见，存储于磁盘上的物理文件会在每日凌晨自动清理。', life: 3000 })
         fileRecords.value.splice(index, 1)
         fileRecordCount.value -= 1
     } catch (error: any) {
