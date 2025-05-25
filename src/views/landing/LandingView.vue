@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick, useTemplateRef, computed } from 'vue'
+import { ref, onMounted, nextTick, useTemplateRef } from 'vue'
 import LandingPageLink from '@/components/HyperLinkCard.vue'
 import router from '@/router'
 import ProfileComponent from '@/components/LandingView/ProfileComponent.vue'
