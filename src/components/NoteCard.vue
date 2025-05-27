@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, onMounted, ref, watch } from 'vue'
+import { inject, onMounted, ref, watch, computed } from 'vue'
 import Button from 'primevue/button'
 import Vditor from 'vditor'
 import ConfirmPopup from 'primevue/confirmpopup'
@@ -28,6 +28,18 @@ const treeNode = ref<TreeNode[]>([
         children: []
     }
 ])
+
+// 使用计算属性处理按钮图标逻辑
+const uploadButtonIcon = computed(() => {
+    if (editNoteLoading.value) {
+        return 'pi pi-spin pi-spinner'
+    } else if (editNote.value.id === -1) {
+        return 'pi pi-cloud-upload'
+    } else {
+        return 'pi pi-check'
+    }
+})
+
 onMounted(() => {
     refreshTree()
     vditor.value = new Vditor('vditor', {
@@ -204,7 +216,9 @@ async function newNote() {
 </script>
 <template>
     <ConfirmPopup></ConfirmPopup>
-    <div class="flex min-h-[74vh] min-w-[80vw] items-start justify-start">
+    <div
+        class="flex min-h-[74vh] items-start justify-start transition-all duration-300"
+    >
         <div class="flex h-4/5 w-80 flex-col">
             <Tree
                 :value="treeNode"
@@ -219,18 +233,7 @@ async function newNote() {
                     v-model="editNote.title"
                 />
                 <div>
-                    <Button
-                        class="h-10 w-8"
-                        :icon="
-                            editNoteLoading
-                                ? 'pi pi-spin pi-spinner'
-                                : editNote.id === -1
-                                  ? 'pi pi-cloud-upload'
-                                  : 'pi pi-check'
-                        "
-                        text
-                        @click="uploadEvent()"
-                    />
+                    <Button class="h-10 w-8" :icon="uploadButtonIcon" text @click="uploadEvent()" />
                     <Button
                         class="h-10 w-8"
                         v-show="editNote.id !== -1"
@@ -246,7 +249,6 @@ async function newNote() {
                 <ProgressSpinner />
                 <p class="mt-8">等待编辑器组件加载……</p>
             </div>
-
             <div v-show="!vditorLoading" id="vditor"></div>
         </div>
     </div>

@@ -47,7 +47,10 @@ function IHandler(componentName: string) {
                 modal: true,
                 closable: false,
                 header: componentNameMap[componentName],
-                maximizable: true
+                maximizable: true,
+                style: {
+                    width: '80vw'
+                }
             }
         })
     } else {
@@ -59,7 +62,7 @@ function IHandler(componentName: string) {
 <template>
     <div class="flex flex-col items-center min-h-screen bg-[#f2f2f2] dark:bg-slate-950">
         <ClockCard class="mt-36 lg:mt-28" />
-        <DynamicDialog max />
+        <DynamicDialog />
         <Toast />
         <div class="flex justify-between mt-10 gap-4 lg:max-w-96 lg:w-2/5">
             <i

@@ -48,9 +48,3 @@ const closeDialog = () => {
         />
     </div>
 </template>
-<style scoped>
-/* 手动声明Tabs组件的根元素宽度 */
-.p-tabs {
-    min-width: 80vw;
-}
-</style>
