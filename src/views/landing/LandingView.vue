@@ -61,6 +61,7 @@ async function loadFont() {
 
 async function switchSloganType() {
     if (isLoggedIn()) {
+        await api.tokenController.refreshToken()
         router.push('/dashboard')
         return
     }

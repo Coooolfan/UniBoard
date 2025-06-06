@@ -30,11 +30,19 @@ export class TokenController {
         _separator = '&';
         return (await this.executor({uri: _uri, method: 'GET'})) as Promise<void>;
     }
+    
+    readonly refreshToken: () => Promise<
+        void
+    > = async() => {
+        let _uri = '/api/token';
+        return (await this.executor({uri: _uri, method: 'POST'})) as Promise<void>;
+    }
 }
 
 export type TokenControllerOptions = {
     'getToken': {
         readonly login: ProfileLogin
     }, 
-    'deleteToken': {}
+    'deleteToken': {}, 
+    'refreshToken': {}
 }

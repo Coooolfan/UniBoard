@@ -5,6 +5,7 @@ import { useDialog } from 'primevue/usedialog'
 import DynamicDialog from 'primevue/dynamicdialog'
 import Toast from 'primevue/toast'
 import { defineAsyncComponent, nextTick, onMounted, type Component } from 'vue'
+import { api } from '@/ApiInstance'
 
 const router = useRouter()
 const dialog = useDialog()
@@ -17,6 +18,7 @@ function router2Landing() {
 // Vite 不支持动态导入，import() 必须传入静态字符串
 
 onMounted(async () => {
+    api.tokenController.refreshToken()
     await nextTick()
     import('@/components/NoteCard.vue')
     import('@/components/ShortUrlCard.vue')

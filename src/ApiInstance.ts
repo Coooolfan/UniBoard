@@ -20,8 +20,8 @@ export const api = new Api(async ({ uri, method, headers, body }) => {
         headers: fetchHeaders
     })
 
-    // 401处理：排除获取token的接口(POST)和GET请求，避免循环
-    if (response.status === 401 && !uri.includes('/api/token') && !method.includes('Get')) {
+    // 401处理：排除获取token的接口，避免循环
+    if (response.status === 401 && !(uri.includes('/api/token') && method.includes('GET'))) {
         // 清除 token
         document.cookie =
             'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=' +
