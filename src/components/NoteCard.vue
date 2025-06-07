@@ -81,6 +81,12 @@ onMounted(() => {
                 }
                 return JSON.stringify(targetResp)
             }
+        },
+        preview: {
+            theme: {
+                current: 'dark',
+                path:""
+            }
         }
     })
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
@@ -89,8 +95,11 @@ onMounted(() => {
 })
 
 async function setTheme() {
-    const theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'classic'
-    vditor.value?.setTheme(theme, theme, theme)
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        vditor.value?.setTheme('dark', 'dark', 'dark', '/dist/css/content-theme')
+    } else {
+        vditor.value?.setTheme('classic', 'light', 'light', '/dist/css/content-theme')
+    }
 }
 
 async function refreshTree() {
