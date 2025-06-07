@@ -4,6 +4,18 @@ declare module "*.png";
 
 interface Window {
     VditorI18n: ITips;
+    hljs: {
+        listLanguages(): string[];
+        highlight(text: string, options: {
+            language?: string,
+            ignoreIllegals: boolean
+        }): {
+            value: string
+        };
+        getLanguage(text: string): {
+            name: string
+        };
+    };
 }
 
 interface IObject {
@@ -321,6 +333,7 @@ interface ITips {
 }
 
 interface II18n {
+    de_DE: ITips;
     en_US: ITips;
     fr_FR: ITips;
     ja_JP: ITips;
@@ -350,6 +363,10 @@ interface IUpload {
     max?: number;
     /** 剪切板中包含图片地址时，使用此 url 重新上传 */
     linkToImgUrl?: string;
+
+    /** 剪切板中包含图片地址时，使用此方法进行自定义 */
+    renderLinkDest?(vditor: IVditor, node: ILuteNode, entering: boolean): [string, number];
+
     /** CORS 上传验证，头为 X-Upload-Token */
     token?: string;
     /** 文件上传类型，同 [input accept](https://www.w3schools.com/tags/att_input_accept.asp) */
@@ -391,6 +408,9 @@ interface IUpload {
 
     /** 将上传的文件处理后再返回  */
     file?(files: File[]): File[] | Promise<File[]>;
+
+    /** 取消正在上传的文件  */
+    cancel?(files: File[]): void;
 
     /** 图片地址上传后的回调  */
     linkToImgCallback?(responseText: string): void;
@@ -502,7 +522,8 @@ interface IPreview {
     theme?: IPreviewTheme;
     /** @link https://ld246.com/article/1549638745630#options-preview-actions  */
     actions?: Array<IPreviewAction | IPreviewActionCustom>;
-    render?: IPreviewRender
+    render?: IPreviewRender;
+
     /** 预览回调 */
     parse?(element: HTMLElement): void;
 
@@ -513,7 +534,7 @@ interface IPreview {
 interface IPreviewRender {
     media?: {
         enable?: boolean;
-    }
+    };
 }
 
 type IPreviewAction = "desktop" | "tablet" | "mobile" | "mp-wechat" | "zhihu";
@@ -549,7 +570,7 @@ interface IPreviewOptions {
     renderers?: ILuteRender;
     theme?: IPreviewTheme;
     icon?: "ant" | "material" | undefined;
-    render?: IPreviewRender
+    render?: IPreviewRender;
 
     transform?(html: string): string;
 
@@ -760,6 +781,9 @@ interface IOptions {
 
     /** 编辑器中选中文字后触发 */
     select?(value: string): void;
+
+    /** 编辑器中未选中文字后触发 */
+    unSelect?(): void;
 }
 
 interface IEChart {
@@ -786,6 +810,7 @@ interface IVditor {
     toolbar?: {
         elements?: { [key: string]: HTMLElement },
         element?: HTMLElement,
+        updateConfig(vditor: IVditor, options: IToolbarConfig): void,
     };
     preview?: {
         element: HTMLElement,
@@ -817,6 +842,7 @@ interface IVditor {
         element: HTMLElement
         isUploading: boolean
         range: Range,
+        xhr?: XMLHttpRequest,
     };
     undo?: {
         clearStack(vditor: IVditor): void,
