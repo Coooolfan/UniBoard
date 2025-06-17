@@ -5,12 +5,19 @@ import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
 import Dialog from 'primevue/dialog'
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
+import Tabs from 'primevue/tabs'
+import TabList from 'primevue/tablist'
+import Tab from 'primevue/tab'
+import TabPanels from 'primevue/tabpanels'
+import TabPanel from 'primevue/tabpanel'
 import HyperLinkCard from '@/components/HyperLinkCard.vue'
 import LabelAndInput from '@/components/LabelAndInput.vue'
 import ColorPicker from 'primevue/colorpicker'
 import { api } from '@/ApiInstance'
 import type { HyperLinkDto } from '@/__generated/model/dto'
 import ConfirmPopup from 'primevue/confirmpopup'
+import { unwrapApiError } from '@/utils/errorHandling'
+import type { ApiErrors } from '@/__generated/ApiErrors'
 const toast = useToast()
 const confirm = useConfirm()
 const hyperLinkList = ref<ReadonlyArray<HyperLinkDto['HyperLinkController/DEFAULT_HYPER_LINK']>>([])
@@ -157,6 +164,43 @@ async function saveHyperLink() {
     dialogVisible.value = false
     refreshHyperLinks()
 }
+
+async function saveHyperLinkBySnapShot() {
+    uploading.value = true
+    try {
+        await api.hyperLinkController.insertHyperLinkBySnapshot({
+            body: {
+                url: currentHyperLink.value.url
+            }
+        })
+        toast.add({
+            severity: 'success',
+            summary: '创建成功',
+            detail: '超链接已添加',
+            life: 3000
+        })
+        dialogVisible.value = false
+        refreshHyperLinks()
+    } catch (error: any) {
+        const err = await unwrapApiError<ApiErrors['hyperLinkController']['insertHyperLinkBySnapshot']>(error)
+        if (err.code === 'FETCH_SNAPSHOT_FAILED') {
+            toast.add({
+                severity: 'error',
+                summary: '创建失败',
+                detail: '无法获取网页信息，请检查 URL 是否有效',
+                life: 3000
+            })
+        } else {
+            toast.add({
+                severity: 'error',
+                summary: '创建失败',
+                detail: '未知错误',
+                life: 3000
+            })
+        }
+    }
+    uploading.value = false
+}
 </script>
 <template>
     <ConfirmPopup></ConfirmPopup>
@@ -198,74 +242,112 @@ async function saveHyperLink() {
         :closable="!uploading"
         :closeOnEscape="!uploading"
     >
-        <div class="flex flex-col lg:flex-row">
-            <div class="pr-4 lg:w-1/2">
-                <LabelAndInput
-                    id="title"
-                    label="标题"
-                    v-model="currentHyperLink.title"
-                    :loading="uploading"
-                    :disabled="uploading"
-                />
-                <LabelAndInput
-                    id="description"
-                    label="描述"
-                    v-model="currentHyperLink.description"
-                    :loading="uploading"
-                    :disabled="uploading"
-                />
-                <LabelAndInput
-                    id="url"
-                    label="目标链接"
-                    v-model="currentHyperLink.url"
-                    :loading="uploading"
-                    :disabled="uploading"
-                />
-                <div class="mt-4 flex place-content-between items-center space-x-4">
-                    <div class="flex grow items-center gap-2">
-                        <label for="name" class="w-20 shrink-0 text-right">主题色</label>
-                        <ColorPicker
-                            id="color"
-                            v-model="currentHyperLink.color"
-                            v-tooltip.right="'建议使用淡色系'"
-                            type="text"
+        <Tabs value="0">
+            <TabList>
+                <Tab value="0">手动添加</Tab>
+                <Tab value="1">从URL自动导入</Tab>
+            </TabList>
+            <TabPanels>
+                <TabPanel value="0">
+                    <div class="flex flex-col lg:flex-row">
+                        <div class="pr-4 lg:w-1/2">
+                            <LabelAndInput
+                                id="title"
+                                label="标题"
+                                v-model="currentHyperLink.title"
+                                :loading="uploading"
+                                :disabled="uploading"
+                            />
+                            <LabelAndInput
+                                id="description"
+                                label="描述"
+                                v-model="currentHyperLink.description"
+                                :loading="uploading"
+                                :disabled="uploading"
+                            />
+                            <LabelAndInput
+                                id="url"
+                                label="目标链接"
+                                v-model="currentHyperLink.url"
+                                :loading="uploading"
+                                :disabled="uploading"
+                            />
+                            <div class="mt-4 flex place-content-between items-center space-x-4">
+                                <div class="flex grow items-center gap-2">
+                                    <label for="name" class="w-20 shrink-0 text-right"
+                                        >主题色</label
+                                    >
+                                    <ColorPicker
+                                        id="color"
+                                        v-model="currentHyperLink.color"
+                                        v-tooltip.right="'建议使用淡色系'"
+                                        type="text"
+                                        :disabled="uploading"
+                                    />
+                                </div>
+                                <div class="flex grow items-center gap-2">
+                                    <label class="w-20 shrink-0 text-right">图标</label>
+                                    <FileUpload
+                                        mode="basic"
+                                        accept="image/*"
+                                        chooseLabel="选择图标"
+                                        :auto="true"
+                                        class="h-10"
+                                        :disabled="uploading"
+                                        @select="onFileChooseHandler"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 lg:mt-0 lg:w-1/2">
+                            <HyperLinkCard
+                                class="translate-4 scale-75"
+                                :hyperLink="previewHyperLink"
+                                :allow-redirect="false"
+                            />
+                        </div>
+                    </div>
+                    <div class="mt-4 flex justify-end gap-2">
+                        <Button
+                            label="取消"
+                            @click="dialogVisible = false"
+                            severity="secondary"
                             :disabled="uploading"
                         />
-                    </div>
-                    <div class="flex grow items-center gap-2">
-                        <label class="w-20 shrink-0 text-right">图标</label>
-                        <FileUpload
-                            mode="basic"
-                            accept="image/*"
-                            chooseLabel="选择图标"
-                            :auto="true"
-                            class="h-10"
+                        <Button
+                            :label="dialogType === 'new' ? '创建' : '保存'"
+                            @click="saveHyperLink"
+                            :loading="uploading"
+                        /></div
+                ></TabPanel>
+                <TabPanel value="1">
+                    <div class="flex flex-col gap-2">
+                        <LabelAndInput
+                            id="url-snapshot"
+                            label="目标链接"
+                            v-model="currentHyperLink.url"
+                            :loading="uploading"
                             :disabled="uploading"
-                            @select="onFileChooseHandler"
+                        />
+                        <span class="m-4 text-sm text-gray-500">
+                            UniBoard 可以尝试从 URL 自动提取标题、描述、图标等信息。
+                        </span>
+                    </div>
+                    <div class="mt-4 flex justify-end gap-2">
+                        <Button
+                            label="取消"
+                            @click="dialogVisible = false"
+                            severity="secondary"
+                            :disabled="uploading"
+                        />
+                        <Button
+                            :label="dialogType === 'new' ? '创建' : '保存'"
+                            @click="saveHyperLinkBySnapShot"
+                            :loading="uploading"
                         />
                     </div>
-                </div>
-            </div>
-            <div class="mt-4 lg:mt-0 lg:w-1/2">
-                <HyperLinkCard
-                    class="translate-4 scale-75"
-                    :hyperLink="previewHyperLink"
-                    :allow-redirect="false"
-                />
-            </div>
-        </div>
-        <template #footer>
-            <Button
-                label="取消"
-                @click="dialogVisible = false"
-                severity="secondary"
-                :disabled="uploading"
-            />
-            <Button
-                :label="dialogType === 'new' ? '创建' : '保存'"
-                @click="saveHyperLink"
-                :loading="uploading"
-            />
-        </template>
+                </TabPanel>
+            </TabPanels>
+        </Tabs>
     </Dialog>
 </template>
