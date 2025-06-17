@@ -2,6 +2,9 @@ export type AllErrors = {
         family: 'FILE_RECORD', 
         code: 'EMPTY_PASSWORD'
     } | {
+        family: 'HYPER_LINK', 
+        code: 'FETCH_SNAPSHOT_FAILED'
+    } | {
         family: 'COMMON', 
         code: 'NOT_FOUND'
     } | {
@@ -39,6 +42,11 @@ export type ApiErrors = {
             })
     }, 
     'hyperLinkController': {
+        'insertHyperLinkBySnapshot': AllErrors & ({
+                family: 'HYPER_LINK', 
+                code: 'FETCH_SNAPSHOT_FAILED', 
+                readonly [key:string]: any
+            })
     }, 
     'noteController': {
         'getNoteById': AllErrors & ({
