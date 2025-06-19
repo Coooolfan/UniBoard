@@ -1,17 +1,9 @@
 services:
     web:
         image: coolfan1024/uniboard:latest
-        container_name: uniboard-frontend
+        container_name: uniboard-web
         ports:
-            - '8888:80'
-        env_file:
-            - .env
-        depends_on:
-            - backend
-
-    backend:
-        image: coolfan1024/uniboard-service:latest
-        container_name: uniboard-backend
+            - '8888:8080'
         volumes:
             - ./service/media:/app/service
         env_file:

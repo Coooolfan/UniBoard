@@ -16,8 +16,6 @@
 
 我们在此版本再此尝试减少Docker compose组件。现在前端服务和后端服务统一由Tomcat提供。整个服务仅由`web`和`db`组成。希望这是我们最后一次调整Docker compose文件。
 
-接下来假设您没有对我们提供的Docker compose文件做大刀阔斧的修改，我们将很快完成这次更新。
-
 ### 暂停原有服务
 
 进入到先前安装目录。停止原有服务。
@@ -26,6 +24,22 @@
 docker compose stop
 ```
 
-### 修改 Docker Compose文件
+### 修改 Docker Compose 文件
 
+> [!NOTE]
+> 如果您在低版本直接使用了我们提供的`docker-compose.yml`文件，那么您只需要从此版本的 releases 中下载新版`docker-compose.yml`文件并替换您原有文件即可，无需其他操作。
+
+使用任意您喜欢的编辑器编辑`docker-compose.yml`文件。做以下修改：
+
+1. 在 `web` 服务中添加原 `backend` 中所有的 `volumes` 选项
+2. 修改 `web` 服务的 `depends_on` 值从 `backend` 到 `db`
+3. 修改 `web` 服务的端口映射 `ports` 从 `{your_port}:80` 到 `{your_port}:8080`
+4. 移除整个 `backend` 服务
+5. 修改 `web` 服务的 `container_name` 的值为 `uniboard-web`（可选）
+
+### 拉取新镜像并启动
+
+```shell
+docker compose pull && docker compose up -d
+```
 
