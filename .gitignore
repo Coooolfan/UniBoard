@@ -33,3 +33,5 @@ coverage
 .yarn/
 /database/
 /service/
+
+.cunzhi-memory/

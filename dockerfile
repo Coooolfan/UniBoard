@@ -4,7 +4,7 @@ WORKDIR /app
 
 # 优化git clone，减少下载大小
 RUN apt-get update && \
-    apt-get install -y git && \
+    apt-get install -y --no-install-recommends git && \
     git clone --depth=1 https://github.com/coooolfan/uniboard.git . && \
     corepack enable && \
     yarn && \
@@ -16,7 +16,7 @@ WORKDIR /app
 
 # 优化git clone，减少下载大小
 RUN apt-get update && \
-    apt-get install -y git && \
+    apt-get install -y --no-install-recommends git && \
     git clone --depth=1 https://github.com/coooolfan/uniboard-service.git .
 
 # 从前端构建阶段复制构建结果到后端静态资源目录
