@@ -3,4 +3,5 @@ export interface HyperLinkUpdate {
     readonly description: string;
     readonly url: string;
     readonly color: string;
+    readonly public: boolean;
 }

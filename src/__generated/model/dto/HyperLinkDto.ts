@@ -8,5 +8,6 @@ export type HyperLinkDto = {
         readonly url: string;
         readonly color: string;
         readonly icon: BaseSimpleFile;
+        readonly public: boolean;
     }
 }

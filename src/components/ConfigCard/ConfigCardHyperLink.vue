@@ -33,7 +33,8 @@ const currentHyperLink = ref<HyperLinkDto['HyperLinkController/DEFAULT_HYPER_LIN
     icon: {
         filename: '',
         filepath: ''
-    }
+    },
+    public: true
 })
 // string 表示从服务器获取的图片路径，File 表示从本地上传的图片
 const selectedHyperLinkIcon = ref<string | File | null>(null)
@@ -57,7 +58,8 @@ function openNewHyperLinkDialog() {
         icon: {
             filename: '',
             filepath: ''
-        }
+        },
+        public: true
     }
     selectedHyperLinkIcon.value = null
 }
