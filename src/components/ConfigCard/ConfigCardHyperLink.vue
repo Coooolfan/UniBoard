@@ -219,7 +219,7 @@ async function saveHyperLinkBySnapShot() {
         <div class="m-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             <div
                 v-for="(item, index) of hyperLinkList"
-                :key="index"
+                :key="item.id"
                 class="flex flex-col items-center"
             >
                 <div class="flex flex-col items-end">
