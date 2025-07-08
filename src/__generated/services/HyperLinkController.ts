@@ -33,6 +33,8 @@ export class HyperLinkController {
      * 
      * 获取系统中所有的超链接列表，用于展示在首页或超链接管理页面
      * 
+     * 未登陆状态下只返回公开的超链接
+     * 
      * @return List<HyperLink> 超链接列表
      */
     readonly getAllHyperLinks: () => Promise<

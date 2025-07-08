@@ -18,6 +18,7 @@ import type { HyperLinkDto } from '@/__generated/model/dto'
 import ConfirmPopup from 'primevue/confirmpopup'
 import { unwrapApiError } from '@/utils/errorHandling'
 import type { ApiErrors } from '@/__generated/ApiErrors'
+import Checkbox from 'primevue/checkbox'
 const toast = useToast()
 const confirm = useConfirm()
 const hyperLinkList = ref<ReadonlyArray<HyperLinkDto['HyperLinkController/DEFAULT_HYPER_LINK']>>([])
@@ -172,7 +173,8 @@ async function saveHyperLinkBySnapShot() {
     try {
         await api.hyperLinkController.insertHyperLinkBySnapshot({
             body: {
-                url: currentHyperLink.value.url
+                url: currentHyperLink.value.url,
+                public: currentHyperLink.value.public
             }
         })
         toast.add({
@@ -184,7 +186,10 @@ async function saveHyperLinkBySnapShot() {
         dialogVisible.value = false
         refreshHyperLinks()
     } catch (error: any) {
-        const err = await unwrapApiError<ApiErrors['hyperLinkController']['insertHyperLinkBySnapshot']>(error)
+        const err =
+            await unwrapApiError<ApiErrors['hyperLinkController']['insertHyperLinkBySnapshot']>(
+                error
+            )
         if (err.code === 'FETCH_SNAPSHOT_FAILED') {
             toast.add({
                 severity: 'error',
@@ -288,11 +293,24 @@ async function saveHyperLinkBySnapShot() {
                                     />
                                 </div>
                                 <div class="flex grow items-center gap-2">
-                                    <label class="w-20 shrink-0 text-right">图标</label>
+                                    <label
+                                        title="公开的超链接所有人可见，否则仅在登陆状态下可见"
+                                        for="name"
+                                        class="shrink-0 text-right"
+                                        >公开</label
+                                    >
+                                    <Checkbox
+                                        v-model="currentHyperLink.public"
+                                        binary
+                                        :disabled="uploading"
+                                    />
+                                </div>
+                                <div class="flex grow items-center gap-2">
+                                    <label class="shrink-0 text-right">图标</label>
                                     <FileUpload
                                         mode="basic"
                                         accept="image/*"
-                                        chooseLabel="选择图标"
+                                        chooseLabel="选择"
                                         :auto="true"
                                         class="h-10"
                                         :disabled="uploading"
@@ -331,6 +349,20 @@ async function saveHyperLinkBySnapShot() {
                             :loading="uploading"
                             :disabled="uploading"
                         />
+
+                        <div class="flex grow items-center gap-2">
+                            <label
+                                title="公开的超链接所有人可见，否则仅在登陆状态下可见"
+                                for="name"
+                                class="w-20 shrink-0 text-right"
+                                >公开</label
+                            >
+                            <Checkbox
+                                v-model="currentHyperLink.public"
+                                binary
+                                :disabled="uploading"
+                            />
+                        </div>
                         <span class="m-4 text-sm text-gray-500">
                             UniBoard 可以尝试从 URL 自动提取标题、描述、图标等信息。
                         </span>
