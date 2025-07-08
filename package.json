@@ -23,6 +23,7 @@
         "primevue": "^4.3.5",
         "vditor": "^3.11.1",
         "vue": "^3.5.16",
+        "vue-draggable-plus": "^0.6.0",
         "vue-router": "^4.5.1"
     },
     "devDependencies": {

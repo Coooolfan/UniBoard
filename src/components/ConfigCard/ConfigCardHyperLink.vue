@@ -19,9 +19,10 @@ import ConfirmPopup from 'primevue/confirmpopup'
 import { unwrapApiError } from '@/utils/errorHandling'
 import type { ApiErrors } from '@/__generated/ApiErrors'
 import Checkbox from 'primevue/checkbox'
+import { VueDraggable } from 'vue-draggable-plus'
 const toast = useToast()
 const confirm = useConfirm()
-const hyperLinkList = ref<ReadonlyArray<HyperLinkDto['HyperLinkController/DEFAULT_HYPER_LINK']>>([])
+const hyperLinkList = ref<Array<HyperLinkDto['HyperLinkController/DEFAULT_HYPER_LINK']>>([])
 const dialogVisible = ref(false)
 const uploading = ref(false)
 const dialogType = ref<'new' | 'edit'>('new')
@@ -215,30 +216,43 @@ async function saveHyperLinkBySnapShot() {
         <div class="mb-4 flex justify-end">
             <Button label="新增超链接" icon="pi pi-plus" @click="openNewHyperLinkDialog" />
         </div>
-
-        <div class="m-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <div
-                v-for="(item, index) of hyperLinkList"
-                :key="item.id"
-                class="flex flex-col items-center"
-            >
-                <div class="flex flex-col items-end">
-                    <HyperLinkCard :hyperLink="item" :allow-redirect="false"></HyperLinkCard>
-                    <div class="mt-2 flex justify-end space-x-2">
-                        <Button
-                            icon="pi pi-pencil"
-                            class="p-button-rounded p-button-text"
-                            @click="openEditHyperLinkDialog(index)"
-                        />
-                        <Button
-                            icon="pi pi-trash"
-                            class="p-button-rounded p-button-text p-button-danger"
-                            @click="removeHyperLink($event, item.id)"
-                        />
+        <VueDraggable
+            ref="el"
+            v-model="hyperLinkList"
+            :animation="150"
+            ghostClass="ghost"
+            handle=".drag-handle"
+            target=".grid-container"
+        >
+            <div class="grid-container m-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                <div
+                    v-for="(item, index) of hyperLinkList"
+                    :key="item.id"
+                    class="flex flex-col items-center"
+                >
+                    <div class="flex flex-col items-end">
+                        <HyperLinkCard :hyperLink="item" :allow-redirect="false"></HyperLinkCard>
+                        <div class="mt-2 flex justify-end space-x-2">
+                            <Button
+                                icon="pi pi-list"
+                                class="drag-handle p-button-rounded p-button-text"
+                                severity="secondary"
+                                title="拖动以排序，即刻生效"
+                            />
+                            <Button
+                                icon="pi pi-pencil"
+                                class="p-button-rounded p-button-text"
+                                @click="openEditHyperLinkDialog(index)"
+                            />
+                            <Button
+                                icon="pi pi-trash"
+                                class="p-button-rounded p-button-text p-button-danger"
+                                @click="removeHyperLink($event, item.id)"
+                            />
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
+                </div></div
+        ></VueDraggable>
     </div>
 
     <Dialog
@@ -385,3 +399,9 @@ async function saveHyperLinkBySnapShot() {
         </Tabs>
     </Dialog>
 </template>
+
+<style scoped>
+.ghost {
+    opacity: 0.5;
+}
+</style>
