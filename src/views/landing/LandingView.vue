@@ -45,6 +45,7 @@ onMounted(async () => {
         .getAllHyperLinks()
         .then((res) => {
             links.value = res
+            links.value = [...links.value].sort((a, b) => a.sort - b.sort)
         })
         .catch((err) => {
             console.error(err)

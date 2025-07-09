@@ -7,6 +7,7 @@ export type {FileRecordUpdate} from './FileRecordUpdate';
 export type {FileRecordUpdate_TargetOf_file} from './FileRecordUpdate_TargetOf_file';
 export type {HyperLinkInsert} from './HyperLinkInsert';
 export type {HyperLinkInsertBySnapShot} from './HyperLinkInsertBySnapShot';
+export type {HyperLinkOrderUpdate} from './HyperLinkOrderUpdate';
 export type {HyperLinkUpdate} from './HyperLinkUpdate';
 export type {NoteInsert} from './NoteInsert';
 export type {NotePicture} from './NotePicture';

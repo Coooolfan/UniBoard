@@ -1,6 +1,11 @@
 import type {Executor} from '../';
 import type {HyperLinkDto} from '../model/dto/';
-import type {HyperLinkInsert, HyperLinkInsertBySnapShot, HyperLinkUpdate} from '../model/static/';
+import type {
+    HyperLinkInsert, 
+    HyperLinkInsertBySnapShot, 
+    HyperLinkOrderUpdate, 
+    HyperLinkUpdate
+} from '../model/static/';
 
 /**
  * 超链接控制器
@@ -121,6 +126,13 @@ export class HyperLinkController {
         }
         return (await this.executor({uri: _uri, method: 'PUT', body: _formData})) as Promise<HyperLinkDto['HyperLinkController/DEFAULT_HYPER_LINK']>;
     }
+    
+    readonly updateHyperLinkSort: (options: HyperLinkControllerOptions['updateHyperLinkSort']) => Promise<
+        void
+    > = async(options) => {
+        let _uri = '/api/hyper-link/sort';
+        return (await this.executor({uri: _uri, method: 'POST', body: options.body})) as Promise<void>;
+    }
 }
 
 export type HyperLinkControllerOptions = {
@@ -140,6 +152,9 @@ export type HyperLinkControllerOptions = {
             readonly update: HyperLinkUpdate, 
             readonly file?: File | undefined
         }
+    }, 
+    'updateHyperLinkSort': {
+        readonly body: ReadonlyArray<HyperLinkOrderUpdate>
     }, 
     'deleteHyperLinkById': {
         /**

@@ -3,6 +3,9 @@ export type AllErrors = {
         code: 'EMPTY_PASSWORD'
     } | {
         family: 'HYPER_LINK', 
+        code: 'UPDATE_SORT_FAILED'
+    } | {
+        family: 'HYPER_LINK', 
         code: 'FETCH_SNAPSHOT_FAILED'
     } | {
         family: 'COMMON', 
@@ -42,6 +45,11 @@ export type ApiErrors = {
             })
     }, 
     'hyperLinkController': {
+        'updateHyperLinkSort': AllErrors & ({
+                family: 'HYPER_LINK', 
+                code: 'UPDATE_SORT_FAILED', 
+                readonly [key:string]: any
+            }), 
         'insertHyperLinkBySnapshot': AllErrors & ({
                 family: 'HYPER_LINK', 
                 code: 'FETCH_SNAPSHOT_FAILED', 

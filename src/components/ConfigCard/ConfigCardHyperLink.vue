@@ -19,7 +19,8 @@ import ConfirmPopup from 'primevue/confirmpopup'
 import { unwrapApiError } from '@/utils/errorHandling'
 import type { ApiErrors } from '@/__generated/ApiErrors'
 import Checkbox from 'primevue/checkbox'
-import { VueDraggable } from 'vue-draggable-plus'
+import { VueDraggable, type SortableEvent } from 'vue-draggable-plus'
+import type { HyperLinkOrderUpdate } from '@/__generated/model/static'
 const toast = useToast()
 const confirm = useConfirm()
 const hyperLinkList = ref<Array<HyperLinkDto['HyperLinkController/DEFAULT_HYPER_LINK']>>([])
@@ -36,7 +37,8 @@ const currentHyperLink = ref<HyperLinkDto['HyperLinkController/DEFAULT_HYPER_LIN
         filename: '',
         filepath: ''
     },
-    public: true
+    public: true,
+    sort: 0
 })
 // string 表示从服务器获取的图片路径，File 表示从本地上传的图片
 const selectedHyperLinkIcon = ref<string | File | null>(null)
@@ -45,7 +47,8 @@ onMounted(async () => {
 })
 
 async function refreshHyperLinks() {
-    hyperLinkList.value = [...(await api.hyperLinkController.getAllHyperLinks())]
+    const links = await api.hyperLinkController.getAllHyperLinks()
+    hyperLinkList.value = [...links].sort((a, b) => a.sort - b.sort)
 }
 
 function openNewHyperLinkDialog() {
@@ -61,7 +64,8 @@ function openNewHyperLinkDialog() {
             filename: '',
             filepath: ''
         },
-        public: true
+        public: true,
+        sort: 0
     }
     selectedHyperLinkIcon.value = null
 }
@@ -209,6 +213,39 @@ async function saveHyperLinkBySnapShot() {
     }
     uploading.value = false
 }
+
+async function onUpdateSort(e: SortableEvent) {
+    const newSort: HyperLinkOrderUpdate[] = []
+
+    for (let index = 0; index < hyperLinkList.value.length; index++) {
+        newSort.push({
+            id: hyperLinkList.value[index].id,
+            sort: index
+        })
+    }
+    try {
+        await api.hyperLinkController.updateHyperLinkSort({
+            body: newSort
+        })
+        toast.add({
+            severity: 'success',
+            summary: '更新成功',
+            detail: '排序已更新，即刻生效',
+            life: 3000
+        })
+    } catch (error: any) {
+        const err =
+            await unwrapApiError<ApiErrors['hyperLinkController']['updateHyperLinkSort']>(error)
+        if (err.code == 'UPDATE_SORT_FAILED') {
+            toast.add({
+                severity: 'error',
+                summary: '更新失败',
+                detail: '尝试刷新页面后重试',
+                life: 3000
+            })
+        }
+    }
+}
 </script>
 <template>
     <ConfirmPopup></ConfirmPopup>
@@ -223,6 +260,7 @@ async function saveHyperLinkBySnapShot() {
             ghostClass="ghost"
             handle=".drag-handle"
             target=".grid-container"
+            @update="onUpdateSort"
         >
             <div class="grid-container m-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                 <div
