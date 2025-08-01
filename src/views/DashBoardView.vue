@@ -7,6 +7,7 @@ import Toast from 'primevue/toast'
 import { defineAsyncComponent, nextTick, onMounted, type Component } from 'vue'
 import { api } from '@/ApiInstance'
 import ProbeMap from '@/components/probe/ProbeMap.vue'
+import ProbeTargetPanel from '@/components/probe/ProbeTargetPanel.vue'
 
 const router = useRouter()
 const dialog = useDialog()
@@ -63,36 +64,39 @@ function IHandler(componentName: string) {
 </script>
 
 <template>
-    <div>
-        <div class="relative z-50 flex min-h-screen flex-col items-center bg-[#f2f2f222]">
+    <DynamicDialog />
+    <Toast />
+    <div class="flex h-screen w-screen flex-col items-center justify-between bg-[#f2f2f222]">
+        <div class="relative z-50 flex flex-col items-center">
             <ClockCard class="mt-36 lg:mt-28" />
-            <DynamicDialog />
-            <Toast />
-            <div class="mt-10 flex justify-between gap-4 lg:w-2/5 lg:max-w-96">
+            <div class="mt-10 flex justify-between gap-4">
                 <i
-                    class="pi pi-pencil h-10 w-10 cursor-pointer place-content-center rounded-xl bg-white text-black transition-all duration-700 before:grid before:place-content-center hover:drop-shadow-md"
+                    class="pi pi-pencil h-10 w-10 cursor-pointer place-content-center rounded-xl bg-white text-black drop-shadow-sm transition-all duration-700 before:grid before:place-content-center hover:drop-shadow-lg"
                     @click="IHandler('Note')"
                 ></i>
                 <i
-                    class="pi pi-link h-10 w-10 cursor-pointer place-content-center rounded-xl bg-white text-black transition-all duration-700 before:grid before:place-content-center hover:drop-shadow-md"
+                    class="pi pi-link h-10 w-10 cursor-pointer place-content-center rounded-xl bg-white text-black drop-shadow-sm transition-all duration-700 before:grid before:place-content-center hover:drop-shadow-lg"
                     @click="IHandler('Link')"
                 ></i>
                 <i
-                    class="pi pi-copy h-10 w-10 cursor-pointer place-content-center rounded-xl bg-white text-black transition-all duration-700 before:grid before:place-content-center hover:drop-shadow-md"
+                    class="pi pi-copy h-10 w-10 cursor-pointer place-content-center rounded-xl bg-white text-black drop-shadow-sm transition-all duration-700 before:grid before:place-content-center hover:drop-shadow-lg"
                     @click="IHandler('File')"
                 ></i>
                 <i
-                    class="pi pi-cog h-10 w-10 cursor-pointer place-content-center rounded-xl bg-white text-black transition-all duration-700 before:grid before:place-content-center hover:drop-shadow-md"
+                    class="pi pi-cog h-10 w-10 cursor-pointer place-content-center rounded-xl bg-white text-black drop-shadow-sm transition-all duration-700 before:grid before:place-content-center hover:drop-shadow-lg"
                     @click="IHandler('Config')"
                 ></i>
                 <i
-                    class="pi pi-sign-out h-10 w-10 cursor-pointer place-content-center rounded-xl bg-white text-black transition-all duration-700 before:grid before:place-content-center hover:drop-shadow-md"
+                    class="pi pi-sign-out h-10 w-10 cursor-pointer place-content-center rounded-xl bg-white text-black drop-shadow-sm transition-all duration-700 before:grid before:place-content-center hover:drop-shadow-lg"
                     @click="router2Landing"
                 ></i>
             </div>
         </div>
-        <div class="fixed top-0 left-0 z-0 h-full w-full bg-[#80ADD1]">
-            <ProbeMap />
+        <div class="z-50 mb-20 flex flex-col items-center justify-between gap-6">
+            <ProbeTargetPanel v-for="i in 4" :key="i" />
         </div>
+    </div>
+    <div class="fixed top-0 left-0 z-0 h-full w-full bg-[#80ADD1]">
+        <ProbeMap />
     </div>
 </template>
