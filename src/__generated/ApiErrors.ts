@@ -117,5 +117,11 @@ export type ApiErrors = {
                 code: 'AUTHENTICATION_FAILED', 
                 readonly [key:string]: any
             })
+    }, 
+    'probeController': {
+    }, 
+    'probeMetricController': {
+    }, 
+    'probeMetricDataController': {
     }
 };
