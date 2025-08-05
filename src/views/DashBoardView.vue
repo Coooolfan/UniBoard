@@ -7,7 +7,7 @@ import Toast from 'primevue/toast'
 import { defineAsyncComponent, nextTick, onMounted, type Component } from 'vue'
 import { api } from '@/ApiInstance'
 import ProbeMap from '@/components/probe/ProbeMap.vue'
-import ProbeTargetPanel from '@/components/probe/ProbeTargetPanel.vue'
+import ProbeTargetPanels from '@/components/probe/ProbeTargetPanels.vue'
 
 const router = useRouter()
 const dialog = useDialog()
@@ -92,11 +92,7 @@ function IHandler(componentName: string) {
                 ></i>
             </div>
         </div>
-        <div
-            class="z-50 mt-10 hidden flex-col items-center justify-between gap-6 pb-5 md:mb-20 md:flex"
-        >
-            <ProbeTargetPanel v-for="i in 4" :key="i" />
-        </div>
+        <ProbeTargetPanels />
     </div>
     <div class="fixed top-0 left-0 z-0 h-full w-full bg-[#80ADD1] brightness-90">
         <ProbeMap />
