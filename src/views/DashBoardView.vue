@@ -92,7 +92,9 @@ function IHandler(componentName: string) {
                 ></i>
             </div>
         </div>
-        <div class="z-50 hidden flex-col items-center justify-between gap-6 md:mb-20 md:flex">
+        <div
+            class="z-50 mt-10 hidden flex-col items-center justify-between gap-6 pb-5 md:mb-20 md:flex"
+        >
             <ProbeTargetPanel v-for="i in 4" :key="i" />
         </div>
     </div>
