@@ -5,8 +5,7 @@ import {
     HyperLinkController, 
     NoteController, 
     ProbeController, 
-    ProbeMetricController, 
-    ProbeMetricDataController, 
+    ProbeDataController, 
     ProfileController, 
     RedirectController, 
     ShortUrlController, 
@@ -24,6 +23,10 @@ export class Api {
     
     readonly noteController: NoteController
     
+    readonly probeController: ProbeController
+    
+    readonly probeDataController: ProbeDataController
+    
     readonly profileController: ProfileController
     
     readonly redirectController: RedirectController
@@ -34,24 +37,17 @@ export class Api {
     
     readonly tokenController: TokenController
     
-    readonly probeController: ProbeController
-    
-    readonly probeMetricController: ProbeMetricController
-    
-    readonly probeMetricDataController: ProbeMetricDataController
-    
     constructor(executor: Executor) {
         this.fileController = new FileController(executor);
         this.fileRecordController = new FileRecordController(executor);
         this.hyperLinkController = new HyperLinkController(executor);
         this.noteController = new NoteController(executor);
+        this.probeController = new ProbeController(executor);
+        this.probeDataController = new ProbeDataController(executor);
         this.profileController = new ProfileController(executor);
         this.redirectController = new RedirectController(executor);
         this.shortUrlController = new ShortUrlController(executor);
         this.systemConfigController = new SystemConfigController(executor);
         this.tokenController = new TokenController(executor);
-        this.probeController = new ProbeController(executor);
-        this.probeMetricController = new ProbeMetricController(executor);
-        this.probeMetricDataController = new ProbeMetricDataController(executor);
     }
 }

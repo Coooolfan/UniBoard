@@ -1,17 +1,17 @@
-import type {ProbeMetricRange, ProbeTargetLocation} from '../embeddable/';
+import type {ProbeTargetLocation} from '../embeddable/';
+import type {SimpleTargetMetricData} from '../static/';
 
 export type ProbeTargetDto = {
     'ProbeController/DEFAULT_PROBE_TARGET': {
         readonly id: number;
         readonly name: string;
         readonly description: string;
-        readonly key: string;
         readonly location: ProbeTargetLocation;
-        readonly metrics: ReadonlyArray<{
-            readonly id: number;
-            readonly name: string;
-            readonly unit: string;
-            readonly range: ProbeMetricRange;
-        }>;
+        readonly lastReportTime: string;
+        readonly lastReportData?: SimpleTargetMetricData | undefined;
+    }, 
+    'ProbeController/PROBE_TARGET_WITH_KEY': {
+        readonly id: number;
+        readonly key: string;
     }
 }

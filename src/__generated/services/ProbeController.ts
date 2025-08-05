@@ -65,6 +65,24 @@ export class ProbeController {
     }
     
     /**
+     * 刷新探针目标的key
+     * 
+     * 根据ID刷新指定探针目标的key并返回新的key
+     * 需要登录验证
+     * 
+     * @parameter {ProbeControllerOptions['refreshProbeTargetKey']} options
+     * - id 探针目标ID
+     */
+    readonly refreshProbeTargetKey: (options: ProbeControllerOptions['refreshProbeTargetKey']) => Promise<
+        ProbeTargetDto['ProbeController/PROBE_TARGET_WITH_KEY']
+    > = async(options) => {
+        let _uri = '/api/probe-target/';
+        _uri += encodeURIComponent(options.id);
+        _uri += '/key';
+        return (await this.executor({uri: _uri, method: 'PUT'})) as Promise<ProbeTargetDto['ProbeController/PROBE_TARGET_WITH_KEY']>;
+    }
+    
+    /**
      * 更新探针目标信息
      * 
      * 根据ID更新指定的探针目标信息
@@ -105,6 +123,12 @@ export type ProbeControllerOptions = {
         readonly body: ProbeTargetUpdate
     }, 
     'deleteProbeTargetById': {
+        /**
+         * 探针目标ID
+         */
+        readonly id: number
+    }, 
+    'refreshProbeTargetKey': {
         /**
          * 探针目标ID
          */

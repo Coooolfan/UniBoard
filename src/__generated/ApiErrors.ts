@@ -63,6 +63,10 @@ export type ApiErrors = {
                 readonly [key:string]: any
             })
     }, 
+    'probeController': {
+    }, 
+    'probeDataController': {
+    }, 
     'profileController': {
         'getProfile': AllErrors & ({
                 family: 'PROFILE', 
@@ -117,11 +121,5 @@ export type ApiErrors = {
                 code: 'AUTHENTICATION_FAILED', 
                 readonly [key:string]: any
             })
-    }, 
-    'probeController': {
-    }, 
-    'probeMetricController': {
-    }, 
-    'probeMetricDataController': {
     }
 };
