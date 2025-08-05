@@ -27,6 +27,22 @@ const getStatusColor = (value: number, type: 'cpu' | 'memory' | 'load') => {
     }
     return value > 80 ? 'text-red-600' : value > 60 ? 'text-yellow-600' : 'text-green-600'
 }
+
+const bueatyMetricData = (value: number | null | undefined, type: 'cpu' | 'memory' | 'load') => {
+    if (value === null || value === undefined) {
+        return '-'
+    }
+
+    if (type === 'cpu' || type === 'memory') {
+        return `${value.toFixed(1)}%`
+    }
+
+    if (type === 'load') {
+        return value.toFixed(1)
+    }
+
+    return value.toString()
+}
 </script>
 <template>
     <div
@@ -51,7 +67,7 @@ const getStatusColor = (value: number, type: 'cpu' | 'memory' | 'load') => {
                         class="font-semibold"
                         :class="getStatusColor(probeTarget.lastReportData?.cpu || 0, 'cpu')"
                     >
-                        {{ probeTarget.lastReportData?.cpu?.toFixed(1) || '0.0' }}%
+                        {{ bueatyMetricData(probeTarget.lastReportData?.cpu, 'cpu') }}
                     </div>
                 </div>
                 <div class="w-14 text-center">
@@ -60,7 +76,7 @@ const getStatusColor = (value: number, type: 'cpu' | 'memory' | 'load') => {
                         class="font-semibold"
                         :class="getStatusColor(probeTarget.lastReportData?.memory || 0, 'memory')"
                     >
-                        {{ probeTarget.lastReportData?.memory?.toFixed(1) || '0.0' }}%
+                        {{ bueatyMetricData(probeTarget.lastReportData?.memory, 'memory') }}
                     </div>
                 </div>
                 <div class="w-14 text-center">
@@ -69,7 +85,7 @@ const getStatusColor = (value: number, type: 'cpu' | 'memory' | 'load') => {
                         class="font-semibold"
                         :class="getStatusColor(probeTarget.lastReportData?.load || 0, 'load')"
                     >
-                        {{ probeTarget.lastReportData?.load?.toFixed(1) || '0.0' }}
+                        {{ bueatyMetricData(probeTarget.lastReportData?.load, 'load') }}
                     </div>
                 </div>
                 <div class="ml-4 w-34 text-center md:ml-10">
