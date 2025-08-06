@@ -43,19 +43,36 @@ const bueatyMetricData = (value: number | null | undefined, type: 'cpu' | 'memor
 
     return value.toString()
 }
+
+const isOnline = (timeString: string) => {
+    const reportDate = new Date(timeString)
+    const now = new Date()
+    const diffMs = now.getTime() - reportDate.getTime()
+    // 5分钟 = 5 * 60 * 1000 毫秒
+    return diffMs <= 5 * 60 * 1000
+}
 </script>
 <template>
     <div
         class="cursor-pointer rounded-lg border border-gray-200 bg-white/90 pt-3 pr-4 pb-3 pl-4 backdrop-blur-sm transition-all duration-300 hover:scale-101 hover:drop-shadow-xl"
     >
         <div class="flex items-center justify-between gap-10 md:gap-20 lg:gap-40">
-            <div class="w-40 flex-1">
+            <div class="w-50 flex-1">
                 <div class="flex items-center space-x-3">
                     <h3 class="font-semibold">{{ probeTarget.name }}</h3>
                     <div
+                        v-if="isOnline(probeTarget.lastReportTime)"
                         class="flex items-center space-x-1 rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-600"
                     >
-                        <span class="capitalize">online</span>
+                        <i class="pi pi-check-circle" />
+                        <span>online</span>
+                    </div>
+                    <div
+                        v-else
+                        class="flex items-center space-x-1 rounded-full bg-red-50 px-2 py-1 text-xs font-medium text-red-600"
+                    >
+                        <i class="pi pi-wave-pulse" />
+                        <span>offline</span>
                     </div>
                 </div>
                 <p class="mt-1 text-sm text-gray-600">{{ probeTarget.description }}</p>

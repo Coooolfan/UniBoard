@@ -12,6 +12,7 @@ import Divider from 'primevue/divider'
 import ConfigCardLanding from '@/components/ConfigCard/ConfigCardProfile.vue'
 import ConfigCardHyperLink from '@/components/ConfigCard/ConfigCardHyperLink.vue'
 import ConfigCardSystem from '@/components/ConfigCard/ConfigCardSystem.vue'
+import ConfigProbeTarget from '@/components/ConfigCard/ConfigProbeTarget.vue'
 import { api } from '@/ApiInstance'
 const router = useRouter()
 const dialogRef: any = inject('dialogRef')
@@ -30,12 +31,14 @@ const closeDialog = () => {
         <TabList>
             <Tab value="0">首屏设置</Tab>
             <Tab value="1">外链设置</Tab>
-            <Tab value="2">系统设置</Tab>
+            <Tab value="2">探针设置</Tab>
+            <Tab value="3">系统设置</Tab>
         </TabList>
         <TabPanels>
             <TabPanel value="0"> <ConfigCardLanding /> </TabPanel>
             <TabPanel value="1"> <ConfigCardHyperLink /> </TabPanel>
-            <TabPanel value="2"> <ConfigCardSystem /> </TabPanel> 
+            <TabPanel value="2"> <ConfigProbeTarget /> </TabPanel>
+            <TabPanel value="3"> <ConfigCardSystem /> </TabPanel>
         </TabPanels>
     </Tabs>
 
