@@ -8,10 +8,15 @@ import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
-import Message from 'primevue/message';
+import Message from 'primevue/message'
 import type { ProbeTargetDto } from '@/__generated/model/dto'
-import type { ProbeTargetInsert, ProbeTargetUpdate } from '@/__generated/model/static'
+import type {
+    ProbeTargetInsert,
+    ProbeTargetUpdate,
+    ProbeTargetOrderUpdate
+} from '@/__generated/model/static'
 import ProbeTargetPanel from '@/components/probe/ProbeTargetPanel.vue'
+import { VueDraggable, type SortableEvent } from 'vue-draggable-plus'
 
 const toast = useToast()
 const confirm = useConfirm()
@@ -46,8 +51,8 @@ onMounted(() => {
 
 async function refreshProbeTargets() {
     try {
-        const targets = await api.probeController.getAllProbeTagets()
-        probeTargetList.value = [...targets]
+        const targets = await api.probeController.getAllProbeTargets()
+        probeTargetList.value = [...targets].sort((a, b) => a.sort - b.sort)
     } catch (error) {
         toast.add({
             severity: 'error',
@@ -205,6 +210,36 @@ function copyKey() {
         })
     })
 }
+
+async function onUpdateSort(e: SortableEvent) {
+    const newSort: ProbeTargetOrderUpdate[] = []
+
+    for (let index = 0; index < probeTargetList.value.length; index++) {
+        newSort.push({
+            id: probeTargetList.value[index].id,
+            sort: index
+        })
+    }
+
+    try {
+        await api.probeController.updateProbeTargetSort({
+            body: newSort
+        })
+        toast.add({
+            severity: 'success',
+            summary: '更新成功',
+            detail: '排序已更新，即刻生效',
+            life: 3000
+        })
+    } catch (error) {
+        toast.add({
+            severity: 'error',
+            summary: '更新失败',
+            detail: '尝试刷新页面后重试',
+            life: 3000
+        })
+    }
+}
 </script>
 
 <template>
@@ -214,38 +249,54 @@ function copyKey() {
             <Button label="新增探针目标" icon="pi pi-plus" @click="openNewProbeTargetDialog" />
         </div>
 
-        <div class="grid-container m-8 grid grid-cols-1 gap-8">
-            <div
-                v-for="(item, index) of probeTargetList"
-                :key="item.id"
-                class="flex flex-col items-center"
-            >
-                <div class="flex w-full flex-col">
-                    <ProbeTargetPanel :probe-target="item" />
-                    <div class="mt-2 flex justify-end space-x-2">
-                        <Button
-                            icon="pi pi-key"
-                            class="p-button-rounded p-button-text"
-                            severity="info"
-                            title="刷新Key"
-                            @click="showRefreshKeyDialog(item.id)"
-                        />
-                        <Button
-                            icon="pi pi-pencil"
-                            class="p-button-rounded p-button-text"
-                            title="编辑"
-                            @click="openEditProbeTargetDialog(index)"
-                        />
-                        <Button
-                            icon="pi pi-trash"
-                            class="p-button-rounded p-button-text p-button-danger"
-                            title="删除"
-                            @click="removeProbeTarget($event, item.id)"
-                        />
+        <VueDraggable
+            ref="el"
+            v-model="probeTargetList"
+            :animation="150"
+            ghostClass="ghost"
+            handle=".drag-handle"
+            target=".grid-container"
+            @update="onUpdateSort"
+        >
+            <div class="grid-container m-8 grid grid-cols-1 gap-8">
+                <div
+                    v-for="(item, index) of probeTargetList"
+                    :key="item.id"
+                    class="flex flex-col items-center"
+                >
+                    <div class="flex w-full flex-col">
+                        <ProbeTargetPanel :probe-target="item" />
+                        <div class="mt-2 flex justify-end space-x-2">
+                            <Button
+                                icon="pi pi-list"
+                                class="drag-handle p-button-rounded p-button-text"
+                                severity="secondary"
+                                title="拖动以排序，即刻生效"
+                            />
+                            <Button
+                                icon="pi pi-key"
+                                class="p-button-rounded p-button-text"
+                                severity="info"
+                                title="刷新Key"
+                                @click="showRefreshKeyDialog(item.id)"
+                            />
+                            <Button
+                                icon="pi pi-pencil"
+                                class="p-button-rounded p-button-text"
+                                title="编辑"
+                                @click="openEditProbeTargetDialog(index)"
+                            />
+                            <Button
+                                icon="pi pi-trash"
+                                class="p-button-rounded p-button-text p-button-danger"
+                                title="删除"
+                                @click="removeProbeTarget($event, item.id)"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </VueDraggable>
     </div>
 
     <!-- 添加/编辑对话框 -->
@@ -380,3 +431,9 @@ function copyKey() {
         </template>
     </Dialog>
 </template>
+
+<style scoped>
+.ghost {
+    opacity: 0.5;
+}
+</style>

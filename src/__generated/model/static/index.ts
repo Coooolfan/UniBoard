@@ -17,6 +17,7 @@ export type {PasswordUpdate} from './PasswordUpdate';
 export type {ProbeTargetData} from './ProbeTargetData';
 export type {ProbeTargetInsert} from './ProbeTargetInsert';
 export type {ProbeTargetInsert_TargetOf_location} from './ProbeTargetInsert_TargetOf_location';
+export type {ProbeTargetOrderUpdate} from './ProbeTargetOrderUpdate';
 export type {ProbeTargetUpdate} from './ProbeTargetUpdate';
 export type {ProbeTargetUpdate_TargetOf_location} from './ProbeTargetUpdate_TargetOf_location';
 export type {ProfileContacts} from './ProfileContacts';

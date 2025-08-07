@@ -6,6 +6,7 @@ export type ProbeTargetDto = {
         readonly id: number;
         readonly name: string;
         readonly description: string;
+        readonly sort: number;
         readonly location: ProbeTargetLocation;
         readonly lastReportTime: string;
         readonly lastReportData?: SimpleTargetMetricData | undefined;

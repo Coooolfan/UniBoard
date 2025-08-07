@@ -1,6 +1,6 @@
 import type {Executor} from '../';
 import type {ProbeTargetDto} from '../model/dto/';
-import type {ProbeTargetInsert, ProbeTargetUpdate} from '../model/static/';
+import type {ProbeTargetInsert, ProbeTargetOrderUpdate, ProbeTargetUpdate} from '../model/static/';
 
 /**
  * 探针相关资源控制器
@@ -38,7 +38,7 @@ export class ProbeController {
      * @return List<ProbeTarget>
      * 探针目标列表，包含所有标量字段和指标信息
      */
-    readonly getAllProbeTagets: () => Promise<
+    readonly getAllProbeTargets: () => Promise<
         ReadonlyArray<ProbeTargetDto['ProbeController/DEFAULT_PROBE_TARGET']>
     > = async() => {
         let _uri = '/api/probe-target';
@@ -100,10 +100,17 @@ export class ProbeController {
         _uri += encodeURIComponent(options.id);
         return (await this.executor({uri: _uri, method: 'PUT', body: options.body})) as Promise<void>;
     }
+    
+    readonly updateProbeTargetSort: (options: ProbeControllerOptions['updateProbeTargetSort']) => Promise<
+        void
+    > = async(options) => {
+        let _uri = '/api/probe-target/sort';
+        return (await this.executor({uri: _uri, method: 'POST', body: options.body})) as Promise<void>;
+    }
 }
 
 export type ProbeControllerOptions = {
-    'getAllProbeTagets': {}, 
+    'getAllProbeTargets': {}, 
     'insertProbeTarget': {
         /**
          * ProbeTargetInsert
@@ -133,5 +140,8 @@ export type ProbeControllerOptions = {
          * 探针目标ID
          */
         readonly id: number
+    }, 
+    'updateProbeTargetSort': {
+        readonly body: ReadonlyArray<ProbeTargetOrderUpdate>
     }
 }
