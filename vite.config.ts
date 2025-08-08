@@ -18,7 +18,8 @@ export default defineConfig({
         proxy: {
             '/api/': baseURL,
             '/s/': baseURL,
-            '/file/': baseURL
+            '/file/': baseURL,
+            '/data': 'https://echarts.apache.org/examples'
         }
     }
 })

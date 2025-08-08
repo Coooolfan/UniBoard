@@ -94,7 +94,7 @@ function IHandler(componentName: string) {
         </div>
         <ProbeTargetPanels />
     </div>
-    <div class="fixed top-0 left-0 z-0 h-full w-full bg-[#80ADD1] brightness-90">
+    <div class="fixed top-0 left-0 z-0 h-full w-full bg-[#80ADD1] brightness-80">
         <ProbeMap />
     </div>
 </template>

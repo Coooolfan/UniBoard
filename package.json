@@ -19,6 +19,7 @@
         "@primevue/themes": "^4.3.5",
         "@tailwindcss/vite": "^4.1.10",
         "echarts": "^5.6.0",
+        "echarts-gl": "^2.0.9",
         "jwt-decode": "^4.0.0",
         "primeicons": "^7.0.0",
         "primevue": "^4.3.5",

@@ -1638,6 +1638,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"claygl@npm:^1.2.1":
+  version: 1.3.0
+  resolution: "claygl@npm:1.3.0"
+  checksum: 10c0/5e04bd7c8ec6f2c0c5bdc04092ddf6744d8165d3227cf370bcb07b581bcb77d481178d18045484fcea852c1f0bdf702c933865431d371b5ed3591886271444f3
+  languageName: node
+  linkType: hard
+
 "color-convert@npm:^2.0.1":
   version: 2.0.1
   resolution: "color-convert@npm:2.0.1"
@@ -1739,6 +1746,18 @@ __metadata:
   version: 0.2.0
   resolution: "eastasianwidth@npm:0.2.0"
   checksum: 10c0/26f364ebcdb6395f95124fda411f63137a4bfb5d3a06453f7f23dfe52502905bd84e0488172e0f9ec295fdc45f05c23d5d91baf16bd26f0fe9acd777a188dc39
+  languageName: node
+  linkType: hard
+
+"echarts-gl@npm:^2.0.9":
+  version: 2.0.9
+  resolution: "echarts-gl@npm:2.0.9"
+  dependencies:
+    claygl: "npm:^1.2.1"
+    zrender: "npm:^5.1.1"
+  peerDependencies:
+    echarts: ^5.1.2
+  checksum: 10c0/8b004731f8d4bcd75c7a8c83bcb70773264a5240788238bd66b8adfdbcaafaa527194bd7cbdf8a53ed11283c939663a6568a1a9d1294a7905162ae99c757daa5
   languageName: node
   linkType: hard
 
@@ -3728,6 +3747,7 @@ __metadata:
     "@vue/tsconfig": "npm:^0.7.0"
     adm-zip: "npm:^0.5.16"
     echarts: "npm:^5.6.0"
+    echarts-gl: "npm:^2.0.9"
     eslint: "npm:9.29.0"
     eslint-plugin-vue: "npm:^10.2.0"
     fs-extra: "npm:^11.3.0"
@@ -4025,7 +4045,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zrender@npm:5.6.1":
+"zrender@npm:5.6.1, zrender@npm:^5.1.1":
   version: 5.6.1
   resolution: "zrender@npm:5.6.1"
   dependencies:
