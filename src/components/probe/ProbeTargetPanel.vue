@@ -21,14 +21,22 @@ const formatLastReportTime = (timeString: string) => {
 }
 
 // 获取状态颜色
-const getStatusColor = (value: number, type: 'cpu' | 'memory' | 'load') => {
+function getStatusColor(value: number | null | undefined, type: 'cpu' | 'memory' | 'load'): string {
+    if (value === null || value === undefined) {
+        return 'text-gray-500'
+    }
+
     if (type === 'load') {
         return value > 2 ? 'text-red-600' : value > 1 ? 'text-yellow-600' : 'text-green-600'
     }
+
     return value > 80 ? 'text-red-600' : value > 60 ? 'text-yellow-600' : 'text-green-600'
 }
 
-const bueatyMetricData = (value: number | null | undefined, type: 'cpu' | 'memory' | 'load') => {
+function bueatyMetricData(
+    value: number | null | undefined,
+    type: 'cpu' | 'memory' | 'load'
+): string {
     if (value === null || value === undefined) {
         return '-'
     }
@@ -44,7 +52,7 @@ const bueatyMetricData = (value: number | null | undefined, type: 'cpu' | 'memor
     return value.toString()
 }
 
-const isOnline = (timeString: string) => {
+function isOnline(timeString: string): boolean {
     const reportDate = new Date(timeString)
     const now = new Date()
     const diffMs = now.getTime() - reportDate.getTime()
