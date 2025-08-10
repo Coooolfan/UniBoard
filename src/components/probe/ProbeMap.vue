@@ -1,89 +1,89 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import * as echarts from 'echarts/core'
-import {
-    TooltipComponent,
-    type TooltipComponentOption,
-    GeoComponent,
-    type GeoComponentOption
-} from 'echarts/components'
-import { EffectScatterChart, type EffectScatterSeriesOption } from 'echarts/charts'
-import { UniversalTransition } from 'echarts/features'
-import { CanvasRenderer, SVGRenderer } from 'echarts/renderers'
-import icelandSvg from '@/assets/Map_of_Iceland.svg?raw'
+import { GeoComponent } from 'echarts/components'
+import { EffectScatterChart } from 'echarts/charts'
+import { SVGRenderer } from 'echarts/renderers'
+import worldMap from '@/assets/world.json?raw'
+import type { ProbeTargetDto } from '@/__generated/model/dto'
+import { api } from '@/ApiInstance'
 
-echarts.use([
-    TooltipComponent,
-    GeoComponent,
-    EffectScatterChart,
-    CanvasRenderer,
-    UniversalTransition,
-    SVGRenderer
-])
-
-type EChartsOption = echarts.ComposeOption<
-    TooltipComponentOption | GeoComponentOption | EffectScatterSeriesOption
->
+echarts.use([GeoComponent, SVGRenderer, EffectScatterChart])
 
 const map = ref<HTMLElement | null>(null)
 let myChart: echarts.ECharts | null = null
+const probeTargets = ref<ProbeTargetDto['ProbeController/DEFAULT_PROBE_TARGET'][]>([])
 
-onMounted(() => {
+async function fetchData() {
+    try {
+        const targets = await api.probeController.getAllProbeTargets()
+        probeTargets.value = [...targets]
+
+        if (!myChart) return
+
+        const mapData = targets.map((target) => [
+            target.location.longitude,
+            target.location.latitude,
+            target.name
+        ])
+
+        myChart.setOption({
+            series: [
+                {
+                    data: mapData
+                }
+            ]
+        })
+    } catch (error) {
+        console.error('Failed to fetch probe targets:', error)
+    }
+}
+
+onMounted(async () => {
     if (!map.value) return
 
     myChart = echarts.init(map.value, null, { renderer: 'svg' })
 
     if (!myChart) return
 
-    echarts.registerMap('iceland_svg', { svg: icelandSvg })
+    echarts.registerMap('world', worldMap)
 
-    const option: EChartsOption = {
-        tooltip: {},
+    const option = {
+        progressive: 20000,
+        backgroundColor: '#f2f2f2',
         geo: {
-            map: 'iceland_svg',
-            roam: true,
-            zoom: 1,
-            // center: ['50%', '50%'],
-            // boundingCoords: [
-            //     // 定位左上角经纬度
-            //     [-180, 90],
-            //     // 定位右下角经纬度
-            //     [180, -90]
-            // ]
-        },
-        series: {
-            type: 'effectScatter',
-            coordinateSystem: 'geo',
-            geoIndex: 0,
-            symbolSize: function (params) {
-                return (params[2] / 100) * 15 + 10
-            },
+            center: ['0%', '1%'],
+            zoom: 1.1,
+            map: 'world',
+            roam: false,
+            silent: true,
             itemStyle: {
-                color: '#b02a02'
-            },
-            encode: {
-                tooltip: 2
-            },
-            data: [
-                [-180, 90, 0],
-                [488.2358421078053, 459.70913833075736, 1],
-                [770.3415644319939, 757.9672194986475, 2],
-                [1180.0329284196291, 743.6141808346214, 3],
-                [894.03790632245, 1188.1985153835008, 4],
-                [1372.98925630313, 477.3839988649537, 5],
-                [1378.62251255796, 935.6708486282843, 6],
-                [180, -90, -1],
-            ]
-        }
+                color: '#fff',
+                borderColor: '#fff',
+                borderWidth: 1
+            }
+        },
+        series: [
+            {
+                type: 'effectScatter',
+                coordinateSystem: 'geo',
+                geoIndex: 0,
+                symbolSize: function (params: any) {
+                    return 10
+                },
+                itemStyle: {
+                    color: '#b02a02'
+                },
+                encode: {
+                    tooltip: 2
+                },
+                data: []
+            }
+        ]
     }
 
     myChart.setOption(option)
-
-    myChart.getZr().on('click', function (params) {
-        const pixelPoint = [params.offsetX, params.offsetY]
-        const dataPoint = myChart?.convertFromPixel({ geoIndex: 0 }, pixelPoint)
-        console.log(dataPoint)
-    })
+    fetchData()
 })
 
 onUnmounted(() => {

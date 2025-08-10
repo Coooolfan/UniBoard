@@ -18,7 +18,7 @@ onUnmounted(() => {
 
 async function refreshProbes() {
     const targets = await api.probeController.getAllProbeTargets()
-    probeTargets.value = [...targets].sort((a, b) => a.sort - b.sort)
+    probeTargets.value = [...targets].sort((a, b) => a.sort - b.sort).slice(0, 3)
 }
 
 function startPolling() {
@@ -39,10 +39,38 @@ function stopPolling() {
     <div
         class="z-50 mt-10 hidden flex-col items-center justify-between gap-6 pb-5 md:mb-20 md:flex"
     >
-        <ProbeTargetPanel
-            v-for="probeTarget in probeTargets"
-            :key="probeTarget.id"
-            :probe-target="probeTarget"
-        />
+        <TransitionGroup
+            name="probe-panel"
+            tag="div"
+            class="flex w-full flex-col items-center gap-6"
+        >
+            <ProbeTargetPanel
+                v-for="(probeTarget, index) in probeTargets"
+                :key="probeTarget.id"
+                :probe-target="probeTarget"
+                :style="{ '--delay': `${index * 150}ms` }"
+                class="probe-panel-item"
+            />
+        </TransitionGroup>
     </div>
 </template>
+
+<style scoped>
+.probe-panel-enter-active {
+    transition: all 0.6s cubic-bezier(0.01, 0.46, 0.23, 1);
+}
+
+.probe-panel-enter-from {
+    opacity: 0.1;
+    transform: translateY(100px) scale(0.6);
+}
+
+.probe-panel-enter-to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.probe-panel-item {
+    width: 100%;
+}
+</style>

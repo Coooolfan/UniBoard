@@ -62,7 +62,7 @@ function isOnline(timeString: string): boolean {
 </script>
 <template>
     <div
-        class="cursor-pointer rounded-lg border border-gray-200 bg-white/90 pt-3 pr-4 pb-3 pl-4 backdrop-blur-sm transition-all duration-300 hover:scale-101 hover:drop-shadow-xl"
+        class="cursor-pointer drop-shadow-md rounded-lg border border-gray-200 bg-white/90 pt-3 pr-4 pb-3 pl-4 backdrop-blur-sm transition-all duration-300 hover:scale-101 hover:drop-shadow-xl"
     >
         <div class="flex items-center justify-between gap-10 md:gap-20 lg:gap-40">
             <div class="w-50 flex-1">
