@@ -40,7 +40,7 @@ async function login() {
     <div
         class="flex h-dvh flex-col items-center justify-center bg-[#f2f2f2] transition-all dark:bg-[#1e2939]"
     >
-        <h3 class="text-2xl font-bold">UniBoard</h3>
+        <h3 class="text-2xl font-bold text-black dark:text-white">UniBoard</h3>
         <form
             class="animate-slide-up mt-4 flex w-1/2 max-w-60 flex-col gap-4"
             @submit.prevent="login"

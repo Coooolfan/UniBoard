@@ -208,10 +208,10 @@ function generateBanner() {
 
 <template>
     <Toast />
-    <div class="min-h-screen w-screen bg-[#f2f2f2] p-6">
-        <div class="mx-auto mt-16 mb-8 w-3/4 rounded-lg bg-white p-6 shadow-md">
+    <div class="min-h-screen w-screen bg-[#f2f2f2] p-6 dark:bg-[#01020A]">
+        <div class="mx-auto mt-16 mb-8 w-3/4 rounded-lg bg-white p-6 shadow-md dark:bg-[#18181B]">
             <div class="mb-6 flex items-center justify-between">
-                <h1 class="text-xl font-bold">UniBoard 初始化</h1>
+                <h1 class="text-xl font-bold text-black dark:text-white">UniBoard 初始化</h1>
             </div>
 
             <Stepper v-model:value="activeStep">
@@ -224,8 +224,10 @@ function generateBanner() {
                     <!-- Step 1: 登录信息 -->
                     <StepPanel value="1">
                         <div class="py-4">
-                            <div class="card mb-4 rounded-lg bg-white p-4">
-                                <h2 class="mb-4 border-b pb-2 text-lg font-semibold text-gray-800">
+                            <div class="card mb-4 rounded-lg bg-white p-4 dark:bg-[#18181B]">
+                                <h2
+                                    class="mb-4 border-b pb-2 text-lg font-semibold dark:bg-[#18181B] dark:text-gray-200"
+                                >
                                     登录信息
                                 </h2>
 
@@ -269,12 +271,16 @@ function generateBanner() {
                     <StepPanel value="2">
                         <div class="py-4">
                             <!-- 基本信息 -->
-                            <div class="card mb-4 rounded-lg bg-white p-4">
-                                <h2 class="mb-4 border-b pb-2 text-lg font-semibold text-gray-800">
+                            <div class="card mb-4 rounded-lg bg-white p-4 dark:bg-[#18181B]">
+                                <h2
+                                    class="mb-4 border-b pb-2 text-lg font-semibold dark:bg-[#18181B] dark:text-gray-200"
+                                >
                                     基本信息
                                 </h2>
                                 <div class="mt-4 flex items-center space-x-2">
-                                    <label for="avatar" class="w-20 shrink-0 text-right"
+                                    <label
+                                        for="avatar"
+                                        class="w-20 shrink-0 text-right text-black dark:text-white"
                                         >头像</label
                                     >
                                     <div class="grow">
@@ -295,7 +301,9 @@ function generateBanner() {
                                     </div>
                                 </div>
                                 <div class="mt-4 flex items-center space-x-2">
-                                    <label for="banner" class="w-20 shrink-0 text-right"
+                                    <label
+                                        for="banner"
+                                        class="w-20 shrink-0 text-right text-black dark:text-white"
                                         >横幅</label
                                     >
                                     <div class="grow">
@@ -343,7 +351,7 @@ function generateBanner() {
                             </div>
 
                             <!-- 联系方式 -->
-                            <div class="rounded-lg bg-white p-4">
+                            <div class="rounded-lg bg-white p-4 dark:bg-[#18181B]">
                                 <!-- 联系方式在一个面板中 -->
                                 <Panel
                                     header="联系方式"
@@ -440,7 +448,7 @@ function generateBanner() {
             </Stepper>
 
             <div class="mt-6 flex justify-center">
-                <div class="flex items-center text-sm text-gray-500">
+                <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
                     <i class="pi pi-info-circle mr-2"></i>
                     在此页面关闭之前，数据不会被保存
                 </div>
