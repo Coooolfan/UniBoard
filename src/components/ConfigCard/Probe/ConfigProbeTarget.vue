@@ -16,6 +16,7 @@ import type {
     ProbeTargetOrderUpdate
 } from '@/__generated/model/static'
 import ProbeTargetPanel from '@/components/probe/ProbeTargetPanel.vue'
+import ConfigProbeInstallerDialog from '@/components/ConfigCard/Probe/ConfigProbeInstallerDialog.vue'
 import { VueDraggable, type SortableEvent } from 'vue-draggable-plus'
 
 const toast = useToast()
@@ -24,6 +25,8 @@ const confirm = useConfirm()
 const probeTargetList = ref<ProbeTargetDto['ProbeController/DEFAULT_PROBE_TARGET'][]>([])
 const dialogVisible = ref(false)
 const keyDialogVisible = ref(false)
+const probeInstallerDialogVisible = ref(false)
+const selectedProbeTargetForInstall = ref(-1)
 const dialogType = ref<'new' | 'edit'>('new')
 const currentProbeTarget = ref<{
     id?: number
@@ -240,6 +243,12 @@ async function onUpdateSort(e: SortableEvent) {
         })
     }
 }
+
+function showProbeInstallerDialog(probeId: number) {
+    selectedProbeTargetForInstall.value = probeId
+    probeInstallerDialogVisible.value = true
+}
+
 </script>
 
 <template>
@@ -274,6 +283,12 @@ async function onUpdateSort(e: SortableEvent) {
                                 title="拖动以排序，即刻生效"
                             />
                             <Button
+                                icon="pi pi-pencil"
+                                class="p-button-rounded p-button-text"
+                                title="编辑"
+                                @click="openEditProbeTargetDialog(index)"
+                            />
+                            <Button
                                 icon="pi pi-key"
                                 class="p-button-rounded p-button-text"
                                 severity="info"
@@ -281,10 +296,10 @@ async function onUpdateSort(e: SortableEvent) {
                                 @click="showRefreshKeyDialog(item.id)"
                             />
                             <Button
-                                icon="pi pi-pencil"
+                                icon="pi pi-download"
                                 class="p-button-rounded p-button-text"
-                                title="编辑"
-                                @click="openEditProbeTargetDialog(index)"
+                                title="一键安装"
+                                @click="showProbeInstallerDialog(item.id)"
                             />
                             <Button
                                 icon="pi pi-trash"
@@ -430,6 +445,10 @@ async function onUpdateSort(e: SortableEvent) {
             />
         </template>
     </Dialog>
+    <ConfigProbeInstallerDialog
+        :probe-id="selectedProbeTargetForInstall"
+        v-model:show-probe-installer-dialog="probeInstallerDialogVisible"
+    />
 </template>
 
 <style scoped>

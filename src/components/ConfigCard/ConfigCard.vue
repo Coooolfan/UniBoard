@@ -12,7 +12,7 @@ import Divider from 'primevue/divider'
 import ConfigCardLanding from '@/components/ConfigCard/ConfigCardProfile.vue'
 import ConfigCardHyperLink from '@/components/ConfigCard/ConfigCardHyperLink.vue'
 import ConfigCardSystem from '@/components/ConfigCard/ConfigCardSystem.vue'
-import ConfigProbeTarget from '@/components/ConfigCard/ConfigProbeTarget.vue'
+import ConfigProbeTarget from '@/components/ConfigCard/Probe/ConfigProbeTarget.vue'
 import { api } from '@/ApiInstance'
 const router = useRouter()
 const dialogRef: any = inject('dialogRef')

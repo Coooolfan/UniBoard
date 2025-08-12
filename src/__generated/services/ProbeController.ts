@@ -101,6 +101,16 @@ export class ProbeController {
         return (await this.executor({uri: _uri, method: 'PUT', body: options.body})) as Promise<void>;
     }
     
+    /**
+     * 更新探针目标的排序
+     * 
+     * 根据提供的排序列表更新探针目标的显示顺序
+     * 需要登录验证
+     * 
+     * @parameter {ProbeControllerOptions['updateProbeTargetSort']} options
+     * - sortList List<ProbeTargetOrderUpdate>
+     * 包含要更新的探针目标ID和新的排序值
+     */
     readonly updateProbeTargetSort: (options: ProbeControllerOptions['updateProbeTargetSort']) => Promise<
         void
     > = async(options) => {
@@ -142,6 +152,10 @@ export type ProbeControllerOptions = {
         readonly id: number
     }, 
     'updateProbeTargetSort': {
+        /**
+         * List<ProbeTargetOrderUpdate>
+         * 包含要更新的探针目标ID和新的排序值
+         */
         readonly body: ReadonlyArray<ProbeTargetOrderUpdate>
     }
 }

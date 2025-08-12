@@ -4,6 +4,7 @@ export {HyperLinkController} from './HyperLinkController';
 export {NoteController} from './NoteController';
 export {ProbeController} from './ProbeController';
 export {ProbeDataController} from './ProbeDataController';
+export {ProbeScriptController} from './ProbeScriptController';
 export {ProfileController} from './ProfileController';
 export {RedirectController} from './RedirectController';
 export {ShortUrlController} from './ShortUrlController';

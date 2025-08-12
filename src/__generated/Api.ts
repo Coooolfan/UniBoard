@@ -6,6 +6,7 @@ import {
     NoteController, 
     ProbeController, 
     ProbeDataController, 
+    ProbeScriptController, 
     ProfileController, 
     RedirectController, 
     ShortUrlController, 
@@ -27,6 +28,8 @@ export class Api {
     
     readonly probeDataController: ProbeDataController
     
+    readonly probeScriptController: ProbeScriptController
+    
     readonly profileController: ProfileController
     
     readonly redirectController: RedirectController
@@ -44,6 +47,7 @@ export class Api {
         this.noteController = new NoteController(executor);
         this.probeController = new ProbeController(executor);
         this.probeDataController = new ProbeDataController(executor);
+        this.probeScriptController = new ProbeScriptController(executor);
         this.profileController = new ProfileController(executor);
         this.redirectController = new RedirectController(executor);
         this.shortUrlController = new ShortUrlController(executor);

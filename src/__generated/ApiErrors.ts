@@ -67,6 +67,8 @@ export type ApiErrors = {
     }, 
     'probeDataController': {
     }, 
+    'probeScriptController': {
+    }, 
     'profileController': {
         'getProfile': AllErrors & ({
                 family: 'PROFILE', 
