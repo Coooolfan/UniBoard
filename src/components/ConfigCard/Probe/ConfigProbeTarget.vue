@@ -26,7 +26,9 @@ const probeTargetList = ref<ProbeTargetDto['ProbeController/DEFAULT_PROBE_TARGET
 const dialogVisible = ref(false)
 const keyDialogVisible = ref(false)
 const probeInstallerDialogVisible = ref(false)
-const selectedProbeTargetForInstall = ref(-1)
+const selectedProbeTargetForInstall = ref<
+    ProbeTargetDto['ProbeController/DEFAULT_PROBE_TARGET'] | null
+>(null)
 const dialogType = ref<'new' | 'edit'>('new')
 const currentProbeTarget = ref<{
     id?: number
@@ -245,10 +247,13 @@ async function onUpdateSort(e: SortableEvent) {
 }
 
 function showProbeInstallerDialog(probeId: number) {
-    selectedProbeTargetForInstall.value = probeId
+    probeTargetList.value.forEach((item) => {
+        if (item.id === probeId) {
+            selectedProbeTargetForInstall.value = item
+        }
+    })
     probeInstallerDialogVisible.value = true
 }
-
 </script>
 
 <template>
@@ -446,7 +451,7 @@ function showProbeInstallerDialog(probeId: number) {
         </template>
     </Dialog>
     <ConfigProbeInstallerDialog
-        :probe-id="selectedProbeTargetForInstall"
+        :probe-target="selectedProbeTargetForInstall"
         v-model:show-probe-installer-dialog="probeInstallerDialogVisible"
     />
 </template>

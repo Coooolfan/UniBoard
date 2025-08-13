@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
 import Stepper from 'primevue/stepper'
@@ -8,9 +8,11 @@ import Step from 'primevue/step'
 import StepPanel from 'primevue/steppanel'
 import Message from 'primevue/message'
 import { api } from '@/ApiInstance'
+import type { ProbeTargetDto } from '@/__generated/model/dto'
+import { useClipboard } from '@/composables/useClipboard'
 
 const props = defineProps<{
-    probeId: number
+    probeTarget: ProbeTargetDto['ProbeController/DEFAULT_PROBE_TARGET'] | null
     showProbeInstallerDialog: boolean
 }>()
 
@@ -19,11 +21,10 @@ const emit = defineEmits<{
 }>()
 
 const isInstalling = ref(false)
-const installProgress = ref(0)
-const installStatus = ref<
-    'preparing' | 'downloading' | 'installing' | 'configuring' | 'completed' | 'error'
->('preparing')
-const errorMessage = ref('')
+const probeTargetKey = ref('-')
+const systemConfigHost = ref('-')
+
+const { copyToClipboard } = useClipboard()
 
 const preCheckList = ref({
     systemConfigHost: {
@@ -55,6 +56,8 @@ async function preCheck() {
         if (!(systemConfig.host && systemConfig.host.trim())) {
             preCheckList.value.systemConfigHost.value = false
             preCheckList.value.systemConfigHost.message = '“系统设置 - 站点域名” 配置为空或无效'
+        } else {
+            systemConfigHost.value = systemConfig.host
         }
 
         // 检查 HTTPS 状态
@@ -78,14 +81,53 @@ async function preCheck() {
 }
 
 function resetInstallState() {
-    isInstalling.value = false
-    installProgress.value = 0
-    installStatus.value = 'preparing'
-    errorMessage.value = ''
+    probeTargetKey.value = '-'
 }
 
 function closeDialog() {
     emit('update:showProbeInstallerDialog', false)
+}
+
+const preCheckPassed = computed(() => {
+    return preCheckList.value.systemConfigHost.value && preCheckList.value.https.value
+})
+
+const preCheckTips = computed(() => {
+    if (preCheckList.value.systemConfigHost.value && !preCheckList.value.https.value) {
+        return 'HTTPS 启用与否不影响探针上报，您仍然可以手动完成探针目标的配置与安装'
+    }
+    return ''
+})
+
+const bueatyProbeTargetDesc = computed(() => {
+    if (props.probeTarget) {
+        return `ID: ${props.probeTarget.id} 名称: ${props.probeTarget.name} 描述: ${props.probeTarget.description}`
+    }
+})
+
+async function genCmd() {
+    if (props.probeTarget == undefined) return
+    const refreshProbeTargetKeyResp = await api.probeController.refreshProbeTargetKey({
+        id: props.probeTarget?.id
+    })
+
+    probeTargetKey.value = refreshProbeTargetKeyResp.key
+}
+
+const installScript = computed(() => {
+    if (props.probeTarget == undefined) return
+
+    var host = structuredClone(systemConfigHost.value)
+
+    if (host.endsWith('/')) host = host.slice(0, -1)
+
+    return `curl -fsSL "${host}/api/script/installer/probe/${props.probeTarget.id}/key/${probeTargetKey.value}/interval/60" | sudo bash`
+})
+
+function copyScript() {
+    if (installScript.value) {
+        copyToClipboard(installScript.value, '安装脚本已复制到剪贴板', '复制安装脚本失败')
+    }
 }
 </script>
 
@@ -95,7 +137,7 @@ function closeDialog() {
         @update:visible="emit('update:showProbeInstallerDialog', $event)"
         header="在探针目标上安装探针"
         modal
-        class="w-full max-w-3xl"
+        class="w-196"
         :closable="!isInstalling"
     >
         <Stepper value="1">
@@ -129,18 +171,53 @@ function closeDialog() {
                         </strong>
                     </Message>
                     <div>
-                        <Button label="继续" @click="activateCallback('2')" />
+                        <Button
+                            class="mr-4"
+                            label="继续"
+                            @click="activateCallback('2')"
+                            :disabled="!preCheckPassed"
+                        />
+                        <span class="text-gray-400">{{ preCheckTips }}</span>
                     </div>
                 </StepPanel>
             </StepItem>
             <StepItem value="2">
-                <Step>选择安装方式</Step>
+                <Step>生成安装脚本</Step>
                 <StepPanel v-slot="{ activateCallback }">
-                    <div class="flex h-48 flex-col">
-                        <div
-                            class="border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-950 flex flex-auto items-center justify-center rounded border-2 border-dashed font-medium"
-                        >
-                            Content II
+                    <div class="flex flex-col justify-end">
+                        <Message severity="success" :closable="false" class="mb-4 max-w-11/12">
+                            <span>
+                                {{ '即将为 "' + bueatyProbeTargetDesc + '" 生成安装脚本' }}</span
+                            >
+                        </Message>
+                        <Message severity="info" :closable="false" class="mb-4 max-w-11/12">
+                            <span
+                                >单击生成后，Uniboard 会为此探针目标重新生成用于鉴权的 Key ，旧 Key
+                                将立即失效</span
+                            >
+                        </Message>
+                        <Button
+                            label="生成"
+                            class="w-16"
+                            @click="genCmd"
+                            :disabled="probeTargetKey.length >= 2"
+                        />
+                        <div v-if="probeTargetKey.length >= 2" class="mt-4">
+                            <div class="relative">
+                                <pre
+                                    class="mb-4 overflow-x-auto rounded-lg border border-gray-700 bg-gray-900 p-4 font-mono text-sm text-green-400"
+                                    >{{ installScript }}</pre
+                                >
+                                <Button
+                                    icon="pi pi-copy"
+                                    @click="copyScript"
+                                    size="small"
+                                    severity="secondary"
+                                    outlined
+                                    label="复制脚本"
+                                    v-tooltip="'复制脚本'"
+                                />
+                            </div>
                         </div>
                     </div>
                     <div class="flex gap-2 py-6">
@@ -160,14 +237,16 @@ function closeDialog() {
                         <Message severity="success" :closable="false">
                             <strong><i class="pi pi-info-circle" /> Tips：</strong>
                             <ul class="mt-2 ml-4 list-disc space-y-1">
-                                <li>观察到探针目标数据正常上报后</li>
-                                <li>新 Key 仅在创建时展示一次，请务必保存</li>
+                                <li>手动登录监控目标，在控制台中粘贴您复制的命令</li>
+                                <li>安装脚本将自动执行 service 注册等操作，并为您启动上报服务</li>
+                                <li>确保探针目标可以连接到 Uniboard 实例</li>
+                                <li>静候佳音</li>
                             </ul>
                         </Message>
                     </div>
                     <div class="py-6">
                         <Button
-                            label="上一部"
+                            label="上一步"
                             severity="secondary"
                             @click="activateCallback('2')"
                         />
