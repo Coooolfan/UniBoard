@@ -32,7 +32,10 @@ onMounted(async () => {
         .then((res) => {
             profile.value = res
             loadFont()
-            document.title = `${profile.value.name} - ${profile.value.description}`
+
+            if (profile.value.description.trim.length === 0) document.title = profile.value.name
+            else document.title = `${profile.value.name} - ${profile.value.description}`
+
             document
                 .querySelector('link[rel="icon"]')
                 ?.setAttribute('href', profile.value.avatar.filepath)
