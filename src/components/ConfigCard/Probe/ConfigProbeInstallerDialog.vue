@@ -121,7 +121,7 @@ const installScript = computed(() => {
 
     if (host.endsWith('/')) host = host.slice(0, -1)
 
-    return `curl -fsSL "${host}/api/script/installer/probe/${props.probeTarget.id}/key/${probeTargetKey.value}/interval/60" | sudo bash`
+    return `curl -fsSL "${host}/api/probe-script/installer/probe/${props.probeTarget.id}/key/${probeTargetKey.value}/interval/60" | sudo bash`
 })
 
 function copyScript() {
