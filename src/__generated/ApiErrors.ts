@@ -63,6 +63,12 @@ export type ApiErrors = {
                 readonly [key:string]: any
             })
     }, 
+    'probeController': {
+    }, 
+    'probeDataController': {
+    }, 
+    'probeScriptController': {
+    }, 
     'profileController': {
         'getProfile': AllErrors & ({
                 family: 'PROFILE', 

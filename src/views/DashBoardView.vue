@@ -6,6 +6,8 @@ import DynamicDialog from 'primevue/dynamicdialog'
 import Toast from 'primevue/toast'
 import { defineAsyncComponent, nextTick, onMounted, type Component } from 'vue'
 import { api } from '@/ApiInstance'
+import ProbeMap from '@/components/probe/ProbeMap.vue'
+import ProbeTargetPanels from '@/components/probe/ProbeTargetPanels.vue'
 
 const router = useRouter()
 const dialog = useDialog()
@@ -62,31 +64,37 @@ function IHandler(componentName: string) {
 </script>
 
 <template>
-    <div class="flex flex-col items-center min-h-screen bg-[#f2f2f2] dark:bg-slate-950">
-        <ClockCard class="mt-36 lg:mt-28" />
-        <DynamicDialog />
-        <Toast />
-        <div class="flex justify-between mt-10 gap-4 lg:max-w-96 lg:w-2/5">
-            <i
-                class="pi text-black place-content-center before:grid before:place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-pencil"
-                @click="IHandler('Note')"
-            ></i>
-            <i
-                class="pi text-black place-content-center before:grid before:place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-link"
-                @click="IHandler('Link')"
-            ></i>
-            <i
-                class="pi text-black place-content-center before:grid before:place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-copy"
-                @click="IHandler('File')"
-            ></i>
-            <i
-                class="pi text-black place-content-center before:grid before:place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-cog"
-                @click="IHandler('Config')"
-            ></i>
-            <i
-                class="pi text-black place-content-center before:grid before:place-content-center rounded-xl bg-white w-10 h-10 cursor-pointer transition-all duration-700 hover:drop-shadow-md pi-sign-out"
-                @click="router2Landing"
-            ></i>
+    <DynamicDialog />
+    <Toast />
+    <div class="flex h-screen w-screen flex-col items-center justify-between">
+        <div class="relative z-50 flex flex-col items-center">
+            <ClockCard class="mt-36 lg:mt-28" />
+            <div class="mt-10 flex justify-between gap-4 md:gap-10 lg:gap-12">
+                <i
+                    class="pi pi-pencil h-10 w-10 cursor-pointer place-content-center rounded-xl bg-white/90 text-black drop-shadow-sm backdrop-blur-xs transition-all duration-300 before:grid before:place-content-center hover:scale-101 hover:drop-shadow-lg"
+                    @click="IHandler('Note')"
+                ></i>
+                <i
+                    class="pi pi-link h-10 w-10 cursor-pointer place-content-center rounded-xl bg-white/90 text-black drop-shadow-sm backdrop-blur-xs transition-all duration-300 before:grid before:place-content-center hover:scale-101 hover:drop-shadow-lg"
+                    @click="IHandler('Link')"
+                ></i>
+                <i
+                    class="pi pi-copy h-10 w-10 cursor-pointer place-content-center rounded-xl bg-white/90 text-black drop-shadow-sm backdrop-blur-xs transition-all duration-300 before:grid before:place-content-center hover:scale-101 hover:drop-shadow-lg"
+                    @click="IHandler('File')"
+                ></i>
+                <i
+                    class="pi pi-cog h-10 w-10 cursor-pointer place-content-center rounded-xl bg-white/90 text-black drop-shadow-sm backdrop-blur-xs transition-all duration-300 before:grid before:place-content-center hover:scale-101 hover:drop-shadow-lg"
+                    @click="IHandler('Config')"
+                ></i>
+                <i
+                    class="pi pi-sign-out h-10 w-10 cursor-pointer place-content-center rounded-xl bg-white/90 text-black drop-shadow-sm backdrop-blur-xs transition-all duration-300 before:grid before:place-content-center hover:scale-101 hover:drop-shadow-lg"
+                    @click="router2Landing"
+                ></i>
+            </div>
         </div>
+        <ProbeTargetPanels />
+    </div>  
+    <div class="fixed top-0 left-0 z-0 h-full w-full bg-[#80ADD1] brightness-80">
+        <ProbeMap />
     </div>
 </template>

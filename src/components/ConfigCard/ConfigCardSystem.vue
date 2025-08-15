@@ -128,10 +128,11 @@ async function updatePassword() {
 <template>
     <LabelAndInput
         id="host"
-        label="站点域名"
-        placeholder="当前版本无须设置此项，留空即可"
+        label="站点URL"
+        placeholder="https://example.com"
         v-model="sysConfig.host"
         :loading="systemConfigLoading"
+        tooltip="用于标识外部服务如何连接到站点，必须以http://或https://开头，且不能包含额外path"
     />
     <div class="flex">
         <LabelAndCheckbox

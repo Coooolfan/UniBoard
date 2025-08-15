@@ -12,7 +12,7 @@ const time_formatted = computed(() => time.value.toLocaleTimeString())
         <div
             v-for="(item, index) in time_formatted"
             :key="index"
-            class="min-w-6 text-5xl text-center text-slate-800 dark:text-slate-100 select-none lg:min-w-16 lg:text-9xl"
+            class="w-8 text-center text-5xl text-slate-900 select-none md:w-12 lg:w-20 lg:text-9xl dark:text-slate-100"
         >
             {{ item }}
         </div>

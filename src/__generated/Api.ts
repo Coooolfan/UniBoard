@@ -4,6 +4,9 @@ import {
     FileRecordController, 
     HyperLinkController, 
     NoteController, 
+    ProbeController, 
+    ProbeDataController, 
+    ProbeScriptController, 
     ProfileController, 
     RedirectController, 
     ShortUrlController, 
@@ -21,6 +24,12 @@ export class Api {
     
     readonly noteController: NoteController
     
+    readonly probeController: ProbeController
+    
+    readonly probeDataController: ProbeDataController
+    
+    readonly probeScriptController: ProbeScriptController
+    
     readonly profileController: ProfileController
     
     readonly redirectController: RedirectController
@@ -36,6 +45,9 @@ export class Api {
         this.fileRecordController = new FileRecordController(executor);
         this.hyperLinkController = new HyperLinkController(executor);
         this.noteController = new NoteController(executor);
+        this.probeController = new ProbeController(executor);
+        this.probeDataController = new ProbeDataController(executor);
+        this.probeScriptController = new ProbeScriptController(executor);
         this.profileController = new ProfileController(executor);
         this.redirectController = new RedirectController(executor);
         this.shortUrlController = new ShortUrlController(executor);
