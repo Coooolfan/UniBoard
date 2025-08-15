@@ -9,6 +9,7 @@
                 @input="onInput"
                 class="h-10 w-full"
                 :placeholder="placeholder"
+                v-tooltip.bottom="tooltip"
             />
             <Skeleton v-else height="2.5rem"></Skeleton>
         </div>
@@ -24,13 +25,15 @@ const {
     label,
     modelValue,
     placeholder = '',
+    tooltip = '',
     loading = false
 } = defineProps<{
     id: string
     label: string
     modelValue: string
-    placeholder?: string
     loading: boolean
+    placeholder?: string
+    tooltip?:string
 }>()
 
 const emit = defineEmits(['update:modelValue'])
