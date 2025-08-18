@@ -4,7 +4,7 @@ import * as echarts from 'echarts/core'
 import { GeoComponent } from 'echarts/components'
 import { EffectScatterChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import worldMap from '@/assets/world.json?raw'
+
 import type { ProbeTargetDto } from '@/__generated/model/dto'
 import { api } from '@/ApiInstance'
 
@@ -39,12 +39,25 @@ async function fetchData() {
     }
 }
 
+async function loadWorldMap() {
+    try {
+        const worldMapModule = await import('@/assets/world.json?raw')
+        return worldMapModule.default
+    } catch (error) {
+        console.error('Failed to load world map:', error)
+        return null
+    }
+}
+
 onMounted(async () => {
     if (!map.value) return
 
     myChart = echarts.init(map.value, null, { renderer: 'svg' })
 
     if (!myChart) return
+
+    const worldMap = await loadWorldMap()
+    if (!worldMap) return
 
     echarts.registerMap('world', worldMap)
 

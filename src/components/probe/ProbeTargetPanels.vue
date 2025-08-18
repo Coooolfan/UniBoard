@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 import type { ProbeTargetDto } from '@/__generated/model/dto'
 import { api } from '@/ApiInstance'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { defineAsyncComponent, onMounted, onUnmounted, ref } from 'vue'
 import ProbeTargetPanel from '@/components/probe/ProbeTargetPanel.vue'
 
 const probeTargets = ref<ProbeTargetDto['ProbeController/DEFAULT_PROBE_TARGET'][]>([])
 let pollTimer: number | null = null
+
+const ProbeMap = defineAsyncComponent(() => import('@/components/probe/ProbeMap.vue'))
 
 onMounted(async () => {
     await refreshProbes()
@@ -22,7 +24,7 @@ async function refreshProbes() {
 }
 
 function startPolling() {
-    // 每30秒更新一次数据
+    // 每秒更新一次数据
     pollTimer = window.setInterval(async () => {
         await refreshProbes()
     }, 1000)
@@ -36,6 +38,12 @@ function stopPolling() {
 }
 </script>
 <template>
+    <Transition name="probe-map" mode="out-in">
+        <ProbeMap
+            v-if="probeTargets.length > 0"
+            class="fixed top-0 left-0 z-0 h-full w-full brightness-80"
+        />
+    </Transition>
     <div
         class="z-50 mt-10 hidden flex-col items-center justify-between gap-6 pb-5 md:mb-20 md:flex"
     >
@@ -72,5 +80,23 @@ function stopPolling() {
 
 .probe-panel-item {
     width: 100%;
+}
+
+.probe-map-enter-active {
+    transition: opacity 0.8s ease-in-out;
+}
+
+.probe-map-leave-active {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.probe-map-enter-from,
+.probe-map-leave-to {
+    opacity: 0;
+}
+
+.probe-map-enter-to,
+.probe-map-leave-from {
+    opacity: 1;
 }
 </style>

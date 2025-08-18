@@ -6,11 +6,11 @@ import DynamicDialog from 'primevue/dynamicdialog'
 import Toast from 'primevue/toast'
 import { defineAsyncComponent, nextTick, onMounted, type Component } from 'vue'
 import { api } from '@/ApiInstance'
-import ProbeMap from '@/components/probe/ProbeMap.vue'
-import ProbeTargetPanels from '@/components/probe/ProbeTargetPanels.vue'
+import { useToast } from 'primevue/usetoast'
 
 const router = useRouter()
 const dialog = useDialog()
+const toast = useToast()
 
 function router2Landing() {
     router.push('/')
@@ -26,7 +26,12 @@ onMounted(async () => {
     import('@/components/ShortUrlCard.vue')
     import('@/components/FileCard.vue')
     import('@/components/ConfigCard/ConfigCard.vue')
+    import('@/components/probe/ProbeTargetPanels.vue')
 })
+
+const ProbeTargetPanels = defineAsyncComponent(
+    () => import('@/components/probe/ProbeTargetPanels.vue')
+)
 
 // 组件映射
 const componentMap: Record<string, Component> = {
@@ -58,7 +63,12 @@ function IHandler(componentName: string) {
             }
         })
     } else {
-        console.error(`组件 "${componentName}" 未找到`)
+        toast.add({
+            severity: 'error',
+            summary: '组件尚未完成加载',
+            detail: '请稍后再试',
+            life: 3000
+        })
     }
 }
 </script>
@@ -66,7 +76,7 @@ function IHandler(componentName: string) {
 <template>
     <DynamicDialog />
     <Toast />
-    <div class="flex h-screen w-screen flex-col items-center justify-between">
+    <div class="flex h-screen flex-col items-center justify-between bg-[#ccc] dark:bg-slate-950">
         <div class="relative z-50 flex flex-col items-center">
             <ClockCard class="mt-36 lg:mt-28" />
             <div class="mt-10 flex justify-between gap-4 md:gap-10 lg:gap-12">
@@ -93,8 +103,5 @@ function IHandler(componentName: string) {
             </div>
         </div>
         <ProbeTargetPanels />
-    </div>  
-    <div class="fixed top-0 left-0 z-0 h-full w-full bg-[#80ADD1] brightness-80">
-        <ProbeMap />
     </div>
 </template>
