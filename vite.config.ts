@@ -19,7 +19,6 @@ export default defineConfig({
             '/api/': baseURL,
             '/s/': baseURL,
             '/file/': baseURL,
-            '/data': 'https://echarts.apache.org/examples'
         }
     }
 })
