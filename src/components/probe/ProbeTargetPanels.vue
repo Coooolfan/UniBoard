@@ -3,8 +3,14 @@ import type { ProbeTargetDto } from '@/__generated/model/dto'
 import { api } from '@/ApiInstance'
 import { defineAsyncComponent, onMounted, onUnmounted, ref } from 'vue'
 import ProbeTargetPanel from '@/components/probe/ProbeTargetPanel.vue'
+import { isOnline } from '@/utils/probeUtils'
 
-const probeTargets = ref<ProbeTargetDto['ProbeController/DEFAULT_PROBE_TARGET'][]>([])
+// 扩展原始类型，添加online字段
+type ProbeTargetWithOnline = ProbeTargetDto['ProbeController/DEFAULT_PROBE_TARGET'] & {
+    online: boolean
+}
+
+const probeTargets = ref<ProbeTargetWithOnline[]>([])
 let pollTimer: number | null = null
 
 const ProbeMap = defineAsyncComponent(() => import('@/components/probe/ProbeMap.vue'))
@@ -20,7 +26,23 @@ onUnmounted(() => {
 
 async function refreshProbes() {
     const targets = await api.probeController.getAllProbeTargets()
-    probeTargets.value = [...targets].sort((a, b) => a.sort - b.sort).slice(0, 3)
+    
+    const targetsWithOnline: ProbeTargetWithOnline[] = targets.map(target => ({
+        ...target,
+        online: isOnline(target.lastReportTime)
+    }))
+    
+    // 排序：offline优先，然后各自按sort排序
+    const sortedTargets = targetsWithOnline.sort((a, b) => {
+        // 首先按online状态排序，offline(false)在前
+        if (a.online !== b.online) {
+            return a.online ? 1 : -1
+        }
+        // 相同online状态下，按sort字段排序
+        return a.sort - b.sort
+    })
+    
+    probeTargets.value = sortedTargets.slice(0, 3)
 }
 
 function startPolling() {

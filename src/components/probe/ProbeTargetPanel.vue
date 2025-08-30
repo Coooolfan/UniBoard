@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ProbeTargetDto } from '@/__generated/model/dto'
+import { isOnline } from '@/utils/probeUtils'
 
 interface Props {
     probeTarget: ProbeTargetDto['ProbeController/DEFAULT_PROBE_TARGET']
@@ -52,13 +53,7 @@ function bueatyMetricData(
     return value.toString()
 }
 
-function isOnline(timeString: string): boolean {
-    const reportDate = new Date(timeString)
-    const now = new Date()
-    const diffMs = now.getTime() - reportDate.getTime()
-    // 5分钟 = 5 * 60 * 1000 毫秒
-    return diffMs <= 5 * 60 * 1000
-}
+
 </script>
 <template>
     <div
