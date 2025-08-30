@@ -152,7 +152,7 @@ function copyScript() {
                             <li>
                                 此页面的安装程序仅用于开箱即用的快速配置，您完全可以基于 OpenAPI
                                 自行构建数据上报程序，参见
-                                <a class="pi pi-github" href="https://github.com"> GitHub </a>
+                                <a class="pi pi-github" href="https://uniboard.coooolfan.com/guide/probe.html#_1-前置准备"> 文档站 </a>
                             </li>
                             <li>请确保探针目标可以连接到 Uniboard 实例</li>
                         </ul>
