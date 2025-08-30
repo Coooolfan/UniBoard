@@ -12,6 +12,10 @@ type ProbeTargetWithOnline = ProbeTargetDto['ProbeController/DEFAULT_PROBE_TARGE
 
 const probeTargets = ref<ProbeTargetWithOnline[]>([])
 let pollTimer: number | null = null
+let isPolling = false
+const BASE_INTERVAL_MS = 1000
+const MAX_INTERVAL_MS = 10000
+let nextDelayMs = BASE_INTERVAL_MS
 
 const ProbeMap = defineAsyncComponent(() => import('@/components/probe/ProbeMap.vue'))
 
@@ -46,17 +50,42 @@ async function refreshProbes() {
 }
 
 function startPolling() {
-    // 每秒更新一次数据
-    pollTimer = window.setInterval(async () => {
-        await refreshProbes()
-    }, 1000)
+    if (isPolling) {
+        return
+    }
+    isPolling = true
+    nextDelayMs = BASE_INTERVAL_MS
+    scheduleNextPoll()
 }
 
 function stopPolling() {
+    isPolling = false
     if (pollTimer) {
-        clearInterval(pollTimer)
+        clearTimeout(pollTimer)
         pollTimer = null
     }
+}
+
+function scheduleNextPoll() {
+    if (!isPolling) {
+        return
+    }
+    if (pollTimer) {
+        clearTimeout(pollTimer)
+        pollTimer = null
+    }
+
+    pollTimer = window.setTimeout(async () => {
+        try {
+            await refreshProbes()
+            nextDelayMs = BASE_INTERVAL_MS
+        } catch (error) {
+            // 弱网/失败时指数退避，最大不超过 10s
+            nextDelayMs = Math.min(nextDelayMs * 2, MAX_INTERVAL_MS)
+        } finally {
+            scheduleNextPoll()
+        }
+    }, nextDelayMs)
 }
 </script>
 <template>

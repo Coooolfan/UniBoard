@@ -7,7 +7,7 @@ ARG TAG_VERSION=latest
 
 # 优化git clone，减少下载大小
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends git && \
+    apt-get install -y --no-install-recommends git ca-certificates && \
     git clone --depth=1 https://github.com/coooolfan/uniboard.git . && \
     if [ "$TAG_VERSION" != "latest" ]; then git fetch --depth=1 origin tag $TAG_VERSION && git checkout $TAG_VERSION; fi && \
     corepack enable && \
@@ -15,7 +15,7 @@ RUN apt-get update && \
     yarn build
 
 ### 后端构建阶段 ###
-FROM ibm-semeru-runtimes:open-23-jdk-noble AS backend-build-stage
+FROM ibm-semeru-runtimes:open-24-jdk-noble AS backend-build-stage
 WORKDIR /app
 
 # 定义版本参数，默认为latest
@@ -23,7 +23,7 @@ ARG TAG_VERSION=latest
 
 # 优化git clone，减少下载大小
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends git && \
+    apt-get install -y --no-install-recommends git ca-certificates && \
     git clone --depth=1 https://github.com/coooolfan/uniboard-service.git . && \
     if [ "$TAG_VERSION" != "latest" ]; then git fetch --depth=1 origin tag $TAG_VERSION && git checkout $TAG_VERSION; fi
 
@@ -34,7 +34,7 @@ COPY --from=web-build-stage /app/dist /app/src/main/resources/static
 RUN ./gradlew assemble --no-daemon 
 
 ### 生产阶段 ###
-FROM ibm-semeru-runtimes:open-23-jre-noble
+FROM ibm-semeru-runtimes:open-24-jre-noble
 WORKDIR /app
 
 # 从构建阶段复制构建结果
