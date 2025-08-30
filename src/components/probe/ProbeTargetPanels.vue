@@ -42,7 +42,7 @@ async function refreshProbes() {
         return a.sort - b.sort
     })
     
-    probeTargets.value = sortedTargets.slice(0, 3)
+    probeTargets.value = sortedTargets
 }
 
 function startPolling() {
@@ -67,25 +67,46 @@ function stopPolling() {
         />
     </Transition>
     <div
-        class="z-50 mt-10 hidden flex-col items-center justify-between gap-6 pb-5 md:mb-20 md:flex"
+        class="z-50 mt-10 hidden flex-col items-center justify-between pb-5 md:mb-20  md:flex"
     >
-        <TransitionGroup
-            name="probe-panel"
-            tag="div"
-            class="flex w-full flex-col items-center gap-6"
-        >
-            <ProbeTargetPanel
-                v-for="(probeTarget, index) in probeTargets"
-                :key="probeTarget.id"
-                :probe-target="probeTarget"
-                :style="{ '--delay': `${index * 150}ms` }"
-                class="probe-panel-item"
-            />
-        </TransitionGroup>
+        <!-- 外层容器：高度控制 -->
+        <div class="fade-mask-y w-full max-h-80 ">
+            <!-- 滚动容器 -->
+            <div class="probe-scroll-area scrollbar-hide h-full overflow-y-auto px-10 ">
+                <TransitionGroup
+                    name="probe-panel"
+                    tag="div"
+                    class="flex w-full flex-col items-center gap-6 py-8"
+                >
+                    <ProbeTargetPanel
+                        v-for="(probeTarget) in probeTargets"
+                        :key="probeTarget.id"
+                        :probe-target="probeTarget"
+                    />
+                </TransitionGroup>
+            </div>
+        </div>
     </div>
 </template>
 
 <style scoped>
+/* 容器样式 */
+.probe-scroll-area {
+    max-height: inherit;
+    transition: all 0.3s ease-in-out;
+}
+
+/* 隐藏滚动条 */
+.scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+}
+
+/* 动画样式 */
 .probe-panel-enter-active {
     transition: all 0.6s cubic-bezier(0.01, 0.46, 0.23, 1);
 }
@@ -98,10 +119,6 @@ function stopPolling() {
 .probe-panel-enter-to {
     opacity: 1;
     transform: translateY(0) scale(1);
-}
-
-.probe-panel-item {
-    width: 100%;
 }
 
 .probe-map-enter-active {
@@ -120,5 +137,14 @@ function stopPolling() {
 .probe-map-enter-to,
 .probe-map-leave-from {
     opacity: 1;
+}
+
+/* 上下透明过渡遮罩 */
+.fade-mask-y {
+    /* 顶部/底部 32px 渐隐到透明，保留中间内容完全不透明 */
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 32px, #000 calc(100% - 32px), transparent);
+    mask-image: linear-gradient(to bottom, transparent, #000 32px, #000 calc(100% - 32px), transparent);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
 }
 </style>

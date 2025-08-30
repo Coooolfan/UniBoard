@@ -36,7 +36,11 @@
 ### 主页
 
 ![主页仪表盘](img/HomePage0.webp)
-空荡荡的仪表盘是为了之后放探针服务的全屏展示的~
+
+or
+
+![探针仪表盘](img/HomePage1.webp)
+
 
 <table>
     <tr>
@@ -50,6 +54,9 @@
     <tr>
         <td><img src="img/dashboard/hyper-link.webp" alt="设置-外链页"></td>
         <td><img src="img/dashboard/system-setting.webp" alt="设置-系统设置页"></td>
+    </tr>
+        <tr>
+        <td><img src="img/dashboard/probe.webp" alt="探针仪表盘"></td>
     </tr>
 </table>
 
