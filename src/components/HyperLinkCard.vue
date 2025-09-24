@@ -29,7 +29,7 @@ const bgGradientTo = '#ffffff'
 <template>
     <a
         :href="allowRedirect ? hyperLink.url : '#'"
-        target="_self"
+        target="_blank"
         class="group relative block h-44 max-w-96 min-w-80 cursor-pointer drop-shadow-lg transition-all duration-700 ease-in-out group-hover:drop-shadow-2xl"
         @mouseenter="reverseHoverring"
         @mouseleave="reverseHoverring"
