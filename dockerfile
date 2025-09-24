@@ -43,7 +43,7 @@ COPY --from=backend-build-stage /app/build/libs/*.jar app.jar
 # 暴露应用端口(默认Spring Boot端口)
 EXPOSE 8080
 
-# 设置JVM参数
+# 允许通过环境变量传递JVM参数
 ENV JAVA_OPTS=""
 
 # 启动应用
