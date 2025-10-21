@@ -32,6 +32,7 @@
 ![着陆页首屏](img/LandingPage1.webp)
 ![着陆页第二屏](img/LandingPage2.webp)
 ![着陆页登录组件](img/login.webp)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FCoooolfan%2FUniBoard.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FCoooolfan%2FUniBoard?ref=badge_shield)
 
 ### 主页
 
@@ -203,3 +204,7 @@ TODO
     src="https://api.star-history.com/svg?repos=Coooolfan/UniBoard&type=Date"
   />
 </picture>
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FCoooolfan%2FUniBoard.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FCoooolfan%2FUniBoard?ref=badge_large)
