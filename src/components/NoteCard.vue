@@ -21,13 +21,7 @@ const editNoteLoading = ref(false)
 const vditor = ref<Vditor>()
 const vditorLoading = ref(true)
 const selectedKey = ref<TreeSelectionKeys>([])
-const treeNode = ref<TreeNode[]>([
-    {
-        key: '-1',
-        label: '默认文件夹',
-        children: []
-    }
-])
+const treeNode = ref<TreeNode[]>([])
 
 // 使用计算属性处理按钮图标逻辑
 const uploadButtonIcon = computed(() => {
@@ -85,7 +79,7 @@ onMounted(() => {
         preview: {
             theme: {
                 current: 'dark',
-                path:""
+                path: ""
             }
         }
     })
@@ -104,7 +98,7 @@ async function setTheme() {
 
 async function refreshTree() {
     const noteList = await api.noteController.getAllNotes()
-    treeNode.value[0].children = noteList.map((note) => {
+    treeNode.value = noteList.map((note) => {
         return {
             key: note.id?.toString() ?? '',
             label: note.title
@@ -225,32 +219,20 @@ async function newNote() {
 </script>
 <template>
     <ConfirmPopup></ConfirmPopup>
-    <div
-        class="flex min-h-[74vh] items-start justify-start transition-all duration-300"
-    >
+    <div class="flex min-h-[74vh] items-start justify-start transition-all duration-300">
         <div class="flex h-4/5 w-80 flex-col">
-            <Tree
-                :value="treeNode"
-                v-model:selectionKeys="selectedKey"
-                selectionMode="single"
-            ></Tree>
+            <p v-show="treeNode.length === 0">试着在笔记内容随便输入些什么</p>
+            <Tree v-show="treeNode.length > 0" :value="treeNode" v-model:selectionKeys="selectedKey" selectionMode="single" :pt="{ nodeToggleButton: 'hidden!' }" />
         </div>
         <div class="w-full">
             <div class="flex items-center justify-between">
                 <input
                     class="ml-1 w-4/5 border-b-[1px] text-xl font-bold outline-hidden focus:border-black focus:outline-hidden"
-                    v-model="editNote.title"
-                />
+                    v-model="editNote.title" />
                 <div>
                     <Button class="h-10 w-8" :icon="uploadButtonIcon" text @click="uploadEvent()" />
-                    <Button
-                        class="h-10 w-8"
-                        v-show="editNote.id !== -1"
-                        severity="danger"
-                        :icon="'pi pi-trash'"
-                        text
-                        @click="confirmDelete($event, editNote.id)"
-                    />
+                    <Button class="h-10 w-8" v-show="editNote.id !== -1" severity="danger" :icon="'pi pi-trash'" text
+                        @click="confirmDelete($event, editNote.id)" />
                     <Button :icon="'pi pi-plus'" text class="mr-4 ml-auto" @click="newNote" />
                 </div>
             </div>
