@@ -6,11 +6,9 @@ import com.coooolfan.uniboard.model.Note
 import com.coooolfan.uniboard.model.by
 import com.coooolfan.uniboard.model.dto.NoteInsert
 import com.coooolfan.uniboard.model.dto.NoteUpdate
-import com.coooolfan.uniboard.repo.NoteRepo
-import com.coooolfan.uniboard.utils.hashPassword
+import com.coooolfan.uniboard.service.NoteService
 import org.babyfish.jimmer.client.ApiIgnore
 import org.babyfish.jimmer.client.FetchBy
-import org.babyfish.jimmer.sql.ast.mutation.SaveMode
 import org.babyfish.jimmer.sql.kt.fetcher.newFetcher
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -24,7 +22,7 @@ import org.springframework.web.bind.annotation.*
  */
 @RestController
 @RequestMapping("/api/note")
-class NoteController(private val repo: NoteRepo) {
+class NoteController(private val service: NoteService) {
     /**
      * 获取所有笔记
      *
@@ -36,9 +34,7 @@ class NoteController(private val repo: NoteRepo) {
     @GetMapping
     @SaCheckLogin
     fun getAllNotes(): List<@FetchBy("DEFAULT_NOTE") Note> {
-        return repo.findAll(DEFAULT_NOTE) {
-            asc(Note::id)
-        }
+        return service.findAll(DEFAULT_NOTE)
     }
 
     /**
@@ -55,14 +51,14 @@ class NoteController(private val repo: NoteRepo) {
     @SaCheckLogin
     @Throws(CommonException.NotFound::class)
     fun getNoteById(@PathVariable id: Long): @FetchBy("DEFAULT_NOTE") Note {
-        return repo.findById(id, DEFAULT_NOTE) ?: throw CommonException.NotFound()
+        return service.findById(id, DEFAULT_NOTE)
     }
 
     @GetMapping("/{id}", params = ["pw"], produces = [MediaType.TEXT_PLAIN_VALUE])
     @ApiIgnore
     @Throws(CommonException.NotFound::class)
     fun downloadNotePlainText(@PathVariable id: Long, @RequestParam pw: String): String {
-        return downloadPlainText(id, pw)
+        return service.downloadPlainText(id, pw)
     }
 
     /**
@@ -78,9 +74,7 @@ class NoteController(private val repo: NoteRepo) {
     @SaCheckLogin
     @ResponseStatus(HttpStatus.CREATED)
     fun insertNote(@RequestBody insert: NoteInsert): @FetchBy("DEFAULT_NOTE") Note {
-        return repo.saveCommand(insert.toEntity {
-            password = preparePassword(insert.password)
-        }, SaveMode.INSERT_ONLY).execute(DEFAULT_NOTE).modifiedEntity
+        return service.insert(insert, DEFAULT_NOTE)
     }
 
     /**
@@ -95,7 +89,7 @@ class NoteController(private val repo: NoteRepo) {
     @SaCheckLogin
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteNoteById(@PathVariable id: Long) {
-        repo.deleteById(id)
+        service.deleteById(id)
     }
 
     /**
@@ -111,36 +105,10 @@ class NoteController(private val repo: NoteRepo) {
     @SaCheckLogin
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun updateNoteById(@PathVariable id: Long, @RequestBody update: NoteUpdate) {
-        val current = repo.findById(id) ?: throw CommonException.NotFound()
-        repo.saveCommand(update.toEntity {
-            this.id = id
-            password = preparePassword(update.password, current.password)
-        }, SaveMode.UPDATE_ONLY).execute(DEFAULT_NOTE).modifiedEntity
-    }
-
-    private fun downloadPlainText(id: Long, password: String): String {
-        if (password.length <= MIN_PASSWORD_LENGTH) throw CommonException.NotFound()
-
-        val note = repo.findById(id) ?: throw CommonException.NotFound()
-        val passwordHash = note.password ?: throw CommonException.NotFound()
-        if (passwordHash != hashPassword(password)) throw CommonException.NotFound()
-
-        return note.content
-    }
-
-    private fun preparePassword(password: String?, fallback: String? = null): String? {
-        if (password == null) return fallback
-
-        val trimmed = password.trim()
-        if (trimmed.isEmpty()) return null
-        if (trimmed.length <= MIN_PASSWORD_LENGTH) throw CommonException.Forbidden()
-
-        return hashPassword(trimmed)
+        service.update(id, update, DEFAULT_NOTE)
     }
 
     companion object {
-        private const val MIN_PASSWORD_LENGTH = 8
-
         private val DEFAULT_NOTE = newFetcher(Note::class).by {
             title()
             content()
