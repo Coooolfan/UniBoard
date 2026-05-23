@@ -1,0 +1,37 @@
+export com.coooolfan.uniboard.model.HyperLink
+
+input HyperLinkInsert {
+    title
+
+    description
+
+    url
+
+    color
+
+    public
+}
+
+input HyperLinkInsertBySnapShot {
+    url
+
+    public
+}
+
+input HyperLinkUpdate {
+    title
+
+    description
+
+    url
+
+    color
+
+    public
+}
+
+input HyperLinkOrderUpdate {
+    id
+
+    sort
+}

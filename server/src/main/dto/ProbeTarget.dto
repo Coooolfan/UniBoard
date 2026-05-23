@@ -1,0 +1,31 @@
+export com.coooolfan.uniboard.model.probe.ProbeTarget
+
+input ProbeTargetInsert {
+    name
+
+    description
+
+    location {
+        latitude
+
+        longitude
+    }
+}
+
+input ProbeTargetUpdate {
+    name
+
+    description
+
+    location {
+        latitude
+
+        longitude
+    }
+}
+
+input ProbeTargetOrderUpdate {
+    id
+
+    sort
+}

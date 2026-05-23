@@ -2,7 +2,7 @@
 
 个人主页 + 导航页 + 笔记 + 短链接 + 文件分享
 
-此仓库仅为前端页面代码，使用 Vue + TS + Primevue + Tailwind CSS 构建。[后端仓库地址点此访问。](https://github.com/Coooolfan/UniBoard-Service)
+此仓库使用 monorepo 管理前后端：前端位于 `web/`，使用 Vue + TS + PrimeVue + Tailwind CSS 构建；后端位于 `server/`，使用 Spring Boot + Kotlin + Jimmer ORM 构建。
 
 ## 功能介绍
 
@@ -151,15 +151,15 @@ docker compose pull && docker compose up -d
 
 1. 上传文件
 
-    `POST /api/file-record`：上传文件，参数为[`FileRecord`对象](https://github.com/Coooolfan/UniBoard-Service/blob/main/src/main/kotlin/com/coooolfan/uniboard/model/FileRecord.kt)，其中的`share_code`字段会被忽略，由服务器生成。返回新增成功的`FileRecord`对象，包含生成的`share_code`字段。注意上传时使用`multipart/form-data`格式，以携带二进制文件。
+    `POST /api/file-record`：上传文件，参数为[`FileRecord`对象](server/src/main/kotlin/com/coooolfan/uniboard/model/FileRecord.kt)，其中的`share_code`字段会被忽略，由服务器生成。返回新增成功的`FileRecord`对象，包含生成的`share_code`字段。注意上传时使用`multipart/form-data`格式，以携带二进制文件。
 
 1. 编辑文件信息
 
-    `PATCH /api/file-record/<int:file_id>`：编辑文件信息，参数为[`FileRecord`对象](https://github.com/Coooolfan/UniBoard-Service/blob/main/src/main/kotlin/com/coooolfan/uniboard/model/FileRecord.kt)，返回修改成功的`FileRecord`对象。如果要修改文件的`file`字段，需要使用`multipart/form-data`格式，以携带二进制文件。
+    `PATCH /api/file-record/<int:file_id>`：编辑文件信息，参数为[`FileRecord`对象](server/src/main/kotlin/com/coooolfan/uniboard/model/FileRecord.kt)，返回修改成功的`FileRecord`对象。如果要修改文件的`file`字段，需要使用`multipart/form-data`格式，以携带二进制文件。
 
 2. 获取文件列表
 
-    `GET /api/file-record`：获取文件列表，返回[`FileRecord`对象](https://github.com/Coooolfan/UniBoard-Service/blob/main/src/main/kotlin/com/coooolfan/uniboard/model/FileRecord.kt)列表。（此方法需要鉴权）
+    `GET /api/file-record`：获取文件列表，返回[`FileRecord`对象](server/src/main/kotlin/com/coooolfan/uniboard/model/FileRecord.kt)列表。（此方法需要鉴权）
 
 3. 获取文件下载直链
 
@@ -177,7 +177,20 @@ docker compose pull && docker compose up -d
 
 ## For Development
 
-TODO
+### 前端
+
+```shell
+cd web
+yarn install
+yarn dev
+```
+
+### 后端
+
+```shell
+cd server
+./gradlew bootRun
+```
 
 ## Star History
 

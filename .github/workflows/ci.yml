@@ -1,0 +1,58 @@
+name: UniBoard CI
+
+on:
+  push:
+    tags: [ '**' ]
+  pull_request:
+
+jobs:
+  check-web:
+    name: 检查前端 (web)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./web
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v5
+
+      - name: 设置 Node 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 启用 Corepack 并激活 Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@4.9.2 --activate
+
+      - name: 安装依赖
+        run: yarn install --immutable
+
+      - name: 类型检查
+        run: yarn type-check
+
+      - name: 构建
+        run: yarn build
+
+  check-server:
+    name: 检查后端 (server)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v5
+
+      - name: 设置 JDK 环境
+        uses: actions/setup-java@v5
+        with:
+          java-version: '24'
+          distribution: 'temurin'
+
+      - name: 编译检查
+        working-directory: ./server
+        run: |
+          chmod +x ./gradlew
+          ./gradlew compileKotlin
+          ./gradlew --stop || true

@@ -1,0 +1,11 @@
+export com.coooolfan.uniboard.model.SystemConfig
+
+input SystemConfigUpdate{
+    host
+
+    showProfile
+
+    showCopyRight
+}
+
+// 不需要create，在创建Profile会自动创建

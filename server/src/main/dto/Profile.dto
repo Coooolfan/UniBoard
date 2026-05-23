@@ -1,0 +1,39 @@
+export com.coooolfan.uniboard.model.Profile
+
+input ProfileUpdate {
+    name
+
+    slogan
+
+    description
+
+    contacts
+}
+
+input ProfileCreate {
+    name
+
+    slogan
+
+    description
+
+    contacts
+
+    loginName
+
+    loginPassword
+}
+
+input ProfileLogin {
+    loginName
+
+    loginPassword
+}
+
+input PasswordUpdate {
+    oldPassword :String
+
+    newLoginName :String
+
+    newPassword :String
+}
