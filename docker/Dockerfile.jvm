@@ -1,4 +1,4 @@
-FROM ibm-semeru-runtimes:open-24-jre-noble
+FROM eclipse-temurin:25-jre-noble
 WORKDIR /app
 ARG JAR_FILE=app.jar
 COPY ${JAR_FILE} app.jar

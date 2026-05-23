@@ -1,9 +1,9 @@
 plugins {
-    kotlin("jvm") version "2.2.10"
-    kotlin("plugin.spring") version "2.2.10"
+    kotlin("jvm") version "2.3.0"
+    kotlin("plugin.spring") version "2.3.0"
     id("org.springframework.boot") version "3.5.5"
     id("io.spring.dependency-management") version "1.1.7"
-    id("com.google.devtools.ksp") version "2.2.10-2.0.2"
+    id("com.google.devtools.ksp") version "2.3.4"
 }
 
 group = providers.gradleProperty("projectGroup").get()
@@ -11,7 +11,7 @@ version = providers.gradleProperty("projectVersion").get()
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(24)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -45,7 +45,7 @@ dependencies {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.addAll("-Xjsr305=strict")
+        freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
     }
     sourceSets.main {
         kotlin.srcDir("build/generated/ksp/main/kotlin")
