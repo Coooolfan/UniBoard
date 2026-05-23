@@ -16,6 +16,7 @@
     - 支持 Markdown 语法
     - 支持所见即所得编辑
     - 自带图床服务
+    - 支持分享密码与纯文本直链
 - 短链服务
     - 统计
 - 文件
@@ -69,7 +70,7 @@ or
 
 ### Docker Compose
 
-1. 下载`.env`文件和`docker-compsoe.yml`文件
+1. 下载`.env`文件和`docker-compose.yml`文件
 
     ```shell
     mkdir uniboard
@@ -78,9 +79,9 @@ or
     wget https://github.com/Coooolfan/UniBoard/releases/latest/download/example.env
     ```
 
-2. 按照需要修改`.env`文件和`docker-compsoe.yml`
+2. 按照需要修改`.env`文件和`docker-compose.yml`
 
-    1. `docker-compsoe.yml`：默认只暴露`8888`端口（文件第6行），通过此端口向外暴露所有服务，如果您需要对`uniboard`配置反向代理，只需代理此端口即可。
+    1. `docker-compose.yml`：默认只暴露`8888`端口（文件第6行），通过此端口向外暴露所有服务，如果您需要对`uniboard`配置反向代理，只需代理此端口即可。
     2. `.env`：按照提示修改即可，切记要修改`POSTGRES_PASSWORD`的值，**不要使用默认值!**
     3. 修改完成后复制`example.env`为`.env`文件,供`docker compose`服务调取
 
@@ -147,23 +148,29 @@ docker compose pull && docker compose up -d
 
 可见：<https://uniboard.apifox.cn/>
 
+### 与笔记相关的API说明
+
+1. 获取笔记纯文本内容
+
+    `GET /api/note/<int:note_id>?pw=<str:password>`：匿名获取笔记纯文本内容。笔记密码为空时表示私有；密码长度需大于`8`才有效。笔记不存在、私有、密码无效或密码错误时均返回`404`。
+
 ### 与文件相关的API说明
 
 1. 上传文件
 
-    `POST /api/file-record`：上传文件，参数为[`FileRecord`对象](server/src/main/kotlin/com/coooolfan/uniboard/model/FileRecord.kt)，其中的`share_code`字段会被忽略，由服务器生成。返回新增成功的`FileRecord`对象，包含生成的`share_code`字段。注意上传时使用`multipart/form-data`格式，以携带二进制文件。
+    `POST /api/file-record/files`：上传文件，使用`multipart/form-data`格式，其中`insert`为文件记录信息，`file`为二进制文件。返回新增成功的`FileRecord`对象，包含服务端生成的`shareCode`字段。（此方法需要鉴权）
 
 1. 编辑文件信息
 
-    `PATCH /api/file-record/<int:file_id>`：编辑文件信息，参数为[`FileRecord`对象](server/src/main/kotlin/com/coooolfan/uniboard/model/FileRecord.kt)，返回修改成功的`FileRecord`对象。如果要修改文件的`file`字段，需要使用`multipart/form-data`格式，以携带二进制文件。
+    `PUT /api/file-record/<int:file_id>`：编辑文件信息，参数为文件记录更新对象，返回修改成功的`FileRecord`对象。（此方法需要鉴权）
 
 2. 获取文件列表
 
-    `GET /api/file-record`：获取文件列表，返回[`FileRecord`对象](server/src/main/kotlin/com/coooolfan/uniboard/model/FileRecord.kt)列表。（此方法需要鉴权）
+    `GET /api/file-record?pageIndex=<int:page_index>&pageSize=<int:page_size>`：分页获取文件列表，返回[`FileRecord`对象](server/src/main/kotlin/com/coooolfan/uniboard/model/FileRecord.kt)分页结果。（此方法需要鉴权）
 
 3. 获取文件下载直链
 
-    `GET /api/file-record/direct-link/<int:file_id>`：获取文件下载直链，返回一个UUID。使用`5`中的API，替换`<str:UUID>`为UUID即可。获取的地址在5分钟后会失效。（此方法需要鉴权，对所有文件可用）
+    `POST /api/file-record/direct-link`：获取文件下载直链，参数为文件记录ID，返回一个UUID。使用`5`中的API，替换`<str:UUID>`为UUID即可。获取的地址在5分钟后会失效。（此方法需要鉴权，对所有文件可用）
 
 4. 使用API直接下载文件
 
@@ -171,7 +178,7 @@ docker compose pull && docker compose up -d
 
     2. `GET /file/<str:UUID>/`：使用此API直接下载文件，`UUID`为`4`中返回的UUID。此API不需要鉴权，对所有文件有效。
  
-    3. `GET /file/<str:share_code>/?pw=<str:password>`：使用此API直接下载**非私有文件**，`share_code`为文件的`share_code`字段，`password`即为文件设置的密码，**密码参数可选**。
+    3. `GET /file/<str:share_code>/?pw=<str:password>`：使用此API直接下载**非私有文件**，`share_code`为文件的`shareCode`字段，`password`即为文件设置的密码，**密码参数可选**。
    
     4. 部分客户端默认不支持使用content-disposition设定文件名，您可以在路径最后加上文件名来为这些客户端提供文件名。比如`localhost/file/UUID/文件名`或者`localhost/file/share_code/文件名`。其中`文件名`不参与任何服务端的逻辑，仅用于客户端显性显示文件名。对于密码保护的文件，需要在路径中加上`?pw=文件密码`。例如`localhost/file/i2S3/sky.png?pw=123456`，这样可以直接下载`share_code`为`i2S3`的文件并显性地告知客户端文件名为`sky.png`，其中密码为`123456`。
 
