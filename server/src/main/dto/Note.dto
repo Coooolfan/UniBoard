@@ -4,12 +4,16 @@ input NoteUpdate {
     title?
 
     content?
+
+    password
 }
 
 input NoteInsert {
     title
 
     content
+
+    password
 }
 
 NotePicture {

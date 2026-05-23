@@ -6,23 +6,23 @@ import com.coooolfan.uniboard.model.Note
 import com.coooolfan.uniboard.model.by
 import com.coooolfan.uniboard.model.dto.NoteInsert
 import com.coooolfan.uniboard.model.dto.NoteUpdate
-import com.coooolfan.uniboard.repo.NoteRepo
+import com.coooolfan.uniboard.service.NoteService
+import org.babyfish.jimmer.client.ApiIgnore
 import org.babyfish.jimmer.client.FetchBy
-import org.babyfish.jimmer.sql.ast.mutation.SaveMode
 import org.babyfish.jimmer.sql.kt.fetcher.newFetcher
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
 /**
  * 笔记控制器
  *
- * 处理笔记的增删改查操作，包括创建、查询、更新和删除笔记
- * 所有操作都需要登录验证
+ * 处理笔记的增删改查操作，包括创建、查询、更新和删除笔记。
+ * 管理操作需要登录验证；带 pw 参数的纯文本下载接口允许匿名访问。
  */
 @RestController
 @RequestMapping("/api/note")
-@SaCheckLogin
-class NoteController(private val repo: NoteRepo) {
+class NoteController(private val service: NoteService) {
     /**
      * 获取所有笔记
      *
@@ -32,10 +32,9 @@ class NoteController(private val repo: NoteRepo) {
      * @return List<Note> 笔记列表
      */
     @GetMapping
+    @SaCheckLogin
     fun getAllNotes(): List<@FetchBy("DEFAULT_NOTE") Note> {
-        return repo.findAll(DEFAULT_NOTE) {
-            asc(Note::id)
-        }
+        return service.findAll(DEFAULT_NOTE)
     }
 
     /**
@@ -48,10 +47,18 @@ class NoteController(private val repo: NoteRepo) {
      * @return Note 笔记对象
      * @throws CommonException.NotFound 当指定ID的笔记不存在时抛出
      */
-    @GetMapping("/{id}")
+    @GetMapping("/{id}", params = ["!pw"])
+    @SaCheckLogin
     @Throws(CommonException.NotFound::class)
     fun getNoteById(@PathVariable id: Long): @FetchBy("DEFAULT_NOTE") Note {
-        return repo.findById(id, DEFAULT_NOTE) ?: throw CommonException.NotFound()
+        return service.findById(id, DEFAULT_NOTE)
+    }
+
+    @GetMapping("/{id}", params = ["pw"], produces = [MediaType.TEXT_PLAIN_VALUE])
+    @ApiIgnore
+    @Throws(CommonException.NotFound::class)
+    fun downloadNotePlainText(@PathVariable id: Long, @RequestParam pw: String): String {
+        return service.downloadPlainText(id, pw)
     }
 
     /**
@@ -64,9 +71,10 @@ class NoteController(private val repo: NoteRepo) {
      * @return Note 创建的笔记对象
      */
     @PostMapping
+    @SaCheckLogin
     @ResponseStatus(HttpStatus.CREATED)
     fun insertNote(@RequestBody insert: NoteInsert): @FetchBy("DEFAULT_NOTE") Note {
-        return repo.saveCommand(insert, SaveMode.INSERT_ONLY).execute(DEFAULT_NOTE).modifiedEntity
+        return service.insert(insert, DEFAULT_NOTE)
     }
 
     /**
@@ -78,9 +86,10 @@ class NoteController(private val repo: NoteRepo) {
      * @param id 要删除的笔记ID
      */
     @DeleteMapping("/{id}")
+    @SaCheckLogin
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteNoteById(@PathVariable id: Long) {
-        repo.deleteById(id)
+        service.deleteById(id)
     }
 
     /**
@@ -93,14 +102,16 @@ class NoteController(private val repo: NoteRepo) {
      * @param update 笔记更新数据
      */
     @PutMapping("/{id}")
+    @SaCheckLogin
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun updateNoteById(@PathVariable id: Long, @RequestBody update: NoteUpdate) {
-        repo.saveCommand(update.toEntity { this.id = id }, SaveMode.UPDATE_ONLY).execute(DEFAULT_NOTE).modifiedEntity
+        service.update(id, update, DEFAULT_NOTE)
     }
 
     companion object {
         private val DEFAULT_NOTE = newFetcher(Note::class).by {
-            allScalarFields()
+            title()
+            content()
         }
     }
 }

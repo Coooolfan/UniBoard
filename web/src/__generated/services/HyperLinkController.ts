@@ -127,6 +127,15 @@ export class HyperLinkController {
         return (await this.executor({uri: _uri, method: 'PUT', body: _formData})) as Promise<HyperLinkDto['HyperLinkController/DEFAULT_HYPER_LINK']>;
     }
     
+    /**
+     * 批量更新超链接排序
+     * 
+     * 根据提供的排序列表更新多个超链接的显示顺序
+     * 需要登录验证
+     * 
+     * @parameter {HyperLinkControllerOptions['updateHyperLinkSort']} options
+     * - sortList 包含超链接ID和新排序值的列表
+     */
     readonly updateHyperLinkSort: (options: HyperLinkControllerOptions['updateHyperLinkSort']) => Promise<
         void
     > = async(options) => {
@@ -154,6 +163,9 @@ export type HyperLinkControllerOptions = {
         }
     }, 
     'updateHyperLinkSort': {
+        /**
+         * 包含超链接ID和新排序值的列表
+         */
         readonly body: ReadonlyArray<HyperLinkOrderUpdate>
     }, 
     'deleteHyperLinkById': {
