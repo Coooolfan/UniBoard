@@ -77,7 +77,7 @@ jobs:
         working-directory: ./server
         run: |
           chmod +x ./gradlew
-          ./gradlew bootJar
+          ./gradlew bootJar -PprojectVersion="${VERSION}"
           ./gradlew --stop || true
 
       - name: 整理 JAR 产物
