@@ -46,6 +46,15 @@ const host = window.location.origin
 const newFileRecord =
     ref<FileRecordDto['FileRecordController/DEFAULT_FILERECORD']>(defaultFileRecord)
 
+const passwordDownloadLink = computed(() => {
+    const password = newFileRecord.value.password?.trim()
+    const shareCode = newFileRecord.value.shareCode
+    const filename = newFileRecord.value.file?.filename
+    if (dialogType.value !== 'edit' || newFileRecord.value.visibility !== 'PASSWORD' || !password || !shareCode || !filename) return ''
+
+    return `${host}/file/${shareCode}/${filename}?pw=${encodeURIComponent(password)}`
+})
+
 onMounted(async () => {
     let resp = await api.fileRecordController.getAllFileRecords({
         pageIndex: page.value,
@@ -269,6 +278,12 @@ async function copyDirctLink() {
     copyToClipboard(DirectLink, '文件下载直链已复制到剪贴板\n有效期 5 分钟', '文件下载直链复制失败')
 }
 
+function copyPasswordDownloadLink() {
+    if (!passwordDownloadLink.value) return
+
+    copyToClipboard(passwordDownloadLink.value, '文件密码直链已复制到剪贴板', '文件密码直链复制失败')
+}
+
 const submitText = computed(() => {
     if (dialogType.value === 'edit') return '修改'
     else return '上传'
@@ -394,11 +409,23 @@ const translateVisibility = (visibility: string): string => {
         </template>
         <FileUpload
             v-if="dialogType === 'new'"
-            mode="basic"
+            mode="advanced"
+            customUpload
+            :multiple="false"
+            :showUploadButton="false"
+            :showCancelButton="false"
             chooseLabel="选择文件"
             @select="onFileChooseHandler"
-            class="h-10"
-        />
+            class="mt-2"
+        >
+            <template #empty>
+                <div class="flex flex-col items-center justify-center rounded-xl border border-dashed border-neutral-300 p-8 text-center text-neutral-500 dark:border-neutral-700">
+                    <i class="pi pi-cloud-upload mb-3 text-3xl" />
+                    <p class="font-medium">拖拽文件到这里</p>
+                    <p class="mt-1 text-sm">也可以点击上方按钮选择文件</p>
+                </div>
+            </template>
+        </FileUpload>
         <LabelAndInput
             id="file_name"
             label="文件名"
@@ -448,6 +475,16 @@ const translateVisibility = (visibility: string): string => {
             :loading="selectedFileLoading"
             v-model="newFileRecord.password!"
         />
+        <div
+            v-if="passwordDownloadLink"
+            class="mt-4 rounded-xl bg-neutral-100 p-3 dark:bg-neutral-800"
+        >
+            <p class="mb-2 text-xs text-neutral-500">密码下载直链</p>
+            <div class="flex items-center gap-2">
+                <span class="min-w-0 flex-1 truncate font-mono text-sm">{{ passwordDownloadLink }}</span>
+                <Button class="shrink-0" icon="pi pi-copy" text @click="copyPasswordDownloadLink" />
+            </div>
+        </div>
         <template #footer>
             <Button
                 v-if="dialogType === 'edit'"
