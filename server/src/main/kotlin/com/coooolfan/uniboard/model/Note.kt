@@ -14,4 +14,6 @@ interface Note {
     val title: String
 
     val content: String
+
+    val password: String?
 }

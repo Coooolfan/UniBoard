@@ -13,13 +13,13 @@ import com.coooolfan.uniboard.model.dto.ProfileUpdate
 import com.coooolfan.uniboard.repo.ProfileRepo
 import com.coooolfan.uniboard.repo.SystemConfigRepo
 import com.coooolfan.uniboard.utils.SaveFileResult
+import com.coooolfan.uniboard.utils.hashPassword
 import org.babyfish.jimmer.sql.ast.mutation.SaveMode
 import org.babyfish.jimmer.sql.fetcher.Fetcher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import java.nio.file.Paths
-import java.security.MessageDigest
 
 @Service
 class ProfileService(private val repo: ProfileRepo, private val sysRepo: SystemConfigRepo) {
@@ -70,15 +70,6 @@ class ProfileService(private val repo: ProfileRepo, private val sysRepo: SystemC
             loginName = update.newLoginName
             loginPassword = hashPassword(update.newPassword)
         }, SaveMode.UPDATE_ONLY).execute()
-    }
-
-    private fun hashPassword(password: String): String {
-        val digest = MessageDigest.getInstance("SHA3-384")
-        val hashBytes = digest.digest(password.toByteArray(Charsets.UTF_8))
-
-        return hashBytes.joinToString("") {
-            "%02x".format(it.toInt() and 0xFF)
-        }
     }
 
     private fun saveProfileFile(file: MultipartFile?, category: String): SaveFileResult? {
