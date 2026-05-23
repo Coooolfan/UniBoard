@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.*
 /**
  * 笔记控制器
  *
- * 处理笔记的增删改查操作，包括创建、查询、更新和删除笔记
- * 所有操作都需要登录验证
+ * 处理笔记的增删改查操作，包括创建、查询、更新和删除笔记。
+ * 管理操作需要登录验证；带 pw 参数的纯文本下载接口允许匿名访问。
  */
 @RestController
 @RequestMapping("/api/note")
