@@ -23,6 +23,6 @@ server/src/main/resources/static
 server/.env
 !server/gradle/wrapper/gradle-wrapper.jar
 
-database/
-service/
+/database/
+/service/
 .cunzhi-memory/
