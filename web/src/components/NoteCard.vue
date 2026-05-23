@@ -13,9 +13,11 @@ import { useConfirm } from 'primevue/useconfirm'
 import { api } from '@/ApiInstance'
 import type { NoteDto } from '@/__generated/model/dto'
 import { BeautyLocalTime } from '@/utils/BeautyDate'
+import { useClipboard } from '@/composables/useClipboard'
 import { useToast } from 'primevue/usetoast'
 const confirm = useConfirm()
 const toast = useToast()
+const { copyToClipboard } = useClipboard()
 const editNote = ref<NoteDto['NoteController/DEFAULT_NOTE']>({
     id: -1,
     title: '',
@@ -207,28 +209,37 @@ async function savePasswordConfig() {
     if (password === undefined) return
 
     editNoteLoading.value = true
-    await api.noteController.updateNoteById({
-        id: editNote.value.id,
-        body: {
-            password
-        }
-    })
-    editNoteLoading.value = false
-    passwordDialogVisible.value = false
-    notePasswordInput.value = ''
+    try {
+        await api.noteController.updateNoteById({
+            id: editNote.value.id,
+            body: {
+                password
+            }
+        })
+        passwordDialogVisible.value = false
+        notePasswordInput.value = ''
 
-    toast.add({
-        severity: 'success',
-        summary: password.length === 0 ? '已设为私有' : '分享密码已更新',
-        life: 3000
-    })
+        toast.add({
+            severity: 'success',
+            summary: password.length === 0 ? '已设为私有' : '分享密码已更新',
+            life: 3000
+        })
+    } catch (error) {
+        toast.add({
+            severity: 'error',
+            summary: '保存失败',
+            detail: error instanceof Error ? error.message : '请稍后重试',
+            life: 3000
+        })
+    } finally {
+        editNoteLoading.value = false
+    }
 }
 
 async function copyPlainTextLink() {
     if (notePlainTextLink.value.length === 0) return
 
-    await navigator.clipboard.writeText(notePlainTextLink.value)
-    toast.add({ severity: 'success', summary: '已复制', detail: '笔记纯文本直链已复制到剪贴板。', life: 3000 })
+    await copyToClipboard(notePlainTextLink.value, '笔记纯文本直链已复制到剪贴板', '笔记纯文本直链复制失败')
 }
 
 async function deleteHandler(index: number) {
